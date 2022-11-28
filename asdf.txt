@@ -2,27 +2,24 @@
 pwd  현재 디렉토리 확인
 ls  현재 파일들 리스트 
 
-
 Git Bash에서 git 환경 설정
 > git config --global user.name “yisy0703”
 > git config --global user.email “yisy0703@naver.com”
 > git config --list
 
+git init 초기화 및 히스토리작성     .git폴더는 히스토리  //그동안 저장한것
 
 수정하고 업데이트 
  git add . 
  git commit –m “버전이름”
  git push –u origin 
 
-
-git init 초기화 및 히스토리작성     .git폴더는 히스토리  //그동안 저장한것
-
 git clone 깃주소   //집에 주소복사 
-
 git pull origin main //동기화 시키고 작업시작 
 
 
-
-매일 요약정리해서 노트로 10줄은 올리자.
+매일 노트와 소스에 요약정리
+ 노트에 10줄 적자.
+소스는 작업물들.
 파일이름에 주제를 적자.
 txt 나 pdf로 올리자 
