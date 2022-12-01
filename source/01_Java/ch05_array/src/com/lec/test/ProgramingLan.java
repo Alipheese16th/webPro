@@ -5,23 +5,22 @@ package com.lec.test;
 public class ProgramingLan {
 	public static void main(String[] args) {
 		int[] array = { 76, 45, 34, 89, 100, 50, 90, 93 };
-		int i,tot = 0;
-		int max = 0 , min = 999;
-		for(i=0;i<array.length;i++) {
+		int i, tot = 0;
+		for (i = 0; i < array.length; i++) {
 			tot += array[i];
 		}
-		double avg = (double)tot/array.length;
-		
-		for(i=0;i<array.length;i++) {
-			if(array[i]>max) {
-				max=array[i];
+		double avg = (double) tot / array.length; // 합계와 평균을 구함
+
+		int max = array[0], min = array[0]; // 최대값과 최소값을 구함
+		for (i = 1; i < array.length; i++) {
+			if (array[i] > max) {
+				max = array[i];
 			}
-			if(array[i]<min) {
-				min=array[i];
+			if (array[i] < min) {
+				min = array[i];
 			}
 		}
-		System.out.printf("값의 합은 %d 이고 평균은 %.2f 이다. \n"
-				+ "그리고 최대값은 %d 최소값은 %d이다.",tot,avg,max,min);
-		
+		System.out.printf("값의 합은 %d이고 평균은 %.2f이다.\n" + "그리고 최대값은 %d, 최소값은 %d이다.", tot, avg, max, min);
+
 	}
 }

@@ -22,21 +22,22 @@ public class Ex04_height {
 		}
 		System.out.println("그래서 평균 키는 " + (double) totHeight / arrHeight.length);
 		scanner.close();
-		//가장 큰 학생과 가장 작은학생
-		int maxIdx=0, maxHeight=0; //최대값을 구하기 위한 변수(작은값으로 초기화)
-		int minIdx=0, minHeight=999;//최소값을 구하기 위한 변수(큰값으로 초기화)
-		for(int idx=0;idx<arrName.length;idx++) {
-			if(arrHeight[idx]>maxHeight) {
+		
+		// 가장 큰 학생과 가장 작은학생
+		int maxIdx = 0, maxHeight = arrHeight[0]; // 최대값을 구하기 위한 변수
+		int minIdx = 0, minHeight = arrHeight[0];// 최소값을 구하기 위한 변수
+		for (int idx = 1; idx < arrName.length; idx++) {
+			if (arrHeight[idx] > maxHeight) {
 				maxHeight = arrHeight[idx];
 				maxIdx = idx;
-			}//if최대값
-			if(arrHeight[idx]<minHeight) {
+			} // if최대값
+			if (arrHeight[idx] < minHeight) {
 				minHeight = arrHeight[idx];
 				minIdx = idx;
-			}//if최소값
-		}//for
-		System.out.printf("가장 큰 학생 %s의 키는 : %d\n",arrName[maxIdx],maxHeight);
-		System.out.printf("가장 작은 학생 %s의 키는 : %d\n",arrName[minIdx],minHeight);
-		
+			} // if최소값
+		} // for
+		System.out.printf("가장 큰 학생 %s의 키는 : %d\n", arrName[maxIdx], maxHeight);
+		System.out.printf("가장 작은 학생 %s의 키는 : %d\n", arrName[minIdx], minHeight);
+
 	}
 }
