@@ -23,6 +23,7 @@ public class Hello {
 		System.out.printf("%e%n",d);
 		System.out.printf("%o%n",age);
 		System.out.printf("%x%n",age);
+		
 
 	}
 }

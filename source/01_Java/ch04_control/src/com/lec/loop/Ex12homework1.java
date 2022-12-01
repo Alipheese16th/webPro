@@ -1,15 +1,15 @@
-package com.lec.loopQuiz;
+package com.lec.loop;
 
+//컴퓨터와 계속 가위바위보를 할수있다. -1을 누르면 종료한다 
 import java.util.Scanner;
-//가위바위보를 지면 게임이 종료 
-public class Quiz6 {
 
+public class Ex12homework1 {
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
-		int you = 0, com= 0 ;
+		int you = 0, com;
 		
 
-		while ((you + 1) % 3 != com) {
+		while (you != -1) {
 			System.out.print("가위(0), 바위(1), 보(2) 중 하나를 내십시오 : ");
 			you = scanner.nextInt();
 			com = (int) (Math.random() * 3);
@@ -25,7 +25,5 @@ public class Quiz6 {
 		}
 		System.out.println("게임을 종료합니다.");
 		scanner.close();
-		
 	}
-
 }
