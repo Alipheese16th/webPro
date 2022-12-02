@@ -25,7 +25,7 @@ public class Rect {
 	public int getWidth() {
 		return width;
 	}
-	public void setwidth(int width) {
+	public void setWidth(int width) {
 		this.width = width;
 	}
 	public int getHeight() {

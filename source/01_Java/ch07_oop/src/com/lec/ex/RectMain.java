@@ -9,7 +9,7 @@ public class RectMain {
 		System.out.printf("r1의 데이터 : %d %d\n",r1.getWidth(),r1.getHeight());
 		System.out.printf("r2의 데이터 : %d %d\n",r2.getWidth(),r2.getHeight());
 		System.out.printf("r3의 데이터 : %d %d\n",r3.getWidth(),r3.getHeight());
-//		r1.setwidth(10); r1.setHeight(5);
+//		r1.setWidth(10); r1.setHeight(5);
 //		System.out.printf("r1의 데이터 : %d %d\n",r1.getWidth(),r1.getHeight());
 //		System.out.printf("r2의 데이터 : %d %d\n",r2.getWidth(),r2.getHeight());
 		System.out.println("r1의 넓이 : "+r1.area());
