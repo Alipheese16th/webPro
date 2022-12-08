@@ -11,11 +11,17 @@ public class TestMain {
 		
 		Staff staff = new Staff("홍사원", "010-8888-8888", "2022-12-06", "판매부");
 		
+		System.out.println("============================================");
+		
 		Person[] person = {customer, staff};
 		
 		for(Person p : person) {
 			System.out.println(p.infoString());
+				if(p instanceof Customer) {
+					((Customer) p).buy(1000000);
+				}
 		}
+		System.out.println("============================================");
 		
 		Person customer1 = new Customer("신길동",  "010-7777-7777",  "서울시 영등포구", "12-07");
 		//customer1.buy //에러 Person형임 
