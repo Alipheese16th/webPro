@@ -16,8 +16,8 @@ class PersonInfo{
 		System.out.println("이름 : "+name+", 나이 : "+age+", 성별 : "+gender);
 	}
 	
-	
 }//class 이렇게 만드는건 사실 좋지 않다.
+
 public class PersonInfoMain {
 	public static void main(String[] args) {
 		PersonInfo[] person = {new PersonInfo("홍",25,'f'),

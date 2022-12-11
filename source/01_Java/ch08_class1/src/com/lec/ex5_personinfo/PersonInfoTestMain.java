@@ -11,7 +11,7 @@ public class PersonInfoTestMain {
 		for (int i = 0; i < arr.length; i++) { //일반for문
 			System.out.print(arr[i]);
 		}
-		for(int a : arr) {		//확장for문
+		for(int a : arr2) {		//확장for문
 			System.out.println(a);
 		}
 		

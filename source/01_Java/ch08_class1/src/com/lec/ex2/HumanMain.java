@@ -22,7 +22,7 @@ public class HumanMain {
 		Man kim = new Man("김길동",22,180,67);
 		
 		Man kim2 = kim; //같은 레퍼런스주소를 갖고 있다. 사실상 같다.
-		//배열도 같다. 객체변수의 할당은 주소를 할당한다.
+																//배열도 참조변수라 같은 원리. 객체변수의 할당은 주소를 할당한다.
 		
 		kim2.setHeight(185); kim2.setWeight(300);
 		System.out.println("kim과 kim2가 같은 객체냐 : "+kim.equals(kim2));
