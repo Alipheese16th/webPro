@@ -1,0 +1,14 @@
+package singleton2;
+
+public class SecondClass {
+	
+	public SecondClass() {
+		System.out.println("secondClass »ý¼ºÀÚ ½ÇÇà Áß");
+		SingletonClass singletonObject = SingletonClass.getInstance();
+		System.out.println("½Ì±ÛÅæ °´Ã¼ÀÇ i°ªÀº "+singletonObject.getI());
+		
+	}
+	
+	
+	
+}

@@ -1,4 +1,4 @@
-package com.lec.ex08_booklib;
+package com.lec.ex.quiz;
 
 import java.util.Scanner;
 
