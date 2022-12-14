@@ -33,5 +33,6 @@ public class Ex07_searchPostTel {
 			}
 		
 		}//while
+		sc.close();
 	}//main
 }//class
