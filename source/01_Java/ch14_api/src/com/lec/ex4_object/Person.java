@@ -9,13 +9,18 @@ public class Person {
 		this.juminNo = juminNo;
 	}
 	
+	@Override
 	public String toString() {
 		return "주민번호는 "+juminNo;
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		return super.equals(obj);
+		if(obj!=null && obj instanceof Person) {
+			return juminNo == ((Person) obj).juminNo;
+		} else {
+			return false;
+		}
 	}
 	
 }
