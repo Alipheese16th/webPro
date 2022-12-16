@@ -1,17 +1,17 @@
-package com.lec.ex.quiz;
+package com.lec.ex5_booklib;
 
 import java.util.Scanner;
 
-public class BookMain {
+public class LibMain {
 
 	public static void main(String[] args) {
 		
-		Book[] books = {
-				new Book("890ㅁ-01-11","java","홍길동"),
-				new Book("890ㅁ-01-12","oracle","오길동"),
-				new Book("890ㅁ-02-01","mysql","마길동"),
-				new Book("890ㅁ-01-01","jdbc","제이디"),
-				new Book("890ㅁ-01-01","html","이에이")
+		BookLib[] books = {
+				new BookLib("890ㅁ-01-11","java","홍길동"),
+				new BookLib("890ㅁ-01-12","oracle","오길동"),
+				new BookLib("890ㅁ-02-01","mysql","마길동"),
+				new BookLib("890ㅁ-01-01","jdbc","제이디"),
+				new BookLib("890ㅁ-01-01","html","이에이")
 		};	
 		Scanner scanner = new Scanner(System.in);
 		int fn; //기능번호 (1:대출/2:반납/3:책list/0:종료)
@@ -37,7 +37,7 @@ public class BookMain {
 					System.out.println("현재 보유하지 않는 도서입니다");
 				}else { //books[idx] 도서를 대출
 					//3.책상태확인
-					if(books[idx].getState() == Book.STATE_BORROWED) {
+					if(books[idx].getState() == BookLib.STATE_BORROWED) {
 						System.out.println("현재 대출 중인 도서입니다");
 					}else {
 						//4.대출인입력
@@ -72,12 +72,14 @@ public class BookMain {
 				}
 				break;
 			case 3: // 책list 출력 : for문을 이용하여 printState()메소드 호출
-				for(Book book : books) {
+				for(BookLib book : books) {
 					book.printState();
 				}
 			}//switch
 		}while(fn != 0);
-		System.out.println("종료");
 		
-	}
-}
+		System.out.println("종료");
+		scanner.close();
+		
+	}//main
+}//class

@@ -1,4 +1,4 @@
-package com.lec.ex.quiz;
+package com.lec.quiz;
 // Book book = new Book("899¤±-01-11", "java","È«±æµ¿")
 public class Book implements ILendable {
 	

@@ -1,4 +1,4 @@
-package com.lec.ex.quiz;
+package com.lec.quiz;
 
 public interface ILendable {
 	
