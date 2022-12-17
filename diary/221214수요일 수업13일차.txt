@@ -40,16 +40,15 @@ date클래스를 100퍼센트 활용할수 있게 만드는 클래스
 
 
  ##### 여러가지  
+ - System.currentTimeMillis()  
+1970.01.01날짜부터 현재까지의 밀리세컨(1초당 1000)
+ 
  - GregorianCalendar클래스의 밀리세컨값구하기  
 객체.getTimeInMillis();  
-현재 시점과 과거시점의 밀리세컨값을 구해서 차이를 연산하면 밀리세컨값이 나오는데
-그걸 1천*초분시간값을 나누면 몇일이 나오는지 계산이 된다.
-굉장히 유용한 사용법.  
+현재 시점과 과거시점의 밀리세컨값을 구해서 차이를 연산하면 밀리세컨값이 나오는데, 그걸 1천*초분시간값을 나누면 몇일이 나오는지 계산이 된다. 굉장히 유용한 사용법.  
 
- - Calendar.getTime()
+ - Calendar.getTime()  
 캘린더타입을 Date타입으로 바꾼다. SimpleDateFormat은 Date타입의 매개변수만 받기때문에 
 필요하다.
 
 
-java - DBMS - JDBC - WEB(웹표준,웹PG프로그래밍) - MVC패턴 - 개별프로젝트 - 
-Spring + myBatis - SpringBoot + myBatis - Spring + jpa

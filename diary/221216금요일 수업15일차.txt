@@ -38,9 +38,5 @@ LinkedList 값끼리 서로 연결되어있다. 입력하는건 오래걸리지�
 
 
 
-https://dingrr.com/blog/post/%EC%9E%85%EB%AC%B8%EC%9E%90%EC%97%90%EA%B2%8C-java%EB%83%90-python%EC%9D%B4%EB%83%90-%EA%B7%B8%EA%B2%83%EC%9D%B4-%EB%AC%B8%EC%A0%9C%EB%A1%9C%EB%8B%A4
-집가서복습 대출도서
-
-
  ##### 여러가지  
 ctrl + T  해당클래스의 상속체계 확인가능 

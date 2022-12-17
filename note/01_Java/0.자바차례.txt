@@ -24,3 +24,8 @@
 
 
 12 16 17 19 중요
+
+
+
+java - DBMS - JDBC - WEB(웹표준,웹PG프로그래밍) - MVC패턴 - 개별프로젝트 - 
+Spring + myBatis - SpringBoot + myBatis - Spring + jpa
