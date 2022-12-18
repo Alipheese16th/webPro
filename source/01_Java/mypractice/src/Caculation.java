@@ -9,5 +9,9 @@ public class Caculation {
 			money %= coin[i];
 		}
 		
+		double d = -0.5;
+		int a = (int)Math.floor(d);
+		System.out.println(a);
+		
 	}
 }

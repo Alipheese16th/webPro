@@ -22,7 +22,7 @@ public class Ex01_Calendar {
 		
 		System.out.printf("%d년 %d월 %d일 ",year,month,day);
 		
-		Calendar now2 = Calendar.getInstance(); //singleton 패턴이기 때문에 같은 객체다. 
+		Calendar now2 = Calendar.getInstance(); 
 		
 		switch (week) {
 		case 1: System.out.print("일요일 "); break;

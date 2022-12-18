@@ -5,7 +5,7 @@ import java.util.Date;
 public class Ex04_Date {
 	public static void main(String[] args) {
 		
-		Date now = new Date(); //2022년 - 1900년  : 122   //예전에 1998년이면 98 이라고 넣었다. 20세기에 만들어졌기때문
+		Date now = new Date(122,0,1); //2022년 - 1900년  : 122   //예전에 1998년이면 98 이라고 넣었다. 20세기에 만들어졌기때문
 		
 		System.out.println(now);
 		
