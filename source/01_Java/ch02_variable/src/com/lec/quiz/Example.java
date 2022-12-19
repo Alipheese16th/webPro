@@ -2,6 +2,7 @@ package com.lec.quiz;
 
 public class Example {
 	public static void main(String[] args) {
+		
 		// 국어, 영어, 수학 점수 할당
 		// 총점, 평균
 		// 점수들 출력 

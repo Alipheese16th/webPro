@@ -4,6 +4,7 @@ package com.lec.ex08_super;
 // super.~ : 부모클래스의~
 // super() : 부모 클래스의 생성자 함수
 public class Person {
+	
 	private String name;
 	private String character;
 	

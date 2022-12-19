@@ -9,6 +9,7 @@ public class StudentMain {
 		Student s3 = new Student("황정민",80,80,90);
 		Student s4 = new Student("강동원",80,90,90);
 		Student s5 = new Student("유아인",70,70,90);
+		
 		Student[] students = { s1, s2, s3, s4, s5 };
 		String[] title = { "이름", "국어", "영어", "수학", "총점", "평균" };
 		int[] total = new int[5]; //0번idx:국어누적, 1번idx:영어, 2번idx:수학 ...4번 평균

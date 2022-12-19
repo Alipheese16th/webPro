@@ -12,9 +12,11 @@ public class HighGradeCar extends Car {
 
 	@Override
 	public void getSpec() {// tax를 포함한 Spec들 출력
+		
 		if(getDisplacement() > 1500) {
 			tax += ( getDisplacement() - 1500 ) * 600;
 		}
+		
 		System.out.println("=======================================");
 		System.out.println("색상 : " + getColor());
 		System.out.println("타이어 : " + getTire());

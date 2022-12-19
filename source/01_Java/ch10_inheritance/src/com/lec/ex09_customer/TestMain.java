@@ -17,9 +17,10 @@ public class TestMain {
 		
 		for(Person p : person) {
 			System.out.println(p.infoString());
-				if(p instanceof Customer) {
-					((Customer) p).buy(1000000);
-				}
+			
+			if(p instanceof Customer) {
+				((Customer) p).buy(1000000);
+			}
 		}
 		System.out.println("============================================");
 		

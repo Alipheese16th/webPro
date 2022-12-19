@@ -23,8 +23,10 @@ public class Ex01_arrayList {
 		arrayList.add("str1");	//1번 인덱스 -> 2번 인덱스
 		arrayList.add("str2");	//2번 인덱스 -> 3번 인덱스
 		arrayList.add(1,"111111"); //1번 인덱스
+		
 		System.out.println("현재 arrayList사이즈는 "+arrayList.size());
 		System.out.println(arrayList);
+		
 		arrayList.set(1, "------");	//1번 인덱스 수정
 		arrayList.add("str4");
 		
@@ -39,10 +41,11 @@ public class Ex01_arrayList {
 		arrayList.remove(1);	//1번 인덱스 제거 (2->1, 3->2, 4->3 인덱스)
 		arrayList.remove(arrayList.size()-1);	//맨 마지막 인덱스 값 제거
 		System.out.println("1번 인덱스와 마지막 인덱스 제거 후 "+arrayList);
+		
 		arrayList.clear();	//arrayList 모든 데이터 제거
 		System.out.println(arrayList.isEmpty()?"arrayList 사이즈가 0":"arrayList 사이즈가 0이 아니다");
 		arrayList = null;	//arrayList에 null을 할당
-		System.out.println(arrayList.size());
+		//System.out.println(arrayList.size());	//NullPointerException
 		
 		
 		

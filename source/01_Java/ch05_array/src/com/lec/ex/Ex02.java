@@ -3,9 +3,11 @@ package com.lec.ex;
 public class Ex02 {
 
 	public static void main(String[] args) {
+		
 		int i = 10;
 		int j = i;
 		j = 99;
+		
 		System.out.printf("i = %d , j =%d\n", i, j);
 		// j의 값이 바뀐거지 i를 바꾼게 아니다
 		// j안에 메모리 안에 값이 바뀐다
@@ -13,6 +15,7 @@ public class Ex02 {
 		int[] score = { 10, 20, 30, 40, 50 };
 		int[] s = score;
 		s[0] = 99;
+		
 		for (int idx = 0; idx < s.length; idx++) {
 			System.out.printf("score[%d] = %d\t s[%d] = %d\n", idx, score[idx], idx, s[idx]);
 		}

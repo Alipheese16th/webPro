@@ -5,17 +5,20 @@ package com.lec.ex;
 // printf() : 콘솔창 출력 (포맷 지정)
 public class VarEx02 {
 	public static void main(String[] args) {
+		
 		// 타입 변수명 할당연산자 값;
 		int i = 10;
 		byte j = 127;
 		double h = 10.15;
 		i = 100; // 값을 계속 바꿔서 넣을수 있다.
+		
 		System.out.println("i=" + i + "\tj=" + j + "\th=" + h);
 		System.out.printf("i=%d \t j=%d \t h=%.2f \n", i, j, h);
 		char c1 = '김';
 		char c2 = '홯';
 		// %c:문자, %s:문자열, %d:정수, %f:실수, %b:boolean
 		// System.out.printf(Format,args);
+		
 		System.out.printf("c1=%c \t c2=%c\n", c1, c2);
 		System.out.printf("c1=%d \t c2=%d\n", (int) c1, (int) c2);
 		System.out.println("프로그램끝 ");

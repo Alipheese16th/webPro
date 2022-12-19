@@ -7,6 +7,7 @@ public class Ex02_linkedList {
 		
 		ArrayList<String> list = new ArrayList<String>();
 		LinkedList<String> linkedList = new LinkedList<String>();
+		
 		linkedList.add("str0");	//0ÀÎµ¦½º
 		linkedList.add("str1");	//1ÀÎµ¦½º -> 0ÀÎµ¦½º
 		linkedList.add("str2");	//2ÀÎµ¦½º -> 1ÀÎµ¦½º
@@ -16,6 +17,7 @@ public class Ex02_linkedList {
 			System.out.println(i+" : "+linkedList.get(i));
 		}
 		linkedList.clear();
+		
 		if(linkedList.isEmpty()) {
 			System.out.println("µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù");
 		}else {

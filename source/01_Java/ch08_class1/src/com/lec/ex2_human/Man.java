@@ -3,6 +3,7 @@ package com.lec.ex2_human;
 //Man kim = new Man("ȫ�浿");
 //Man kim = new Man("ȫ�浿",22,170,65);
 public class Man {
+	
 	private String name;
 	private int age;
 	private int height;

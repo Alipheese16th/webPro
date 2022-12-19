@@ -9,6 +9,7 @@ public class Ex04_FriendArrayListSearchTel {
 	public static void main(String[] args) {
 		
 		ArrayList<Friend> friends = new ArrayList<Friend>();
+		
 		friends.add(new Friend("È«±æµ¿","010-9999-9999"));
 		friends.add(new Friend("½Å±æµ¿","010-8888-9999",new Date(new GregorianCalendar(1998,0,1).getTimeInMillis())));
 		friends.add(new Friend("±è±æµ¿","02-717-7777"));

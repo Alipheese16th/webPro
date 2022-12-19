@@ -7,6 +7,7 @@ public class TestMain {
 		Parent pObj1 = new Parent();
 		Parent pObj2 = new Parent(10);
 		System.out.println("pObj1과 pObj2가 같은지 ? " + pObj1.equals(pObj2)); //Object의 equals
+		
 		pObj1.method1();
 		pObj2.method1();
 		pObj1.method2();
@@ -14,6 +15,7 @@ public class TestMain {
 		
 		Child cObj1 = new Child(); // parent() -> Child()
 		Child cObj2 = new Child(2); // parent() -> Child(2)
+		
 		cObj1.method1();
 		cObj2.method2();
 		cObj1.method3();

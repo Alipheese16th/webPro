@@ -5,6 +5,7 @@ public class Ex01_NullPointEx {
 		
 		String greeting = "Hello";
 		System.out.println(greeting.toUpperCase());
+		
 		greeting = null;
 		System.out.println(greeting.toUpperCase());
 		

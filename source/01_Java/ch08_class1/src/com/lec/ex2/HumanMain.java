@@ -7,13 +7,13 @@ import com.lec.ex2_human.kid.Kid;
 public class HumanMain {
 
 	public static void main(String[] args) {
+		
 		Woman woman1 = new Woman();
 		Woman woman2 = new Woman();
 //		------------	------------
 //	레퍼런스변수(객체변수) 선언	객체 생성(인스턴스 생성)
 		System.out.println("woman1과 woman2가 같은지 : "+(woman1 == woman2));
 		System.out.println("woman1과 woman2가 같은지 : "+woman1.equals(woman2));
-		
 		
 		Man man = new Man();
 		Kid kid = new Kid("홍아기"); 

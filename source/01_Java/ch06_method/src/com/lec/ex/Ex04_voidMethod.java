@@ -3,6 +3,7 @@ package com.lec.ex;
 //return 값이 없는 메소드
 public class Ex04_voidMethod {
 	public static void main(String[] args) {
+		
 		printLine();
 		System.out.println("Hello,World!");
 		printLine('~');

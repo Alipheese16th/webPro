@@ -6,8 +6,10 @@ package com.lec.ex;
 // 1 <= (int)(Math.random()*45+1) < 46 - 1~45 정수
 public class Ex06_lotto {
 	public static void main(String[] args) {
+		
 		int[] lotto = new int[6];
 		int i, j, temp;
+		
 		for (i = 0; i < lotto.length; i++) {
 			do { // 발생된 난수가 중복되었는지 체크
 				temp = (int) (Math.random() * 45 + 1);

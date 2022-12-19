@@ -10,8 +10,8 @@ public class Ex06_telprint {
 		while(true) {
 			System.out.print("전화번호를 입력하세요(xxx-xxx-xxxx)-종료를 원하면(x) :");
 			String tel = scanner.next();
-			if(tel.equalsIgnoreCase("x")) 
-				break;
+			
+			if(tel.equalsIgnoreCase("x")) break;
 			
 			System.out.println("입력한 전화번호 : "+tel);
 			
@@ -21,9 +21,11 @@ public class Ex06_telprint {
 					System.out.print(tel.charAt(i));
 				else 
 					System.out.print(" ");
-			}System.out.println();
+			}
+			System.out.println();
 			
 			System.out.print("문자를 거꾸로 : ");
+			
 			for (int i = tel.length()-1; i >= 0; i--) {
 				System.out.print(tel.charAt(i));
 			}System.out.println();

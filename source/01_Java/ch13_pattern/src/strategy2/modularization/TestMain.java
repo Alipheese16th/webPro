@@ -10,7 +10,9 @@ public class TestMain {
 		Sonata sonata = new Sonata();
 		Accent accent = new Accent();
 		
-		Car[] cars = {genesis,sonata,accent};
+		Car[] cars = {
+				genesis,sonata,accent
+		};
 		
 		for(Car car : cars) {
 			car.shape();

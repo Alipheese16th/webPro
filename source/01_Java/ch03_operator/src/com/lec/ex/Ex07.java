@@ -4,6 +4,7 @@ package com.lec.ex;
 // 사실 자바로 비트연산자는 크게 쓸일 없지만 그래도 배우자. 
 public class Ex07 {
 	public static void main(String[] args) {
+		
 		int n1 = 10; //0 ~ 0 1 0 1 0
 		int n2 = 6; // 0 ~ 0 0 1 1 0
 		//----------------------------

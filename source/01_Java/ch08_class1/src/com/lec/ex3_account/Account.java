@@ -9,8 +9,7 @@ public class Account {
 	private String ownerName;
 	private long balance;
 
-	public Account() {
-	}
+	public Account() {}
 
 	public Account(String accountNo, String ownerName) {
 		this.accountNo = accountNo;

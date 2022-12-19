@@ -5,6 +5,7 @@ public class AccountMain {
 		
 	Account acc1 = new Account("111-111", "ȫ�浿");
 	acc1.deposite(10000);
+	
 	try {
 		acc1.withdraw(19000);
 	} catch (Exception e) {

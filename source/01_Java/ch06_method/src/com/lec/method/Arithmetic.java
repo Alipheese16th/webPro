@@ -4,18 +4,24 @@ package com.lec.method;
 public class Arithmetic {
 	
 	public int sum(int from,int to) { //from부터 to까지 정수 누적 값 return
+		
 		int result = 0;
+		
 		for(int i=from;i<=to;i++) {
 			result+=i;
 		}
+		
 		return result;
 	}
 	
 	public int sum(int to) { // 1~to까지 정수 누적 값 return
+		
 		int result = 0;
+		
 		for(int i=1;i<=to;i++) {
 			result+=i;
 		}
+		
 		return result;
 	}
 	

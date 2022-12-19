@@ -2,6 +2,7 @@ package com.lec.ex;
 // 형변환
 public class VarEx06 {
 	public static void main(String[] args) {
+		
 		int i = 10;
 		double d = i;   // d = 10.0  묵시적인 형변환. 4byte변수를 8byte타입에 넣어도 손실은 없다.
 		System.out.println("d = "+d);

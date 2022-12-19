@@ -17,6 +17,7 @@ public class Ex01_nextLine {
 		System.out.print("주소 : ");
 		scanner.nextLine(); //버퍼에 남아 있는 "\n"을 지우기
 		String address = scanner.nextLine(); //"\n"앞의 값을 return하고 "\n"뒤는 지워요
+		
 		System.out.println("입력한 주소는 "+address);
 		System.out.println("끝");
 		scanner.close();

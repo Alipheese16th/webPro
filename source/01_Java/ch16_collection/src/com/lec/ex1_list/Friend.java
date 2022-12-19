@@ -21,9 +21,9 @@ public class Friend {
 	public String toString() {
 		if(birthday!=null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy³â MM¿ù ddÀÏ(E)");
-			return "Friend [name=" + name + ", tel=" + tel + ", birthday=" + sdf.format(birthday);
+			return "[name]" + name + ", [tel]" + tel + ", [birthday]" + sdf.format(birthday);
 		}else {
-			return "Friend [name=" + name + ", tel=" + tel;
+			return "[name]" + name + ", [tel]" + tel;
 		}
 	}
 	public String getName() {

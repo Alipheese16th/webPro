@@ -1,0 +1,36 @@
+package com.lec.quiz;
+
+public class Customer {
+	
+	private String name;
+	private String tel;
+	private String address;
+	
+	public Customer() {}
+	public Customer(String name, String tel, String address) {
+		this.name = name;
+		this.tel = tel;
+		this.address = address;
+	}
+	@Override
+	public String toString() {
+		return "[이름]" + name + "[전화번호]" + tel + "[주소]" + address;
+	}
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if(obj!=null && getClass()==obj.getClass()) {
+			Customer other = (Customer)obj;
+			return name.equals(other.name)&&tel.equals(other.tel)&&address.equals(other.address);
+		}else {
+			return false;
+		}
+	}
+	
+	
+	
+	
+}

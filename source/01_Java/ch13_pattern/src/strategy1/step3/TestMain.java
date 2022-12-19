@@ -16,7 +16,7 @@ public class TestMain {
 		
 		Robot[] robots = {
 				superRobot,standardRobot,lowRobot
-				};
+		};
 		
 		for(Robot robot : robots) {
 			robot.shape();

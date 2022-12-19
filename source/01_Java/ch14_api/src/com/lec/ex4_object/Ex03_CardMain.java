@@ -26,6 +26,7 @@ public class Ex03_CardMain {
 		Card randomCard = new Card(kinds[random.nextInt(4)],random.nextInt(14));
 		System.out.println("임의로 뽑힌 카드 : "+ randomCard);
 		int i;
+		
 		for (i = 0; i < cards.length; i++) {
 			if(cards[i].equals(randomCard)) {
 				System.out.println(i+"번째 카드와 일치 ★★★");
