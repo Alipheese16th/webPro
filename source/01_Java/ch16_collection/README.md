@@ -11,6 +11,7 @@ Collection을 사용하는 이유에는 3가지가 있습니다
 3. 프로그램 속도 및 품질 향상 : 유용한 데이터 구조 및 알고리즘은 성능을 향상시킬 수 있습니다 Collection을 사용하여 최상의 구현을 생각할 필요없이 간단하게 Collection API를 사용하여 구현을 하면 됩니다
 
 
+<image src ="https://user-images.githubusercontent.com/117807553/208553056-9d0b2a99-af3c-45c5-9cc1-61fc5cbe70e1.png" width="60%" />
 
 
  ### List Interface  
