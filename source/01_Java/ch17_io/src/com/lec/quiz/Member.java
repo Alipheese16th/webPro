@@ -10,18 +10,15 @@ public class Member {
 	private Date birthday;
 	private String address;
 	
-	public Member(String name, String tel, String birthday, String address) {
+	
+	public Member() {}
+
+	public Member(String name, String tel, Date birthday, String address) {
+		super();
 		this.name = name;
 		this.tel = tel;
+		this.birthday = birthday;
 		this.address = address;
-		
-		String[] br = birthday.split("-");
-		this.birthday = new Date(new GregorianCalendar(
-				Integer.parseInt(br[0]),
-				Integer.parseInt(br[1]),
-				Integer.parseInt(br[2])
-		).getTimeInMillis());
-		
 	}
 
 	@Override
@@ -47,9 +44,8 @@ public class Member {
 		this.tel = tel;
 	}
 
-	public String getBirthday() {
-		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
-		return sdf.format(birthday);
+	public Date getBirthday() {
+		return birthday;
 	}
 
 	public void setBirthday(Date birthday) {
