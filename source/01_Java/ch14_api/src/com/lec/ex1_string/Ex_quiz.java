@@ -20,16 +20,10 @@ public class Ex_quiz {
 			
 			System.out.println("입력한 전화번호 : "+tel);
 			
-			
-			
 			System.out.println("전화번호 앞자리는"+tel.substring(0,tel.indexOf("-")));
 			System.out.println("전화번호 뒷자리는"+tel.substring(tel.lastIndexOf("-")+1));
 			
-			
-			
-			
 		}
-		
 		
 		scanner.close();
 	}

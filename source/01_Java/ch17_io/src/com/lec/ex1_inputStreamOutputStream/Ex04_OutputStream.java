@@ -21,7 +21,7 @@ public class Ex04_OutputStream {
 			
 		} finally {
 			try {
-				if(os!=null)os.close();	//(3)
+				if(os!=null) os.close();	//(3)
 			} catch (IOException ignore) {	}
 		}
 		
