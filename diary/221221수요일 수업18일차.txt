@@ -1,0 +1,109 @@
+reader writer   
+ - BufferedReader   
+ - BufferedWriter    
+
+
+
+
+
+ # Java Thread  
+
+
+프로세스와 스레드의 차이 
+
+프로세스는 os가 우선순위관리 
+스레드의 스케쥴링은 jvm이 한다
+사용자는 타겟만 지정
+
+멀티쓰레드는 
+하나의 프로세스에서 여러작업을 동시수행
+
+다만 동시수행에서는 같은데이터를 동시에 건드리다 문제가 발생함
+동기화가 필요
+
+synchronized  - 함수에만 선언가능
+한쓰레드가 수행중일때 다른쓰레드 접근불가능
+
+
+플래그 변수 
+
+ ----------   
+ # 데이터베이스   
+
+이미지는 따로모은다 
+
+데이터의무결성 
+
+자바로 dbms에 접근하면 dbms가 데이터베이스를 조작 
+
+
+
+
+Destination Folder: C:\oraclexe\
+Oracle Home: C:\oraclexe\app\oracle\product\11.2.0\server\
+Oracle Base:C:\oraclexe\
+Port for 'Oracle Database Listener': 1521
+Port for 'Oracle Services for Microsoft Transaction Server': 2030
+Port for 'Oracle HTTP Listener': 8080
+
+웹을 자바로 처리할때 톰캣을 사용하는데 
+나중에 톰캣이 8080포트를 건드릴수있다
+톰캣 포트를 따로설정할것 
+
+
+
+DCL 데이터컨트롤랭귀지
+
+오라클 설치후 cmd에서 
+
+c:\user.. > sqlplus system/비번
+//메인관리자 로그인
+
+c:\user... > sqlplus "/as sysdba
+//서브관리자 로그인
+
+SQL> create user scott identified by tiger;
+//스콧계정 생성 (권한없음)
+
+//세션권한 테이블크리에이트권한 등등 권한 필요 
+
+SQL> grant dba to scott;
+//dba권한 주기 (강력한 권한)
+
+SQL> exit;
+//관리자 계정 접속 해제 
+
+c:\user.. > sqlplus scott/tiger
+//scott 계정으로 접속 후, 수업에 쓸 데이터 넣기 
+
+SQL > @d:/webPro/source/02_DBMS/demo.sql;
+//해당 파일의 모든 명령어를 읽어라 : @
+//demo.sql은 수업용 데이터 생성 명령어들이 들어있다.
+
+SQL > SELECT*FROM TAB;
+모든 테이블을 보여줘라 
+SQL > SELECT*FROM DEPT;
+DEPT를 펼쳐보여라
+
+
+
+
+ ---------------   
+
+
+
+String == null
+String.equals(" ")
+
+null은 ==로 비교하나? 
+그 변수의 값을 비교하는것
+equals는 내용을 비교하는건데 null은 내용이없다 
+
+
+Oracle Database 11gR2 Express Edition for Windows x64
+
+
+
+
+
+

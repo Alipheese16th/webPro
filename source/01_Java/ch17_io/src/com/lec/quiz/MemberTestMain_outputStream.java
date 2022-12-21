@@ -1,6 +1,5 @@
 package com.lec.quiz;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,7 +28,7 @@ public class MemberTestMain_outputStream {
 			String name = scanner.next();
 			System.out.print("전화번호를 입력하세요 :");
 			String tel = scanner.next();
-			System.out.print("생일을 입력하세요(xxxx-xx-xx):");
+			System.out.print("생년월일을 입력하세요(xxxx-xx-xx):");
 			String birthday = scanner.next();
 			scanner.nextLine();
 			System.out.print("주소를 입력하세요 :");
@@ -64,20 +63,18 @@ public class MemberTestMain_outputStream {
 			try {
 				os = new FileOutputStream("src/com/lec/quiz/member.txt");
 				
+				System.out.println("이름\t전화번호\t생일\t주소");
 				for (int i = 0; i < members.size(); i++) {
 					os.write(members.get(i).toString().getBytes());
-					System.out.println(members.get(i));
+					System.out.print(members.get(i));
 				}
 				String mamuri = "....이하 "+members.size()+"명 가입\n";
 				os.write(mamuri.getBytes());
-				System.out.println(mamuri);
-				
-				
-			} catch (FileNotFoundException e) {
-				System.out.println(e.getMessage());
-	
+				System.out.print(mamuri);
+
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
+				
 			} finally {
 				try {
 					if (os != null)

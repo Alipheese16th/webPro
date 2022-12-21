@@ -34,9 +34,10 @@ public class MemberTestMain_writer {
 				scanner.nextLine();
 				member.setAddress(scanner.nextLine());
 				
-				System.out.print("생일을 입력하세요");
+				System.out.print("생년월일을 입력하세요");
 				String birth = scanner.next();
 				StringTokenizer st = new StringTokenizer(birth, "-");
+				
 				if(st.countTokens()==3) {
 					int year = Integer.parseInt(st.nextToken());
 					int month = Integer.parseInt(st.nextToken());
@@ -62,9 +63,11 @@ public class MemberTestMain_writer {
 			Writer writer = null;
 			try {
 				writer = new FileWriter("src/com/lec/quiz/member.txt",true);
+				
+				System.out.println("이름\t전화번호\t생일\t주소");
 				for(Member member : members) {
 					writer.write(member.toString());
-					System.out.println(member);
+					System.out.print(member);
 				}
 				writer.write("이하 "+members.size()+"명 가입\n");
 				System.out.println("이하 "+members.size()+"명 가입");

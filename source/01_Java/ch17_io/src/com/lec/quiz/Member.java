@@ -2,7 +2,6 @@ package com.lec.quiz;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class Member {
 	private String name;
@@ -24,9 +23,15 @@ public class Member {
 	@Override
 	public String toString() {
 		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
-		return name + " " + tel + " " + sdf.format(birthday) + " " + address+"\n";
+		if(birthday!=null) {
+			return name + "\t" + tel + "\t" + sdf.format(birthday) + "\t" + address+"\n";
+		}else {
+			return name + "\t" + tel + "\t생일모름\t" + address + "\n";
+		}
+		
 	}
-
+	
+	//getter & setter
 	
 	public String getName() {
 		return name;
