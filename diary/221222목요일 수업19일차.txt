@@ -15,6 +15,7 @@ SELECT * FROM TAB; --현 계정이 가지고 있는 테이블 정보
 
 SELECT * FROM EMP; --EMP테이블의 모든정보 
 
+ROLLBACK;  -- 데이터의추가 수정 삭제등을 다시 원상복구 
 
 EMPNO    NOT NULL NUMBER(4)    숫자4자리 
 ENAME             VARCHAR2(10)  문자10자리 (다만 한글은 3자리 정식버전은 2자리)
