@@ -1,3 +1,4 @@
+-- SELECT문 연습문제
 --1. EMP 테이블에서 sal이 3000이상인 사원의 empno, ename, job, sal을 출력
 SELECT EMPNO, ENAME, JOB, SAL FROM EMP WHERE SAL >= 3000;
 --2. EMP 테이블에서 empno가 7788인 사원의 ename과 deptno를 출력
@@ -26,8 +27,186 @@ SELECT * FROM EMP WHERE JOB IN ('CLERK','ANALYST') AND SAL NOT IN (1000,3000,500
 -- 11. ename에 L이 두 자가 있고 deptno가 30이거나 또는 mgr이 7782인 사원의 모든 정보를 출력
 SELECT * FROM EMP WHERE ENAME LIKE '%L%L%' AND DEPTNO = 30 OR MGR = 7782;
 -- 12. 입사일이81년이고 업무가 'SALESMAN'이 아닌 직원의 사번, 사원명, 입사일, 업무, 급여를 출력.
-
+SELECT EMPNO, ENAME, HIREDATE, JOB, SAL FROM EMP WHERE TO_CHAR(HIREDATE,'RR')=81 AND JOB != 'SALESMAN';
 -- 13. 사번, 사원명, 입사일, 업무, 급여를 급여가 높은 순으로 정렬하고, 급여가 같으면 입사일이 빠른 사원으로 정렬하여 출력
+SELECT EMPNO, ENAME, HIREDATE, JOB, SAL FROM EMP ORDER BY SAL DESC, HIREDATE;
 -- 14. 사원명의 세 번째 알파벳이 ＇N＇인 사원의 사번, 사원명을 출력
+SELECT EMPNO, ENAME FROM EMP WHERE ENAME LIKE '__N%';
 -- 15. 사원명에 ‘A’가 들어간 사원의 사번, 사원명을 출력
+SELECT EMPNO, ENAME FROM EMP WHERE ENAME LIKE '%A%';
 -- 16. 연봉(SAL*12)이 35000 이상인 사번, 사원명, 연봉을 검색
+SELECT EMPNO, ENAME, SAL*12 FROM EMP WHERE SAL*12 > 35000;
+
+-- JOIN 연습문제
+-- 예제 PART1
+--1. EMP테이블의 모든 사원에 대해 사원명과 직속상사명을 출력하시오.
+SELECT W.ENAME, M.ENAME FROM EMP W, EMP M WHERE W.MGR = M.EMPNO;
+--2. 상사가 있는 직원에 대해 사원명, 급여, 직책, 직속상사명을 출력하시오.
+SELECT W.ENAME, W.SAL, W.JOB, M.ENAME FROM EMP W, EMP M WHERE W.MGR = M.EMPNO;
+--3. 상사가 없는 직원과 상사가 있는 직원들 모두에 대해 사원명, 급여, 직책, 직속상사명을 출력하시오.
+SELECT W.ENAME, W.SAL, W.JOB, M.ENAME FROM EMP W, EMP M WHERE W.MGR = M.EMPNO(+);
+--4. 상사가 있는 직원에 대해 사원명, 사원명, 급여, 부서명, 직속상사명을 출력하시오.
+SELECT W.ENAME, W.SAL, DNAME, M.ENAME FROM EMP W, EMP M, DEPT D WHERE W.MGR = M.EMPNO AND W.DEPTNO = D.DEPTNO;
+--5. 상사가 없는 직원과 상사가 있는 직원 모두에 대해 사원명, 급여, 부서코드, 부서명, 근무지, 직속상사명을 출력하시오.
+--단, 직속상사가 없을 경우 직속상사명에는 ‘없음’으로 대신 출력하시오.
+SELECT W.ENAME, W.SAL, W.DEPTNO, DNAME, LOC, NVL(M.ENAME,'없음') FROM EMP W, EMP M, DEPT D WHERE W.MGR = M.EMPNO(+) AND W.DEPTNO = D.DEPTNO;
+--6. 급여가 2000이상인 사원에 대해 사원명, 급여, 급여등급, 부서명, 직속상사명을 출력하시오.
+SELECT W.ENAME, W.SAL, GRADE, DNAME, M.ENAME FROM EMP W, EMP M, SALGRADE, DEPT D
+    WHERE W.DEPTNO = D.DEPTNO AND W.MGR = M.EMPNO AND W.SAL BETWEEN LOSAL AND HISAL AND W.SAL >= 2000;
+--7. 상사가 있는 직원과 상사가 없는 직원 모두에 대해 사원명, 급여, 급여등급, 부서명, 직속상사명을 부서명 알파벳 순으
+--로 정렬하여 출력하시오.
+SELECT W.ENAME, W.SAL, GRADE, DNAME, M.ENAME FROM EMP W, EMP M, SALGRADE, DEPT D
+    WHERE W.DEPTNO = D.DEPTNO AND W.MGR = M.EMPNO AND W.SAL BETWEEN LOSAL AND HISAL ORDER BY DNAME;
+--8. 사원명, 급여, 급여등급, 부서명, 연봉, 직속상사명을 출력하시오. 단 연봉은 (SAL+COMM)*12로 계산한다.
+SELECT W.ENAME, W.SAL, GRADE, DNAME, (W.SAL+NVL(W.COMM,0))*12, M.ENAME FROM EMP W, EMP M, SALGRADE, DEPT D
+    WHERE W.DEPTNO = D.DEPTNO AND W.MGR = M.EMPNO AND W.SAL BETWEEN LOSAL AND HISAL;
+--9. 위 8번을 부서명 알파벳 순으로 정렬하고 부서명이 같으면 급여가 큰 사원에서 작은 사원 순으로 정렬하여 출력하시오.
+SELECT W.ENAME, W.SAL, GRADE, DNAME, (W.SAL+NVL(W.COMM,0))*12, M.ENAME FROM EMP W, EMP M, SALGRADE, DEPT D
+    WHERE W.DEPTNO = D.DEPTNO AND W.MGR = M.EMPNO AND W.SAL BETWEEN LOSAL AND HISAL
+    ORDER BY DNAME, SAL DESC;
+--예제PART2
+--1. EMP테이블의 모든 사원에 대해 사원명, 부서번호 부서명을 출력하시오.
+SELECT ENAME,E.DEPTNO,DNAME FROM EMP E,DEPT D WHERE E.DEPTNO = D.DEPTNO;
+--2. EMP테이블에서 NEW YORK에서 근무하고 있는 사원에 대해 사원명, 직책, 급여, 부서명을 출력하시오.
+SELECT ENAME,JOB,SAL,DNAME FROM EMP E,DEPT D WHERE E.DEPTNO = D.DEPTNO AND LOC = 'NEW YORK';
+--3. EMP테이블에서 상여(COMM)를 받는 사원에 대해 사원명, 부서명, 위치를 출력하시오.
+SELECT ENAME,DNAME,LOC FROM EMP E,DEPT D WHERE E.DEPTNO = D.DEPTNO AND COMM IS NOT NULL AND COMM > 0;
+--4. EMP테이블에서 사원명에 알파벳 L이 있는 사원에 대해 사원명, 직책, 부서명, 근무지를 출력하시오.
+SELECT ENAME,JOB,DNAME,LOC FROM EMP E,DEPT D WHERE E.DEPTNO = D.DEPTNO AND ENAME LIKE '%L%';
+--5. EMP테이블에서 사번, 사원명, 부서번호, 부서명을 출력하되 사원명 알파벳 순으로 출력하시오.
+SELECT EMPNO,ENAME,E.DEPTNO,DNAME FROM EMP E,DEPT D WHERE E.DEPTNO = D.DEPTNO ORDER BY ENAME;
+--6. 급여가 2000이상인 사원에 대해 사번, 사원명, 급여, 부서명을 급여기준으로 내림차순 정렬하여 출력하시오.
+SELECT EMPNO,ENAME,SAL,DNAME FROM EMP E,DEPT D WHERE E.DEPTNO = D.DEPTNO ORDER BY SAL DESC;
+--7. 직책이 MANAGER이며 급여가 2500이상인 사원에 대해 사번, 사원명, 직책, 급여, 부서명을 사번 기준으로
+--오름차순 정렬하여 출력하시오.
+SELECT EMPNO,ENAME,JOB,SAL,DNAME FROM EMP E,DEPT D WHERE E.DEPTNO = D.DEPTNO AND SAL >= 2500 ORDER BY EMPNO;
+--8. 사번, 사원명, 직책, 급여, 급여등급을 급여기준으로 내림차순 정렬하여 출력하시오
+SELECT EMPNO,ENAME,JOB,SAL,GRADE FROM EMP,SALGRADE WHERE SAL BETWEEN LOSAL AND HISAL ORDER BY SAL DESC;
+--9. 상사가 없는 직원과 상사가 있는 직원 모두에 대해, 사원명, 직속상사명을 출력하시오.
+SELECT W.ENAME, M.ENAME FROM EMP W, EMP M
+    WHERE W.MGR = M.EMPNO(+);
+--10.상사가 없는 직원과 상사가 있는 직원 모두에 대해, 사원명, 상사명, 상사의 상사명을 출력하시오
+SELECT W.ENAME, M.ENAME, MM.ENAME FROM EMP W, EMP M, EMP MM
+    WHERE W.MGR = M.EMPNO(+) AND M.MGR = MM.EMPNO(+);
+
+-- 단일행함수 연습문제
+--1. 현재 날짜를 TITLE에 Current Date로 별칭으로 출력하는 SELECT 문장을 기술하시오.
+SELECT SYSDATE "Current Date" FROM DUAL;
+--2. EMP 테이블에서 현재 급여에 15%가 증가된 급여를 사원번호,이름,업무,급여,증가된 급여(New Salary),증가액(Increase)를 출력하는 SELECT 문장을 기술하시오.
+SELECT EMPNO,ENAME,JOB,SAL,SAL*1.15 "New Salary",SAL*0.15 "Increase" FROM EMP;
+--3. EMP 테이블에서 이름,입사일,입사일로부터 6개월 후 돌아오는 월요일 구하여 출력하는 SELECT 문장을 기술하시오.
+SELECT ENAME,HIREDATE, NEXT_DAY(ADD_MONTHS(HIREDATE,6),'월') FROM EMP;
+--4. EMP 테이블에서 이름,입사일, 입사일로부터 현재까지의 월수,급여, 입사일부터 현재까지의 급여의 총계를 출력하는 SELECT 문장을 기술하시오.
+SELECT ENAME, HIREDATE, TRUNC(MONTHS_BETWEEN(SYSDATE,HIREDATE)),SAL,TRUNC(MONTHS_BETWEEN(SYSDATE,HIREDATE))*SAL FROM EMP;
+--5. EMP 테이블에서 모든 사원의 이름과 급여(15자리로 출력 좌측의 빈 곳은 “*”로 대치)를 출력하는 SELECT 문장을 기술하시오.
+SELECT ENAME,LPAD(SAL,15,'*') FROM EMP;
+--6. EMP 테이블에서 모든 사원의 정보를 이름,업무,입사일,입사한 요일을 출력하는 SELECT 문장을 기술하시오.
+SELECT ENAME,JOB,HIREDATE,TO_CHAR(HIREDATE,'DY') FROM EMP;
+--7. EMP 테이블에서 이름의 길이가 6자 이상인 사원의 정보를 이름,이름의 글자수,업무를 출력하는 SELECT 문장을 기술하시오.
+SELECT ENAME,LENGTH(ENAME),JOB FROM EMP WHERE LENGTH(ENAME) >= 6;
+--8. EMP 테이블에서 모든 사원의 정보를 이름, 업무, 급여, 보너스, 급여+보너스를 출력하는 SELECT 문장을 기술하시오
+SELECT ENAME,JOB,SAL,COMM,SAL+NVL(COMM,0) FROM EMP;
+--9. 사원 테이블의 사원명에서 2번째 문자부터 3개의 문자를 추출하시오. 
+SELECT SUBSTR(ENAME,2,3) FROM EMP;
+--10. 사원 테이블에서 입사일이 12월인 사원의 사번, 사원명, 입사일을 검색하시오 (EXTRACT함수, TO_CHAR함수)
+SELECT EMPNO, ENAME, HIREDATE FROM EMP WHERE TO_CHAR(HIREDATE,'MM')=12;
+--11. 다음과 같은 결과를 검색할 수 있는 SQL 문장을 작성하시오
+--EMPNO ENAME 급여
+--7369 SMITH *******800
+--7499 ALLEN ******1600
+--7521 WARD ******1250
+--…….
+SELECT EMPNO, ENAME, LPAD(SAL,10,'*') FROM EMP;
+--12. 다음과 같은 결과를 검색할 수 있는 SQL 문장을 작성하시오
+--EMPNO ENAME 입사일
+--7369 SMITH 1980-12-17
+--….
+SELECT EMPNO, ENAME, TO_CHAR(HIREDATE,'YYYY-MM-DD') FROM EMP;
+--13. 사원 테이블에서 부서번호가 20인 사원의 사번, 이름, 직무, 급여를 출력하시오(급여는 앞에 $를 삽입하고 3자리마다 , 를 출력한다
+SELECT EMPNO, ENAME, JOB, TO_CHAR(SAL,'$99,999') FROM EMP WHERE DEPTNO = 20;
+
+
+-- 그룹함수 <연습문제>
+-- 1. 인원수,최대 급여,최소 급여,급여의 합을 출력
+
+-- 2. 업무별 인원수를 구하여 출력
+
+--- 3. 최고 급여와 최소 급여의 차이는 얼마인가 출력
+
+-- 4. 각 부서별로 인원수, 급여 평균, 최저 급여, 최고 급여, 급여의 합을 출력(급여의 합이 많은 순으로)
+
+-- 5. 부서별, 업무별 그룹하여 결과를 부서번호, 업무, 인원수, 급여의 평균, 급여의 합을 출력(부서번호, 업무순으로 오름차순 정렬)
+
+-- 6. 업무별, 부서별 그룹하여 결과를  업무, 부서번호, 인원수, 급여의 평균, 급여의 합을 출력(출력결과는 업무순, 부서번호 순 오름차순 정렬)
+
+--7. 사원수가 5명이상 넘는 부서번호와 사원수를 출력
+
+-- 8. 사원수가 5명이상 넘는 부서명과 사원수를 출력
+
+--9. 업무별 급여의 평균이 3000이상인 업무에 대해서 업무명, 평균 급여, 급여의 합을 출력
+
+--10. 급여 합이 5000을 초과하는 각 업무에 대해서 업무와 급여합을 출력(급여 합계순 내림차순 정렬)
+
+--11. 부서별 급여평균, 부서별 급여합계, 부서별 최소급여를 출력
+
+--12. 위의 11번을 수정하여, 부서별 급여평균 최대치, 부서별 급여합의 최대치, 부서별 최소급여의 최대치를 출력
+
+--13. 사원 테이블에서 아래의 결과를 출력
+--H_YEAR COUNT(*)	MIN(SAL)	MAX(SAL)	AVG(SAL)	SUM(SAL)
+--  80	  1		    800		    800		    800		    800
+--	81	 10		    950		    5000	    2282.5	  22825
+--	82	  2		    1300	    3000	   2150		   4300
+--	83	  1		    1100	    1100	    1100	   1100
+
+-- 14.  아래의 결과를 출력(입사년도별 사원수)
+--  1980     1	
+--  1981     10
+--  1982     2
+--  1983     1
+--  total    14	
+
+--15. 최대급여, 최소급여, 전체급여합, 평균을 출력
+
+--16. 부서별 인원수 출력
+
+--17. 부서별 인원수가 6명이상인 부서번호 출력
+
+--18. 급여가 높은 순서대로 등수를 부여하여 다음과 같은 결과가 나오게 하시오. 
+-- (힌트 self join, group by, count사용)
+--ENAME	    등수
+--________________________
+--KING		1
+--SCOTT		2
+--……
+
+
+
+-- 서브쿼리문제 
+--1. 사원테이블에서 가장 먼저 입사한 사람의 이름, 급여, 입사일
+-- 2. 회사에서 가장 급여가 적은 사람의 이름, 급여
+-- 3. 회사 평균보다 급여를 많이 받는 사람의 이름, 급여, 부서코드
+--4. 회사 평균 이하의 급여를 받는 사람의 이름, 급여, 부서명
+--5. SCOTT보다 먼저 입사한 사람의 이름, 급여, 입사일, 급여 등급
+--6. 5번(SCOTT보다 먼저 입사한 사람의 이름, 급여, 입사일, 급여 등급)에 부서명 추가하고 급여가 큰 순 정렬
+--7. BLAKE 보다 급여가 많은 사원들의 사번, 이름, 급여
+--8. MILLER보다 늦게 입사한 사원의 사번, 이름, 입사일
+--9. 사원전체 평균 급여보다 급여가 많은 사원들의 사번, 이름, 급여
+--10. CLARK와 같은 부서번호이며, 사번이 7698인 직원의 급여보다 많은 급여를 받는 사원들의 사번, 이름, 급여
+--11. CLARK와 같은 부서명이며, 사번이 7698인 직원의 급여보다 많은 급여를 받는 사원들의 사번, 이름, 급여
+--12. BLAKE와 같은 부서에 있는 모든 사원의 이름과 입사일자
+--13. 평균 급여 이상을 받는 모든 종업원에 대해서 사원번호와 이름 단 급여가 많은 순으로 출력)
+-- 14. 이름에 “T”가 있는 사원이 근무하는 부서에서 근무하는 모든 직원의 사원 번호,이름,급여(단 사번 순 출력)
+-- 15. 부서 위치가 Dallas인 모든 종업원에 대해 이름,업무,급여
+-- 16. EMP 테이블에서 King에게 보고하는 모든 사원의 이름과 급여
+-- 17. SALES부서 사원의 이름, 업무
+-- 18. 월급이 부서 30의 최저 월급보다 높은 사원의 모든 필드
+-- 19. 부서 10에서 부서 30의 사원과 같은 업무를 맡고 있는 사원의 이름과 업무
+-- 20. FORD와 업무도 월급도 같은 사원의 모든 필드
+-- 21. 이름이 JONES인 직원의 JOB과 같거나 FORD의 SAL 이상을 받는 사원의 정보를 이름, 업무, 부서번호, 급여
+-- 단, 업무별 알파벳 순, 월급이 많은 순으로 출력
+-- 22. SCOTT 또는 WARD와 월급이 같은 사원의 정보를 이름,업무,급여
+-- 23. CHICAGO에서 근무하는 사원과 같은 업무를 하는 사원들의 이름,업무
+-- 24. 부서별 평균 월급보다 높은 사원을 사번, 이름, 급여
+-- 25. 업무별 평균 월급보다 적은 월급을 받는 사원을 부서번호, 이름, 급여
+-- 26. 적어도 한 명 이상으로부터 보고를 받을 수 있는 사원을 업무, 이름, 사번, 부서번호를 출력(단, 부서번호 순으로 오름차순 정렬)
+-- 27. 말단 사원의 사번, 이름, 업무, 부서번
