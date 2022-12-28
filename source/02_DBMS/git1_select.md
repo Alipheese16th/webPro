@@ -86,8 +86,10 @@ DISTINCT를 사용하여 나타나는 결과는 기본적으로 오름차순 정
  - NOT IS NULL           : null값을 갖지 않다
    
 9. 정렬을 위한 ORDER BY 절   
+유일하게 컬럼의 별칭을 사용 가능한 곳이다. WHERE절이나 GROUP BY절에서는 사용 불가능  
  - ASC 오름차순. Default
  - DESC 내림차순
  - SELECT *  FROM emp ORDER BY SAL; -- 오름차순 정렬(기본) ASC
  - SELECT * FROM emp ORDER BY sal ASC; -- ASC 오름차순
  - SELECT * FROM emp ORDER BY sal DESC; -- 내림차순 정렬
+

@@ -66,6 +66,8 @@ SELECT SYSDATE, EXTRACT(MONTH FROM SYSDATE) FROM DUAL;  -- 월만 숫자로 추�
 SELECT SYSDATE, EXTRACT(DAY FROM SYSDATE) FROM DUAL;  -- 일만 숫자로 추출
 
 
+
+
 # 그룹함수  
 SUM, AVG, MIN, MAX, COUNT, STDDEV(표준편차), VARIANCE(분산)  
 
@@ -80,8 +82,8 @@ VARIANCE 분산(평균간 거리의 제곱의 평균)이다 그러나 제곱때�
 STDDEV(표준편차) 분산값에 루트를 적용시켰다. 평균 거리가 확인가능하다
 
 AVG - 2*STDDEV ~ AVG + 2*STDDEV = 95.44%
-
-
+( 평균 - 2*표준편차 ) ~ ( 평균 + 2*표준편차 )
+예상되는 데이터범위
 
 
 
