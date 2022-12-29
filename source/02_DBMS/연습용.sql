@@ -128,49 +128,64 @@ SELECT EMPNO, ENAME, JOB, TO_CHAR(SAL,'$99,999') FROM EMP WHERE DEPTNO = 20;
 
 -- 그룹함수 <연습문제>
 -- 1. 인원수,최대 급여,최소 급여,급여의 합을 출력
-
+SELECT COUNT(*), MAX(SAL), MIN(SAL), SUM(SAL) FROM EMP;
 -- 2. 업무별 인원수를 구하여 출력
-
+SELECT JOB, COUNT(*) FROM EMP GROUP BY JOB;
 --- 3. 최고 급여와 최소 급여의 차이는 얼마인가 출력
-
+SELECT MAX(SAL) - MIN(SAL) FROM EMP;
 -- 4. 각 부서별로 인원수, 급여 평균, 최저 급여, 최고 급여, 급여의 합을 출력(급여의 합이 많은 순으로)
-
+SELECT DEPTNO, COUNT(*), ROUND(AVG(SAL),1), MIN(SAL), MAX(SAL), SUM(SAL) 
+    FROM EMP GROUP BY DEPTNO
+    ORDER BY SUM(SAL) DESC;
 -- 5. 부서별, 업무별 그룹하여 결과를 부서번호, 업무, 인원수, 급여의 평균, 급여의 합을 출력(부서번호, 업무순으로 오름차순 정렬)
-
+SELECT DEPTNO,JOB,COUNT(*),AVG(SAL),SUM(SAL) FROM EMP
+    GROUP BY DEPTNO, JOB
+    ORDER BY DEPTNO, JOB;
 -- 6. 업무별, 부서별 그룹하여 결과를  업무, 부서번호, 인원수, 급여의 평균, 급여의 합을 출력(출력결과는 업무순, 부서번호 순 오름차순 정렬)
-
+SELECT JOB, DEPTNO, COUNT(*), AVG(SAL), SUM(SAL) FROM EMP
+    GROUP BY JOB, DEPTNO ORDER BY JOB, DEPTNO;
 --7. 사원수가 5명이상 넘는 부서번호와 사원수를 출력
-
+SELECT DEPTNO, COUNT(*) FROM EMP GROUP BY DEPTNO HAVING COUNT(*) >= 5;
 -- 8. 사원수가 5명이상 넘는 부서명과 사원수를 출력
-
+SELECT DNAME, COUNT(*) FROM EMP, DEPT WHERE EMP.DEPTNO = DEPT.DEPTNO 
+    GROUP BY DNAME HAVING COUNT(*) >= 5;
 --9. 업무별 급여의 평균이 3000이상인 업무에 대해서 업무명, 평균 급여, 급여의 합을 출력
-
+SELECT JOB, AVG(SAL), SUM(SAL) FROM EMP
+    GROUP BY JOB HAVING AVG(SAL) >= 3000;
 --10. 급여 합이 5000을 초과하는 각 업무에 대해서 업무와 급여합을 출력(급여 합계순 내림차순 정렬)
-
+SELECT JOB, SUM(SAL) FROM EMP
+    GROUP BY JOB HAVING SUM(SAL) > 5000 
+    ORDER BY SUM(SAL) DESC;
 --11. 부서별 급여평균, 부서별 급여합계, 부서별 최소급여를 출력
-
+SELECT DEPTNO, AVG(SAL), SUM(SAL), MIN(SAL) FROM EMP
+    GROUP BY DEPTNO;
 --12. 위의 11번을 수정하여, 부서별 급여평균 최대치, 부서별 급여합의 최대치, 부서별 최소급여의 최대치를 출력
-
+SELECT MAX(AVG(SAL)), MAX(SUM(SAL)), MAX(MIN(SAL)) FROM EMP
+    GROUP BY DEPTNO;
 --13. 사원 테이블에서 아래의 결과를 출력
 --H_YEAR COUNT(*)	MIN(SAL)	MAX(SAL)	AVG(SAL)	SUM(SAL)
 --  80	  1		    800		    800		    800		    800
 --	81	 10		    950		    5000	    2282.5	  22825
 --	82	  2		    1300	    3000	   2150		   4300
 --	83	  1		    1100	    1100	    1100	   1100
-
+SELECT TO_CHAR(HIREDATE,'RR') H_YEAR, COUNT(*), MIN(SAL), MAX(SAL), AVG(SAL), SUM(SAL)
+    FROM EMP GROUP BY TO_CHAR(HIREDATE,'RR')
+    ORDER BY H_YEAR;
 -- 14.  아래의 결과를 출력(입사년도별 사원수)
 --  1980     1	
 --  1981     10
 --  1982     2
 --  1983     1
 --  total    14	
-
+SELECT NVL(TO_CHAR(HIREDATE,'YYYY'),'total') YEAR, COUNT(*) 
+    FROM EMP GROUP BY ROLLUP(TO_CHAR(HIREDATE,'YYYY'))
+    ORDER BY YEAR;
 --15. 최대급여, 최소급여, 전체급여합, 평균을 출력
-
+SELECT MAX(SAL), MIN(SAL), SUM(SAL), AVG(SAL) FROM EMP;
 --16. 부서별 인원수 출력
-
+SELECT DEPTNO, COUNT(*) FROM EMP GROUP BY DEPTNO;
 --17. 부서별 인원수가 6명이상인 부서번호 출력
-
+SELECT DEPTNO, COUNT(*) FROM EMP GROUP BY DEPTNO HAVING COUNT(*) >=6 ;
 --18. 급여가 높은 순서대로 등수를 부여하여 다음과 같은 결과가 나오게 하시오. 
 -- (힌트 self join, group by, count사용)
 --ENAME	    등수
@@ -178,35 +193,173 @@ SELECT EMPNO, ENAME, JOB, TO_CHAR(SAL,'$99,999') FROM EMP WHERE DEPTNO = 20;
 --KING		1
 --SCOTT		2
 --……
-
-
+SELECT E1.ENAME, COUNT(E2.ENAME)+1 "등수"
+    FROM EMP E1, EMP E2
+    WHERE E1.SAL < E2.SAL(+)
+    GROUP BY E1.ENAME
+    ORDER BY 등수;
 
 -- 서브쿼리문제 
 --1. 사원테이블에서 가장 먼저 입사한 사람의 이름, 급여, 입사일
+SELECT ENAME, SAL, HIREDATE FROM EMP WHERE HIREDATE = (SELECT MIN(HIREDATE) FROM EMP);
+
 -- 2. 회사에서 가장 급여가 적은 사람의 이름, 급여
+SELECT ENAME, SAL FROM EMP WHERE SAL = (SELECT MIN(SAL) FROM EMP);
+
 -- 3. 회사 평균보다 급여를 많이 받는 사람의 이름, 급여, 부서코드
+SELECT ENAME, SAL, DEPTNO FROM EMP WHERE SAL > (SELECT AVG(SAL) FROM EMP);
+
 --4. 회사 평균 이하의 급여를 받는 사람의 이름, 급여, 부서명
+SELECT ENAME, SAL, DNAME FROM EMP, DEPT WHERE EMP.DEPTNO = DEPT.DEPTNO AND SAL <= (SELECT AVG(SAL) FROM EMP);
+
 --5. SCOTT보다 먼저 입사한 사람의 이름, 급여, 입사일, 급여 등급
+SELECT ENAME, SAL, HIREDATE, GRADE 
+    FROM EMP, SALGRADE WHERE SAL BETWEEN LOSAL AND HISAL 
+    AND HIREDATE < (SELECT HIREDATE FROM EMP WHERE ENAME = 'SCOTT');
+    
 --6. 5번(SCOTT보다 먼저 입사한 사람의 이름, 급여, 입사일, 급여 등급)에 부서명 추가하고 급여가 큰 순 정렬
+SELECT ENAME, SAL, HIREDATE, GRADE, DNAME
+    FROM EMP, SALGRADE, DEPT WHERE SAL BETWEEN LOSAL AND HISAL AND EMP.DEPTNO = DEPT.DEPTNO
+    AND HIREDATE < (SELECT HIREDATE FROM EMP WHERE ENAME = 'SCOTT')
+    ORDER BY SAL DESC;
+    
 --7. BLAKE 보다 급여가 많은 사원들의 사번, 이름, 급여
+SELECT EMPNO, ENAME, SAL FROM EMP
+    WHERE SAL < (SELECT SAL FROM EMP WHERE ENAME = 'BLAKE');
+    
 --8. MILLER보다 늦게 입사한 사원의 사번, 이름, 입사일
+SELECT EMPNO, ENAME, HIREDATE FROM EMP
+    WHERE HIREDATE > (SELECT HIREDATE FROM EMP WHERE ENAME = 'MILLER');
+    
 --9. 사원전체 평균 급여보다 급여가 많은 사원들의 사번, 이름, 급여
+SELECT EMPNO, ENAME, SAL FROM EMP
+    WHERE SAL > (SELECT AVG(SAL) FROM EMP);
+    
 --10. CLARK와 같은 부서번호이며, 사번이 7698인 직원의 급여보다 많은 급여를 받는 사원들의 사번, 이름, 급여
+SELECT EMPNO, ENAME, SAL FROM EMP
+    WHERE DEPTNO = (SELECT DEPTNO FROM EMP WHERE ENAME = 'CLARK')
+    AND SAL > (SELECT SAL FROM EMP WHERE EMPNO = 7698);
+    
 --11. CLARK와 같은 부서명이며, 사번이 7698인 직원의 급여보다 많은 급여를 받는 사원들의 사번, 이름, 급여
+SELECT EMPNO, ENAME, SAL FROM EMP E, DEPT D
+    WHERE E.DEPTNO = D.DEPTNO
+    AND DNAME = (SELECT DNAME FROM EMP E,DEPT D WHERE E.DEPTNO=D.DEPTNO AND ENAME = 'CLARK')
+    AND SAL > (SELECT SAL FROM EMP WHERE EMPNO = 7698);
+    
 --12. BLAKE와 같은 부서에 있는 모든 사원의 이름과 입사일자
+SELECT ENAME, HIREDATE FROM EMP
+    WHERE DEPTNO = (SELECT DEPTNO FROM EMP WHERE ENAME = 'BLAKE')
+    AND ENAME != 'BLAKE';
+    
 --13. 평균 급여 이상을 받는 모든 종업원에 대해서 사원번호와 이름 단 급여가 많은 순으로 출력)
+SELECT EMPNO, ENAME FROM EMP
+    WHERE SAL > (SELECT AVG(SAL) FROM EMP)
+    ORDER BY SAL DESC;
+    
 -- 14. 이름에 “T”가 있는 사원이 근무하는 부서에서 근무하는 모든 직원의 사원 번호,이름,급여(단 사번 순 출력)
+SELECT EMPNO, ENAME, SAL FROM EMP
+    WHERE DEPTNO IN (SELECT DEPTNO FROM EMP WHERE ENAME LIKE '%T%')
+    ORDER BY EMPNO;
+    
 -- 15. 부서 위치가 Dallas인 모든 종업원에 대해 이름,업무,급여
+SELECT ENAME, JOB, SAL FROM EMP
+    WHERE DEPTNO IN (SELECT E.DEPTNO FROM EMP E, DEPT D 
+                        WHERE E.DEPTNO=D.DEPTNO
+                        AND INITCAP(LOC) = 'Dallas'); -- 서브쿼리 이용
+                        
+SELECT ENAME, JOB, SAL FROM EMP E, DEPT D -- EQUI JOIN 이용
+    WHERE E.DEPTNO = D.DEPTNO
+    AND LOC = 'DALLAS';
+    
 -- 16. EMP 테이블에서 King에게 보고하는 모든 사원의 이름과 급여
+SELECT ENAME, SAL FROM EMP
+    WHERE MGR IN (SELECT EMPNO FROM EMP WHERE ENAME = 'KING');
+    
 -- 17. SALES부서 사원의 이름, 업무
+SELECT ENAME, JOB FROM EMP
+    WHERE DEPTNO IN (SELECT DEPTNO FROM DEPT WHERE DNAME = 'SALES');
+    
 -- 18. 월급이 부서 30의 최저 월급보다 높은 사원의 모든 필드
+SELECT * FROM EMP WHERE SAL > (SELECT MIN(SAL) FROM EMP WHERE DEPTNO = 30);
+
 -- 19. 부서 10에서 부서 30의 사원과 같은 업무를 맡고 있는 사원의 이름과 업무
+SELECT ENAME, JOB FROM EMP WHERE DEPTNO = 10
+    AND JOB IN (SELECT JOB FROM EMP WHERE DEPTNO = 30);
+    
 -- 20. FORD와 업무도 월급도 같은 사원의 모든 필드
+SELECT * FROM EMP WHERE (JOB,SAL) =
+    (SELECT JOB, SAL FROM EMP WHERE ENAME = 'FORD')
+    AND ENAME <> 'FORD';
+    
 -- 21. 이름이 JONES인 직원의 JOB과 같거나 FORD의 SAL 이상을 받는 사원의 정보를 이름, 업무, 부서번호, 급여
 -- 단, 업무별 알파벳 순, 월급이 많은 순으로 출력
+SELECT ENAME,JOB,DEPTNO,SAL FROM EMP
+    WHERE JOB = (SELECT JOB FROM EMP WHERE ENAME = 'JONES')
+    OR SAL >= (SELECT SAL FROM EMP WHERE ENAME = 'FORD')
+    ORDER BY JOB, SAL DESC;
+    
 -- 22. SCOTT 또는 WARD와 월급이 같은 사원의 정보를 이름,업무,급여
+SELECT ENAME, JOB, SAL FROM EMP
+    WHERE SAL IN (SELECT SAL FROM EMP WHERE ENAME IN ('SCOTT','WARD'))
+    AND ENAME NOT IN ('SCOTT','WARD');
+    
 -- 23. CHICAGO에서 근무하는 사원과 같은 업무를 하는 사원들의 이름,업무
+SELECT ENAME, JOB FROM EMP
+    WHERE JOB IN (SELECT JOB 
+                    FROM EMP, DEPT 
+                    WHERE EMP.DEPTNO = DEPT.DEPTNO 
+                    AND LOC ='CHICAGO');
+                    
 -- 24. 부서별 평균 월급보다 높은 사원을 사번, 이름, 급여
+SELECT EMPNO, ENAME, SAL FROM EMP E
+    WHERE SAL > (SELECT AVG(SAL) FROM EMP WHERE DEPTNO = E.DEPTNO);
+    
 -- 25. 업무별 평균 월급보다 적은 월급을 받는 사원을 부서번호, 이름, 급여
--- 26. 적어도 한 명 이상으로부터 보고를 받을 수 있는 사원을 업무, 이름, 사번, 부서번호를 출력(단, 부서번호 순으로 오름차순 정렬)
+SELECT DEPTNO, ENAME, SAL FROM EMP E
+    WHERE SAL < (SELECT AVG(SAL) FROM EMP WHERE JOB = E.JOB);
+    
+-- 26. 적어도 한 명 이상으로부터 보고를 받을 수 있는 사원을 업무, 이름, 사번, 부서번호를 출력
+--(단, 부서번호 순으로 오름차순 정렬)
+SELECT JOB, ENAME, EMPNO, DEPTNO FROM EMP E
+    WHERE EXISTS (SELECT * FROM EMP WHERE E.EMPNO = MGR)
+    ORDER BY DEPTNO;    -- EXISTS 이용
+    
+SELECT DISTINCT M.JOB, M.ENAME, M.EMPNO, M.DEPTNO
+    FROM EMP W, EMP M
+    WHERE W.MGR = M.EMPNO
+    ORDER BY DEPTNO;    -- SELF JOIN 이용
+
 -- 27. 말단 사원의 사번, 이름, 업무, 부서번
+SELECT EMPNO, ENAME, JOB, DEPTNO FROM EMP E
+    WHERE NOT EXISTS (SELECT * FROM EMP WHERE E.EMPNO = MGR); -- EXISTS 이용
+    
+SELECT M.EMPNO, M.ENAME, M.JOB, M.DEPTNO
+    FROM EMP W, EMP M
+    WHERE W.MGR(+) = M.EMPNO
+    AND W.ENAME IS NULL; -- SELF JOIN 이용
+
+ROLLBACK;
+-- DML 연습문제 굵은글씨
+-- 급여가 3000이상인 사원만 급여를 10%인상
+UPDATE EMP01 SET SAL = SAL*1.1 WHERE SAL >= 3000;
+-- EMP01테이블에서 ‘DALLAS’에서 근무하는 직원들의 연봉을 1000인상
+UPDATE EMP01 SET SAL = SAL+1000 WHERE DEPTNO = (SELECT DEPTNO FROM DEPT WHERE LOC = 'DALLAS');
+-- SCOTT사원의 부서번호는 20번으로, 직급은 MANAGER로 한꺼번에 수정
+UPDATE EMP01 SET DEPTNO = 20, JOB = 'MANAGER' WHERE ENAME = 'SCOTT';
+-- 사원명이 ‘FORD’인 사원을 삭제하는 SQL 작성
+DELETE FROM EMP01 WHERE ENAME = 'FORD';
+
+
+SELECT ENAME, JOB, HIREDATE 
+    FROM EMP 
+    WHERE HIREDATE BETWEEN TO_DATE('1981-02-20','YYYY-MM-DD') 
+    AND TO_DATE('1981-05-01','YYYY-MM-DD') 
+    ORDER BY HIREDATE;
+
+
+
+SELECT ENAME, JOB, HIREDATE 
+    FROM EMP 
+    WHERE HIREDATE BETWEEN TO_CHAR('81/02/20','RR/MM/DD') AND TO_CHAR('81/05/01','RR/MM/DD') ORDER BY HIREDATE;
+
+
