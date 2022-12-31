@@ -2,4 +2,5 @@ download/
 IDE/
 ipaddress.txt
 source/01_Java/.metadata/
+source/02_DBMS/.metadata/
 .gitignore.txt
