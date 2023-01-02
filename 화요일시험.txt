@@ -1,0 +1,20 @@
+딕셔너리 딕셔너리 뷰
+
+계정이 가지고 있는 테이블 목록 출력 명령어 select * from tab
+
+UPDATE문    - DML PDF문제
+
+INDEX 문제 
+
+부모테이블 자식테이블  지울때 순서
+
+SUBSTR
+단일행함수이용
+
+SCOTT TIGER 계정생성
+
+VIEW 만드는 예제
+
+TOP-N구문 6등부터 10등까지 출력 등등
+
+
