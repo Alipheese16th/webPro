@@ -121,6 +121,7 @@ insert into division values (10, 'finance', '02-393-4321', '서대문');
 insert into division values (20, 'research', '02-555-4321', '강남');
 insert into division values (30, 'sales', '02-717-4321', '마포');
 insert into division values (40, 'cs', '031-4444-4321', '안양');
+select * from division;
 commit;
 insert into personal values (1111,'smith','manager', 1001, '1990-12-17', 1000, null, 10);
 insert into personal values (1112,'ally','salesman',1116,'1991-02-20',1600,500,30);
@@ -136,14 +137,178 @@ select * from personal;
 select pno, pname, pay, pay*12 + ifnull(bonus,0) from personal;
 select pno, pname, bonus, if(bonus is null, 0, bonus) from personal;
 commit;
+
 -- ★ ★ ★ DML ★ ★ ★ 
+use kimdb;
+select database();
+select * from personal;
+select * from division;
 
--- 단일행함수
+-- 1. 사번, 이름, 급여를 출력
+select pno, pname, pay from personal;
 
--- top-n (limit)
+-- 2. 급여가 2000~5000 사이 모든 직원의 모든 필드
+select * from personal where pay between 2000 and 5000;
 
+-- 3. 부서번호가 10또는 20인 사원의 사번, 이름, 부서번호
+select pno, pname, dno from personal where dno in (10,20);
 
+-- 4. 보너스가 null인 사원의 사번, 이름, 급여 급여 큰 순정렬
+select pno, pname, pay from personal where bonus is null order by pay desc;
 
+-- 5. 사번, 이름, 부서번호, 급여. 부서코드 순 정렬 같으면 PAY 큰순
+select pno, pname, dno, pay from personal order by dno,pay desc;
 
+-- 6. 사번, 이름, 부서명
+select pno, pname, dname from personal p, division d where p.dno = d.dno;
 
+-- 7. 사번, 이름, 상사이름
+select w.pno, w.pname, m.pname "manager" from personal w, personal m where w.manager = m.pno;
+
+-- 8. 사번, 이름, 상사이름(상사가 없는 사람도 출력)
+select w.pno, w.pname, ifnull(m.pname,'★CEO★') "manager"
+	from personal w left outer join personal m 
+    on w.manager = m.pno;
+    
+-- 8. 사번, 이름, 상사이름(상사가 없는 사람도 출력), 부서명
+select w.pno, w.pname, m.pname "manager", dname
+	from division d, personal w left outer join personal m 
+		on w.manager = m.pno  -- left outer join .. on 은 연속적으로 붙어있게 한다.
+    where w.dno = d.dno;
+
+-- 9. 이름이 s로 시작하는 사원 이름
+select pname from personal where pname like 's%';
+
+-- 10. 사번, 이름, 급여, 부서명, 상사이름
+select w.pno, w.pname, w.pay, dname, m.pname
+	from personal w, personal m, division d
+    where w.manager = m.pno and w.dno = d.dno;
+    
+-- 11. 부서코드, 급여합계, 최대급여
+select dno, sum(pay), max(pay) from personal group by dno;
+
+-- 12. 부서명, 급여평균, 인원수
+select dname, round(avg(pay),1) avg_pay, count(*) 
+	from personal, division 
+    where personal.dno = division.dno
+    group by dname;
+    
+-- 13. 부서코드, 급여합계, 인원수 인원수가 4명 이상인 부서만 출력
+select dno, sum(pay), count(*) from personal
+	group by dno having count(*) >= 4;
+    
+-- 14. 사번, 이름, 급여 회사에서 제일 급여를 많이 받는 사람
+select pno, pname, pay from personal
+	where pay = (select max(pay) from personal);
+    
+-- 15. 회사 평균보다 급여를 많이 받는 사람 이름, 급여, 부서번호
+select pname, pay, dno from personal
+	where pay > (select avg(pay) from personal);
+
+-- 16. 회사 평균 급여보다 많이 받는 사원의 사번, 이름, 급여, 부서명을 출력(부서명순 정열 같으면 급여 큰순 정렬)
+select pno, pname, pay, dname from personal p, division d
+	where p.dno = d.dno
+    and pay > (select avg(pay) from personal)
+    order by dname, pay desc;
+
+-- 17. 자신이 속한 부서의 평균보다 많인 받는 사람의 이름, 금여, 부서번호, 반올림한 해당부서평균
+select pname, pay, dno, round((select avg(pay) from personal where dno = p.dno)) avg_pay
+	from personal p
+    where pay > (select avg(pay) from personal where dno = p.dno); -- 그냥 서브쿼리 
+
+select pname, pay, p.dno, round(avgpay)
+	from personal p, (select dno, avg(pay) avgpay from personal group by dno) c  -- 인라인뷰 활용
+    where p.dno = c.dno
+    and pay > avgpay;
+
+-- 18. 입사가 가장 빠른 사람의 이름, 급여, 부서명
+ select pname, pay, dname from personal p, division d
+	where p.dno = d.dno
+    and startdate = (select min(startdate) from personal);
+    
+-- 19. 이름, 급여, 해당부서급여평균
+select pname, pay, round((select avg(pay) from personal where dno = p.dno),1) avg_pay
+	from personal p;
+
+select pname, pay, round(avgpay)
+	from personal p, (select dno, avg(pay) avgpay from personal group by dno) c
+	where p.dno = c.dno;  -- 인라인뷰 활용 
+
+-- 20. 이름, 급여, 부서명, 해당부서급여평균
+select pname, pay, dname, round((select avg(pay) from personal where dno = p.dno),1) avg_pay
+	from personal p, division d
+    where p.dno = d.dno;
+
+select pname, pay, dname, round(avgpay)
+	from personal p, (select dno, avg(pay) avgpay from personal group by dno) c, division d
+	where p.dno = c.dno and p.dno = d.dno; -- inline view 활용
+
+-- ★ ★ ★ Oracle에서의 단일행함수와 다른 부분 
+select sysdate();
+insert into personal values
+	(1000, '홍길동', 'manager', 1001, curdate(), null, null, 40);
+select * from personal where pno = 1000;
+delete from personal where pname = '홍길동';
+set sql_safe_updates = 0;  -- 워크밴치 설정으로 인해 delete함부로 못하게 하는거 취소
+
+-- ex. 'pname는 job이다'
+select concat(pname,'는 ',job,'이다') msg from personal; -- oracle과는 다르게 concat의 매개변수를 제한수없이 무한으로 연결시킬수 있다.
+select round(35.678); -- from 절 없이도 실행 가능
+
+-- 시스템으로부터 현재 시점, 현재 날짜, 현재 시간
+select sysdate(); -- 현재 시점
+select now(); -- 위와 같다. 더 자주 사용함
+select year(sysdate()), month(now()), day(now()), 
+hour(now()), minute(now()), second(now());
+select case weekday(now())
+	when '0' then '월요일'
+    when '1' then '화요일'
+    when '2' then '수요일'
+    when '3' then '목요일'
+	when '4' then '금요일'
+    when '5' then '토요일'
+    when '6' then '일요일' end dayofweek;
+select dayname(now());
+select pname, dayname(startdate) from personal; -- 이름, 입사한 날의 요일
+select monthname(now());
+select pname, monthname(startdate) from personal;
+select date(now()), time(now());
+select pname, year(startdate), month(startdate), day(startdate) from personal;
+-- 시스템으로부터 현재 날짜
+select current_date();
+select curdate();
+-- 시스템으로부터 현재 시간
+select current_time();
+select curtime();
+
+-- date_format(날짜/시간, 포맷) => 문자
+-- date_format(문자, 포맷) => 날짜
+	-- 포맷 : %Y 2023(년도4자리)  %y 23(년도2자리)
+    -- 		 %m(01월, 02월,...) %c(1,2,...) %M 월이름(January), %b 짧은월이름(Jan)
+    -- 		 %d(01, 02, 03,..) %e(1, 2, 3...)
+    -- 	 	 %H(24시간)  %h(12시간)  %p(오전,오후)  %i분 %s초
+select date_format(now(),'%Y년 %c월 %e일 %p %h시 %i분 %s초') now;
+select * from personal where startdate < '1990-08-08';
+select * from personal where startdate < date_format('1990-08-08','%Y-%m-%d');
+
+-- format(숫자, 소수점자리수) -> 문자
+select pname, format(pay,2) from personal; -- 소수점 2자리까지 나오고 세자리마다 ,
+select pname, format(pay,0) from personal;
+
+-- 이름, 급여, 급여3000이상인지 여부
+select pname, pay, if(pay>=3000,'이상','이하') result from personal;
+select pname, pay, bonus, if(bonus is null, 0, bonus) result from personal;
+select pname, bonus, ifnull(bonus,0) from personal;
+
+-- ★ ★ ★ top-n 구문 (rownum이 없고, limit 이용)
+select pname, pay from personal order by pay desc;
+-- limit n (1 ~ n등)
+select pname, pay from personal order by pay desc limit 5; -- 1등~5등 출력
+-- limit n1, n2 (n1번째부터 n2개. 첫번째는 0번째)
+select pname, pay from personal order by pay desc limit 0, 5; -- 0번째부터 5개 출력. 즉 1등부터 5등
+select pname, pay from personal order by pay desc limit 5, 5; -- 6등부터 10등
+select pname, pay from personal order by pay desc limit 6, 3; -- 7등부터 9등
+
+delete from personal;
+select * from personal;
 

@@ -80,6 +80,9 @@ C:\Program Files\MySQL\MySQL Server 8.0\bin
 
 mysql은 소문자로 쓰는경향이 많다 
 
+워크밴치는 기본설정에서는 commit이 자동으로 된다
+
+
 show databases; -- database들의 리스트
 
 create user user01 identified by 'password';
@@ -90,6 +93,12 @@ grant all on *.* to user01;
 		의 모든권한을 부여한다.
 
 flush privileges 뜻 정확히 알기 
+
+테이블만들때 데이터타입
+데이터타입이 조금씩다르다
+문자는 varchar
+숫자는 numeric 이나 int
+날짜는 date 날짜만   datetime 날짜와 시간까지 
 
 drop table if exists 테이블명 
 
