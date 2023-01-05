@@ -14,6 +14,6 @@ SELECT * FROM EMP;
 SELECT * FROM DEPT;
 COMMIT;
 
--- Ex3
+-- Ex3. 부서이름을 입력받아 부서정보를 출력
+SELECT * FROM DEPT WHERE DNAME = UPPER('sales');
 
--- Ex4

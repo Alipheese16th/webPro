@@ -1,0 +1,16 @@
+SELECT * FROM DEPT;
+desc dept;
+-- ex.1 사용자에게 부서번호, 부서명, 근무지를 입력받아 insert
+INSERT INTO DEPT VALUES (50, 'IT','SEOUL');
+COMMIT;
+
+-- ex.2 부서번호 입력받아 중복체크 한후에 부서명, 근무지 입력받아 insert
+SELECT COUNT(*) CNT FROM DEPT WHERE DEPTNO = 99;
+INSERT INTO DEPT VALUES (60, 'IT','SEOUL');
+
+-- update
+SELECT COUNT(*) FROM DEPT WHERE DEPTNO = 99;
+UPDATE DEPT SET DNAME = 'MARKETING', LOC = 'INCHEON' WHERE DEPTNO = 52;
+
+-- DELETE
+DELETE FROM DEPT WHERE DEPTNO = 52;
