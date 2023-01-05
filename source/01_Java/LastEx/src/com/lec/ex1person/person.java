@@ -14,8 +14,8 @@ public class person {
 		String driver = "oracle.jdbc.driver.OracleDriver";
 		String url    = "jdbc:oracle:thin:@127.0.0.1:1521:xe";
 		Connection        conn  = null;
-		PreparedStatement pstmt = null; // 1, 2번 기능
-		Statement         stmt  = null; // 3번 기능, 직업명들(jobs)
+		PreparedStatement pstmt = null;
+		Statement         stmt  = null;
 		ResultSet         rs    = null;
 		Scanner           sc    = new Scanner(System.in);
 		String fn, sql;
