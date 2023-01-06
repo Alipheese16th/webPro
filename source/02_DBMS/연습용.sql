@@ -1,3 +1,7 @@
+
+SELECT * FROM SALGRADE;
+
+
 -- SELECT문 연습문제
 --1. EMP 테이블에서 sal이 3000이상인 사원의 empno, ename, job, sal을 출력
 SELECT EMPNO, ENAME, JOB, SAL FROM EMP WHERE SAL >= 3000;
