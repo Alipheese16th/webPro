@@ -1,33 +1,89 @@
+ROLLBACK;
+commit;
 SELECT * FROM GRADE;
 SELECT * FROM CUSTOMER;
 
 SELECT CID,CTEL,CNAME,CPOINT,CAMOUNT,C.GNO,GRADE,LAMOUNT,HIAMOUNT FROM CUSTOMER C, GRADE G   
     WHERE C.GNO = G.GNO;
     
---1.회원가입시	전화번호, 이름 입력 	★DTO(전화번호,이름) return int 1 , 0
-INSERT INTO CUSTOMER VALUES(CUSTOMER_CID_SEQ.NEXTVAL,'010-9999-9999','홍길동',1000,0,1);
-
---2.폰4자리입력받아 SELECT 고객정보 출력	★DTO(ID,전화,이름,포인트,구매누적액,등급명,레벨업금액)
-SELECT CID,CTEL,CNAME,CPOINT,CAMOUNT,GRADE,HIAMOUNT - CAMOUNT "LEVELUP" 
-    FROM CUSTOMER C, GRADE G
-    WHERE C.GNO = G.GNO AND CTEL LIKE '%8888';
-	
---3.물품구입 고객아이디와 물품가격을 입력받아 처리 //레벨업 조건확인해야함 
---update누적금액,포인트,WHERE고객아디
-UPDATE CUSTOMER SET CAMOUNT = CAMOUNT + 10000, CPOINT = CPOINT + 10000*0.05 
-    WHERE CID = 1;
+--1.회원가입 (CTEL,CNAME 입력받아 INSERT) 
+    --public int insertCustomer(String ctel, String cname)
     
--- 레벨업시 필요한 금액 ( 0이하일시 등급변경)
-SELECT HIAMOUNT - CAMOUNT "LEVELUP" 
-    FROM CUSTOMER C, GRADE G 
-    WHERE C.GNO = G.GNO AND CID = 1;
+INSERT INTO CUSTOMER(CID,CTEL,CNAME) VALUES(CUSTOMER_CID_SEQ.NEXTVAL,'010-1111-1111','마길동');
 
-UPDATE CUSTOMER SET GNO = GNO +1 WHERE CID =1; -- 등급상승
+--2.폰(4자리 혹은 풀번호)입력받아 고객정보 출력	(CID,CTEL,CNAME,CPOINT,CAMOUNT,GRADE,LEVELUP)
+    -- public ArrayList<CustomerDto> ctelGetCustomers(String searchTel)
 
---4.등급별 출력	/모든 등급명 출력보여주고/ 등급 입력받으면 정보출력★DTO(ID,전화,이름,포인트,구매누적액,등급명,레벨업을 위한 추가금액)
+SELECT CID,CTEL,CNAME,CPOINT,CAMOUNT,GRADE,HIAMOUNT+1 - CAMOUNT "LEVELUP" 
+    FROM CUSTOMER C, GRADE G
+    WHERE C.GNO = G.GNO;
 
---5.모든멤버 출력	★DTO(ID,전화,이름,포인트,구매누적액,등급명,레벨업을 위한 추가금액)
+SELECT CNAME, CAMOUNT, 
+    (SELECT HIAMOUNT+1 - CAMOUNT FROM CUSTOMER WHERE GNO!=5 AND CID=C.CID) LEVELUP-- 이용할 서브쿼리
+    FROM CUSTOMER C, GRADE G
+    WHERE C.GNO = G.GNO; 
 
---6.회원탈퇴	전화번호 입력받아 	DELETE WHERE 전화번호
+SELECT CID,CTEL,CNAME,CPOINT,CAMOUNT,GRADE,(SELECT HIAMOUNT+1 - CAMOUNT FROM CUSTOMER WHERE GNO!=5 AND CID=C.CID) LEVELUP
+    FROM CUSTOMER C, GRADE G
+    WHERE C.GNO = G.GNO
+    AND CTEL LIKE '%'||'010-8888-9999'; -- DAO에 들어갈 QUERY
+
+--3.물품구입 (cid,price 입력받아 update : cpoint, camount, gno update)
+    -- public int buy(int cid,int price)
+    -- 1단계 : CPOINT, CAMOUNT 수정
+UPDATE CUSTOMER SET CAMOUNT = CAMOUNT + 1000000, CPOINT = CPOINT + 1000000*0.05 WHERE CID = 1;
+
+    -- 2단계 : 수정된 CAMOUNT에 따라 GNO 조정
+SELECT CNAME, CAMOUNT, C.GNO 현레벨, G.GNO 바뀔레벨
+    FROM CUSTOMER C, GRADE G
+    WHERE CAMOUNT BETWEEN LAMOUNT AND HIAMOUNT;
+SELECT G.GNO
+    FROM CUSTOMER, GRADE G
+    WHERE CAMOUNT BETWEEN LAMOUNT AND HIAMOUNT AND CID = 1;
+    
+UPDATE CUSTOMER SET GNO = (SELECT G.GNO
+                                FROM CUSTOMER, GRADE G
+                                WHERE CAMOUNT BETWEEN LAMOUNT AND HIAMOUNT AND CID = 1)
+    WHERE CID = 1; -- GNO 수정
+    -- DAO에 들어갈 QUERY 완성 (1단계 + 2단계)
+UPDATE CUSTOMER SET CAMOUNT = CAMOUNT + 1000000, 
+                    CPOINT = CPOINT + 1000000*0.05,
+                    GNO = (SELECT G.GNO
+                                FROM CUSTOMER, GRADE G
+                                WHERE CAMOUNT+1000000 BETWEEN LAMOUNT AND HIAMOUNT AND CID = 1)
+    WHERE CID = 1;
+SELECT * FROM CUSTOMER WHERE CID =1;
+
+-- 3번 후 바뀐 고객 정보를 출력 (CID,CTEL,CNAME,CPOINT,CAMOUNT,GRADE,LEVELUP)
+    -- public CustomerDto getCustomer(int cid)
+SELECT CID,CTEL,CNAME,CPOINT,CAMOUNT,GRADE,(SELECT HIAMOUNT+1 - CAMOUNT FROM CUSTOMER WHERE GNO!=5 AND CID=C.CID) LEVELUP
+    FROM CUSTOMER C, GRADE G
+    WHERE C.GNO = G.GNO
+    AND CID = 1;
+
+-- 4번 전 고객등급명들 추출
+    -- public ArrayList<String> getGrades()
+SELECT GRADE FROM GRADE;
+--4.고객 등급별 출력 (grade입력받아 CID,CTEL,CNAME,CPOINT,CAMOUNT,GRADE,LEVELUP 출력)	
+    -- public ArrayList<CustomerDto> gradeGetCustomers(String grade)
+SELECT CID,CTEL,CNAME,CPOINT,CAMOUNT,GRADE,
+    (SELECT HIAMOUNT+1 - CAMOUNT FROM CUSTOMER WHERE GNO!=5 AND CID=C.CID) LEVELUP
+    FROM CUSTOMER C, GRADE G
+    WHERE C.GNO = G.GNO
+    AND GRADE = UPPER('Normal')
+    ORDER BY CAMOUNT DESC;
+    
+--5.고객 전체 출력 (CID,CTEL,CNAME,CPOINT,CAMOUNT,GRADE,LEVELUP 출력)	
+    -- public ArrayList<CustomerDto> getCustomers()
+SELECT CID,CTEL,CNAME,CPOINT,CAMOUNT,GRADE,(SELECT HIAMOUNT+1 - CAMOUNT FROM CUSTOMER WHERE GNO!=5 AND CID=C.CID) LEVELUP
+    FROM CUSTOMER C, GRADE G
+    WHERE C.GNO = G.GNO
+    ORDER BY CAMOUNT DESC;
+
+--6.회원탈퇴 (ctel을 입력받아 delete)
+    -- public int deleteCustomer(String ctel)
+DELETE FROM CUSTOMER WHERE CTEL = '010-9999-9999';
+
+rollback;
 
 

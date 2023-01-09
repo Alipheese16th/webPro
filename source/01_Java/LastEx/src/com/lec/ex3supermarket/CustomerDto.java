@@ -12,19 +12,14 @@ public class CustomerDto {
 	
 	public CustomerDto() {}
 
-	public CustomerDto(String ctel, String cname) {
-		this.ctel = ctel;
-		this.cname = cname;
-	}
-
 	public CustomerDto(int cid, String ctel, String cname, int cpoint, int camount, String grade, int levelup) {
-		this.cid = cid;
-		this.ctel = ctel;
-		this.cname = cname;
-		this.cpoint = cpoint;
-		this.camount = camount;
-		this.grade = grade;
-		this.levelup = levelup;
+		this.cid 		= cid;
+		this.ctel 		= ctel;
+		this.cname 		= cname;
+		this.cpoint 	= cpoint;
+		this.camount 	= camount;
+		this.grade 		= grade;
+		this.levelup 	= levelup;
 	}
 
 	@Override
