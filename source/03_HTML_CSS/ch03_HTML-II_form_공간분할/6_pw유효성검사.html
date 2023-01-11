@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        td{
+            text-align:center;
+        }
+    </style>
+    <script>
+        function chk() {
+            if (frm.id.value.length < 4) {
+                alert('아이디는 4글자 이상 입력하세요');
+                frm.id.focus();
+                return false;
+            } else if (!frm.pw.value) {
+                alert('비밀번호를 입력하세요');
+                frm.pw.focus();
+                return false;
+            } else if (frm.pw.value != frm.pwChk.value) {
+                alert('비밀번호확인하세요');
+                frm.pw.value = '';
+                frm.pwChk.value = '';
+                frm.pw.focus();
+                return false;
+            }
+           
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <form action="" method="get" name="frm" onSubmit="return chk()">
+        <table>
+            <tr>
+                <td>I D</td>
+                <td><input type="text" name="id" /></td>
+            </tr>
+            <tr>
+                <td>P W</td>
+                <td><input type="password" name="pw" /></td>
+            </tr>
+            <tr>
+                <td>pw체크</td>
+                <td><input type="password" name="pwChk" /></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <center><input type="submit" value="가입" /></center>
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
