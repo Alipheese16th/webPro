@@ -118,7 +118,7 @@ ctrl shift c 요소검사 유용
 
 type속성에따라 데이터타입이 다름
 input태그 기준
-text, button,password,tel,number,email,submit,file,radio,checkbox,date
+text, button,password,tel,number,email,submit,file,radio,checkbox,date,url
 
 select태그 안의 option태그활용 
 select multiple속성
