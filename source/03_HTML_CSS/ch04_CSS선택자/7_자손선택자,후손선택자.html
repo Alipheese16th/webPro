@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        #wrap{
+            width: 600px;
+            margin: 0 auto;
+            border:1px solid;
+        }
+        #wrap #header{
+            overflow:hidden;
+        }
+        #header .logo{ /* 후손 선택자 */
+            float:left;
+            padding:10px 30px 10px 150px;
+        }
+        #header .title {
+            float: left;
+            padding: 20px 150px 10px 30px;
+        }
+        div p{ /* 후손 선택자 (자손선택자 포함) */
+            font-size:20px;
+        }
+        div > p { /* 자손 선택자 */
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <div id="header">
+            <div class="logo">
+                <h1>LOGO</h1>
+            </div>
+            <div class="title">
+                <h2>OO 주식회사</h2>
+            </div>
+        </div><!--header close-->
+        <div id="content">
+            <p>
+                가난한 경, 별 듯합니다. 사랑과 별이 새워 가난한 많은 하늘에는 듯합니다. 무덤 벌레는 밤을 버리었습니다. 경, 까닭이요, 걱정도 사람들의 내 거외다. 다 묻힌 내일 봄이 있습니다. 봄이 하늘에는 말 별 나는 부끄러운 아이들의 하나에 봅니다. 그리워 지나가는 내린 봅니다.
+            </p>
+            <ul>
+                <li>
+                    <p>
+                        별 이름자 별 나는 속의 풀이 이름자를 같이 밤이 까닭입니다. 차 까닭이요, 벌써 추억과 아스라히 불러 듯합니다. 옥 밤을 파란 봄이 버리었습니다. 나의 지나가는 덮어 듯합니다.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        별 이름자 별 나는 속의 풀이 이름자를 같이 밤이 까닭입니다. 차 까닭이요, 벌써 추억과 아스라히 불러 듯합니다. 옥 밤을 파란 봄이 버리었습니다. 나의 지나가는 덮어 듯합니다.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        별 이름자 별 나는 속의 풀이 이름자를 같이 밤이 까닭입니다. 차 까닭이요, 벌써 추억과 아스라히 불러 듯합니다. 옥 밤을 파란 봄이 버리었습니다. 나의 지나가는 덮어 듯합니다.
+                    </p>
+                </li>
+            </ul>
+        </div><!--content close-->
+        <div id="footer">
+            <p>
+                서울시 서대문구 대현동
+            </p>
+        </div>
+    </div>
+</body>
+</html>
