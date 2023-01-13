@@ -1,0 +1,138 @@
+
+11.문자선택자
+#content p:nth-child(2)::first-line  	--2번째 p태그의 첫줄
+특정태그::first-letter   	-- 해당 태그의 첫글자
+::selection   -- 드래그했을때의 경우
+
+12.링크선택자
+#content ul li a:after {
+            content: ' - ' attr(href);
+        }
+
+13.부정선택자
+#content ul li:not(.web) a{   /* 부정선택자 */
+            background-color:yellow;
+        }
+
+4장. CSS 선택자들 -끝
+---------------------------------
+5장.CSS 속성들 -시작
+1.	CSS3 단위들: em, %, px
+폰트크기는 기본 16px
+em은 문자에서만 쓸수있는 비율단위
+%는 여기저기서 다쓸수있는 단위
+
+2.	url() : 백그라운드 이미지, 폰트 지정
+스타일시트에서 @는 설정할때쓰인다
+@font-face { 			-- 로컬 폰트 설정
+    font-family: 'NanumSon';
+    src: url('나눔손글씨_김유이체ttf'); }
+* {					-- 전체 폰트 지정
+    font-family: 'NanumSon'; }
+background: url('0113/sulhyun.jpg') center no-repeat;
+백그라운드이미지를 지정하거나 폰트에서 소스지정할때 쓰는속성
+
+3.	display : inline, block, inline-block, none
+블록형을 인라인으로, 인라인을 블록형으로 바꿀수있다.
+블록형은 margin,padding,width,height설정이 가능한데
+인라인은 소용이없다. 마진은 옆만 가능하고 크기설정도 안됨.
+inline-block : 인라인속성이지만 블록형처럼 margin,width설정등이 전부 가능하다 
+흔히 수평정렬하려면 float:left를 쓰지만 이걸로도 가능하다.하지만 비추천
+div끼리 개행되어있다면 스페이스공간이 들어가있는걸로 적용이 되기때문에
+후에 공간분할할때 px단위계산하기 힘들어진다.
+display:none;  /* 안보이게(공간도 없다)*/
+
+4.	visibility
+visibility:hidden;  /* 안보이게(공간확보) */
+
+5.	opacity
+opacity  속성값 : 0 ~ 1 / 0:완전투명, 1:완전불투명
+
+6.	margin과 padding
+px공간계산을 잘해야한다. border의 선굵기도 포함하여
+마진패딩까지계산해서 공간분할
+div를 이용하여 공간분할해서 전체길이,내부div들의 길이를 합(여백,border계산)
+해야한다.
+0 auto 가장 자주쓰는 속성. 양옆 margin을 균일하게 
+
+7.	boxing-sizing ; border를 box안으로
+공간분할할때 계산하기 힘든 border를 박스안으로 사이즈포함시키는 유용한 속성
+box-sizing:border-box; /*border가 box안으로 (border가 width에 포함)*/
+
+8.	border
+border도 상하좌우 따로따로 속성을 정할수있다. 색깔은 물론이고 width선의넓이
+dashed점선 dotted도트점선 solid실선 double이중선
+border-radius : 반지름크기를 적으면 원이된다.
+
+9.	글자관련 속성; font-family, font-size, font-weight, font-style,
+                      line-height, text-align, text-decoration
+text-align 은 글자의 수평조정 (justify 를이용하면 양쪽정렬가능)
+line-height를 조정하면 글자의 수직높이를 조정가능.
+line-height는 글자의크기는 변하지않고 행간격만 조정이됨. 여백느낌도 난다.
+font-weight:bold; font-style:italic; text-decoration:underline;
+font-family:글씨체변경
+
+10.	position
+사용자가 마우스스크롤을 내려도 항상 고정적인 위치에 떠있는 속성
+static은 기본값. 사용안한것과 같다.
+absolute 절대좌표
+fixed 고정좌표
+
+부모가 포지션잡으면 자식태그는 부모안에 들어있다. 
+해당 부모안에서 좌표기준을 새로잡는다
+
+relative 상대좌표 --원래있던 위치기준으로 좌표설정
+
+자식태그는 역시 부모태그안에서 움직인다.
+다만 부모태그에 position속성을 넣지않으면 자식태그에 absolute를 넣엇다가 뛰쳐나갈수있다. 부모태그에 relative주고 top,left를 지정하지않으면 된다.
+★부모에 포지션을 줘야 자식이 부모밖을 벗어나지 않는다.★
+
+겹쳐서 지정할때 나중에 지정한게 위로간다. 배경설정할때 중요.
+z-index:99; /* z-index가 큰값이 위로 */
+z-index:-99; /* z-index가 작은값이 아래로 */
+
+11.	float
+right는 순서가 거꾸로. 첫번째가 오른쪽에 붙는다.
+
+동화책 그림처럼 글이 자연스럽게 옆과 아래에 붙는 경우는?
+이미지에만 float설정해주면 된다. 간단.
+
+12.	폰트
+
+13.	Gradient
+
+
+
+
+
+a{  display:block; /* a태그의 영역 확장 */  }
+a태그는 원래 span태그처럼 width가 없었는데 블록형으로 바꾸면 부모의 width를 받아서
+영역이 커진다. 즉 블록전체가 클릭이 된다. 
+
+
+
+
+
+위치지정할때 테이블표로 규격만들수도있고
+float:left로 수평정렬할수도있고
+div에 position을줘서 위치지정할수도있다.
+
+
+wrap에 투명도를 두면 전체가 투명해져서 안된다
+wrap밑에 div를 둬서 백그라운드이미지만을 꽉채운다 opacity
+
+
+overflow hidden
+text-align:justify
+attr(http)
+
+------------------------
+a태그 블록형디스플레이
+컨텐츠,배너 플로트레프트
+배경이미지만 div를 따로둬서 포지션잡고(앱솔루트 0 0),
+ opacity , z-index낮추기 (11-4예제참조)
+
+
+
+
+
