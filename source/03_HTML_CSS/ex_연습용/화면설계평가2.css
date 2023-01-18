@@ -1,0 +1,111 @@
+
+/* * * * * 초기화 * * * * */
+*{
+    margin:0; padding:0;
+}
+li{list-style: none;}
+a{text-decoration: none; display: block; color: black;}
+
+/* * * * * nav * * * * */
+nav{
+    width:100%;
+    min-width:1200px;
+    height:50px;
+    overflow: hidden;
+}
+nav ul:first-child{
+    float: left;
+}
+nav ul:last-child{
+    float: right;
+}
+nav ul li{
+    float:left;
+    width:80px;
+    height:30px; line-height: 30px; text-align: center;
+    margin:10px 40px;
+}
+nav ul li a:hover{
+    background-color: #fdeada;
+    color:white;
+}
+nav ul:first-child li:first-child{
+    border:1px solid gray;
+    background-color: #fdeada;
+}
+
+/* * * * * #content * * * * */
+#content #title{
+    height:50px; line-height: 50px;
+    margin:10px;
+    border-bottom:1px solid gray;
+}
+#content{
+    width:1200px;
+    margin:10px auto;
+    overflow: hidden;
+}
+
+/* * * * * #content #lnb * * * * */
+#content #lnb{
+    float:left;
+    width:200px;
+    margin:10px 10px 10px 20px;
+}
+#content #lnb ul li a{
+    border:1px solid gray;
+    padding:5px 30px;
+}
+#content #lnb ul li a:hover{
+    background-color: #fdeada;
+    color:white;
+}
+#content #lnb ul li:nth-child(4){
+    background-color: #fdeada;
+    font-weight: bold;
+}
+
+/* * * * * #content #my_content * * * * */
+#content #my_content{
+    float:left;
+    border:1px solid gray;
+    width:900px;
+    margin:10px;
+}  
+#content #my_content #sub_title{
+    border-bottom: 1px solid gray;
+    padding:5px;
+}
+
+#content #my_content #modify table{
+    margin:30px auto;
+}
+
+#content #my_content #modify table tr td{
+    padding:2px 40px;
+}
+input:not(input[type=submit]){
+    width:350px;
+    height:25px;
+}
+#content #my_content #modify table tr:last-child td{
+    text-align: center;
+    padding-top:50px;
+}
+#content #my_content #modify table tr:last-child td input{
+    padding:2px 15px;
+    cursor: pointer;
+}
+
+/* * * * * footer * * * * */
+footer{
+    background-color: #fdeada;
+    border: 1px solid gray;
+    margin:5px;
+    text-align: center;
+    height:30px;
+    line-height: 30px;
+    position:fixed;
+    left:0; right:0; bottom:0;
+}
+
