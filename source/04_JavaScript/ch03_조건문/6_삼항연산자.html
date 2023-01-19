@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script>
+        function chk(){
+            one = frm.su1.value;
+            tue = frm.su2.value;
+
+            if(!one){
+                alert('첫번째수를 입력하세요');
+                frm.su1.focus();
+                return false;
+            }else if(!tue){
+                alert('두번째수를 입력하세요');
+                frm.su2.focus();
+                return false;
+            }
+            //몇번째 수가 얼마 더큰지 경고창과 화면에 출력
+            
+            if(one > tue){
+                alert('첫번째 수가 '+(one-tue)+'만큼 더 크다');
+            }
+
+
+            return false;
+        }
+    </script>
+    <style>
+        table{
+            border:1px solid;
+            padding:10px;
+            margin:10px auto;
+        }
+    </style>
+</head>
+<body>
+    <form name="frm" onsubmit="return chk()">
+        
+        <table>
+            <caption>수 비교</caption>
+            <tr>
+                <td>
+                    첫번째 수
+                </td>
+                <td>
+                    <input type="number" id="su1">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    두번째 수
+                </td>
+                <td>
+                    <input type="number" id="su2">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="submit" value="결과">
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

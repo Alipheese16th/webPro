@@ -59,3 +59,12 @@ com.lec.ex.클래스
 
 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 mysql 8.0.31.0.msi
+
+--------------------------
+자바 -이클립스  (JDBC 드라이버 설치)
+오라클 -sqldeveloper
+mysql -MySQL Workbench 8.0 CE
+exERD
+html - visul studio , vscode
+node.js
+
