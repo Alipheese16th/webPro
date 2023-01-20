@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        var i = 'hello';
+        document.write(i+'<br>');
+
+        var functionVar = function(i){
+            alert(i+'test');
+        };
+
+        // 화살표함수에서 매개변수가 한개인 경우, 소괄호 생략가능
+        // 화살표함수에서 명령어가 한개인 경우, 중괄호 생략가능
+        functionVar = i => alert(i+'test');
+
+        document.write(functionVar+'<br>');
+        document.write(typeof(functionVar)+'<br>');
+        
+        functionVar(10); 
+    </script>
+</head>
+<body>
+
+</body>
+</html>

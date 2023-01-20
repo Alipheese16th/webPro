@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        // forEach(배열반복문), push(배열추가), slice(배열추출 vs .splice)
+        let arr = ['가1','라','라','나2','다3','라']; // 0 1 2 3 4 5 
+        // slice()는 원본 배열을 바꾸지 않고 새로운 배열을 만든다.
+        let copyArr = arr.slice(2,5);  // 2번째 ~ 5번째 앞까지 복사
+        document.write(copyArr+'<br>');
+        copyArr = arr.slice(2,-2);  // -2번째는 뒤에서부터 2번째
+        document.write(copyArr+'<br>');
+        document.write('원본 : '+arr+'<br>');
+        // splice는 원본 배열을 수정
+        // arr.splice(3,2); // 3번째부터 2개를 제거
+        // document.write('원본 : '+arr+'<br>');
+        // arr.splice(0,1,'대체')  // 0번째부터 1개를 제거하는데 대체를 채움.
+        // document.write('원본 : '+arr+'<br>');
+        for(let i=0;i<arr.length;i++){
+            if(arr[i]=='라'){
+                arr.splice(i,1); // i번째 인덱스 값 1개 제거
+            }
+        }
+        document.write('라 제거 후 원본 : '+arr);
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>

@@ -5,8 +5,8 @@
     <title>Document</title>
     <script>
         function chk(){
-            one = frm.su1.value;
-            tue = frm.su2.value;
+            var one = frm.su1.value;
+            var tue = frm.su2.value;
 
             if(!one){
                 alert('첫번째수를 입력하세요');
@@ -21,7 +21,21 @@
             
             if(one > tue){
                 alert('첫번째 수가 '+(one-tue)+'만큼 더 크다');
+                document.body.innerHTML += '<p>첫번째 수가 '+(one-tue)+'만큼 더 크다<p>';
+            }else if(tue > one){
+                alert('두번째 수가 '+(tue-one)+'만큼 더 크다')
+                document.body.innerHTML += '<p>두번째 수가 '+(tue-one)+'만큼 더 크다<p>';
+                } else{
+                    alert('두 수가 같다')
+                    document.body.innerHTML += '<p>두 수가 같다<p>';
             }
+
+
+            //substring(), indexOf(), lastIndexOf()
+            let msg = "0123456789";
+            let mmsg = msg.substring(msg.indexOf(2),msg.lastIndexOf(8));
+            document.body.innerHTML += mmsg;
+
 
 
             return false;
@@ -30,8 +44,27 @@
     <style>
         table{
             border:1px solid;
-            padding:10px;
+            padding:20px;
             margin:10px auto;
+        }
+        td{
+            padding:0 10px;
+            font-size: 20px;
+            text-align: center;
+        }
+        input{
+            font-size:20px; margin-top:10px;
+            height:30px;
+            outline:none;
+        }
+        input:focus{
+            border-color:red;
+            background-color: pink;
+            color:hotpink;
+        }
+        p{
+            text-align: center;
+            font-size: 28px;
         }
     </style>
 </head>
@@ -42,7 +75,7 @@
             <caption>수 비교</caption>
             <tr>
                 <td>
-                    첫번째 수
+                    <label for="su1">첫번째 수</label>
                 </td>
                 <td>
                     <input type="number" id="su1">
@@ -50,7 +83,7 @@
             </tr>
             <tr>
                 <td>
-                    두번째 수
+                    <label for="su2">두번째 수</label>
                 </td>
                 <td>
                     <input type="number" id="su2">
@@ -58,7 +91,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <input type="submit" value="결과">
+                    <input type="submit" value="  결과  ">
                 </td>
             </tr>
         </table>
