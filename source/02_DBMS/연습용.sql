@@ -365,16 +365,23 @@ SELECT ENAME, JOB, HIREDATE
 
 ------------------------------------------
 
+SELECT *
+    FROM EMP
+    WHERE (DEPTNO,SAL) IN (SELECT DEPTNO,MAX(SAL)
+                            FROM EMP
+                            GROUP BY DEPTNO);
 
+SELECT ENAME,JOB,SAL
+    FROM EMP
+    WHERE (JOB,SAL) IN (SELECT JOB,MIN(SAL) FROM EMP GROUP BY JOB);
 
-
-
-
-
-
-
-
-
+select e1.ENAME, 
+       (select e2.ENAME
+         from EMP e2
+        where e1.MGR = e2.EMPNO
+        AND ENAME != 'KING') AS 상위관리자
+  from EMP e1 
+;
 
 
 
