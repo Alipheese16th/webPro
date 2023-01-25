@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body{
+            background-image: url(ch05_img/img03.png);
+            background-size:100%;
+            color: white;
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+    <script>
+        var img = ['url(ch05_img/img01.png)',
+                    'url(ch05_img/img02.png)',
+                    'url(ch05_img/img03.png)'];
+        var col = ['blue','red','yellow'];
+        
+        var cnt = 0;
+        var timer = setInterval(function(){
+                document.write(new Date() + '<br>');
+                document.body.style.backgroundImage = img[cnt % img.length];
+                document.body.style.color = col[cnt % col.length];
+                document.body.style.backgroundSize = '100%';
+                document.body.style.fontSize = '2em';
+                document.body.style.fontWeight = 'bold';
+                document.body.style.textAlign = 'center';
+                cnt++;
+            },1000
+        );
+
+        setTimeout(()=>{
+                    clearInterval(timer);
+                    document.write('끝');
+                },10000
+        );
+
+    </script>
+</head>
+<body>
+    1초뒤 시작.
+</body>
+</html>

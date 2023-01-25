@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body{
+            background-size:100%;
+            background-repeat: no-repeat;
+            color:white;
+            font-size: 4em;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+    <script>
+        var cnt=0;
+        var imgNum=1;
+
+        function imgChg(){
+            document.body.innerHTML = (++cnt)+'초';
+
+            if(imgNum==4){
+                imgNum=1;
+                document.body.style.color = 'white';
+            }
+            if(imgNum==3){
+                document.body.style.color = 'red';
+            }
+            document.body.style.backgroundImage = 
+            'url(ch05_img/img0'+imgNum+'.png)';
+            imgNum++;
+        }
+
+        var timer = setInterval(imgChg,1000);
+
+        setTimeout(()=>{
+                    clearInterval(timer);
+                    document.body.innerHTML = '끝';
+                },10000
+        );
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        // 원하는 경고창 순서 : 0 -> 1 -> 2
+        // for(i=0;i<3;i++){
+        //     setTimeout(function(){
+        //         alert(i);
+        //     },0);
+        // }
+        // 실행 경고창 순서 : 3 -> 3 -> 3
+        
+        // hint 배열이용, 자기호출함수, 지역변수 이용
+
+        for(i=0;i<3;i++){
+            alert(i);
+        }
+
+        for(i=0;i<3;i++){ //자기호출함수 이용
+            (function(x){
+                setTimeout(function(){alert(x)},0);
+            })(i);
+        }
+        
+        for(let i=0;i<3;i++){ // 지역변수 이용 : i가 전역변수라면 타이머가 실행될때 i가 3이라고 받아들이기때문에 지역변수로 제한하고 반복문내에서 i값을 기억하게 한다.
+            setTimeout(function(){alert(i)},0);
+        }
+
+        [0,1,2].forEach(function(data,idx){ // 배열이용
+            setTimeout(function(){alert(data);},0);
+        });
+
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>
