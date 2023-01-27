@@ -40,7 +40,7 @@
         var patternNum = /[0-9]/;            // 숫자 패턴
         var patternEng = /[a-zA-Z]/;         // 알파벳 문자 패턴
         var patternKor = /[가-힣ㄱ-ㅎㅏ-ㅣ]/; // 한글문자 패턴
-        var patternSpc = /[~`!@#$%^&*()-_+=|\\[]{}'":;?,.\/]/; // 특수문자패턴
+        var patternSpc = /[~`!@#$%^&*()\-_+=|\\\[\]{}'";:?,.<>\/]/; // 특수문자패턴(\\->\, \/->/, \[->[, \]->], \- -> -)
 
         var patternMail = /^\w+@\w+(\.\w+){1,2}$/; // 패턴이 일치하는지 
         document.write('str에 숫자가 포함되어 있는지 : '+patternNum.test(str)+'<br>');
