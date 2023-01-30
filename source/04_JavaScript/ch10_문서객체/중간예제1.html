@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        table{
+            margin:10px auto;
+            width:600px;
+            height:200px;
+        }
+    </style>
+    <script>
+        var colors = [];
+            colors.push('red');
+            colors.push('orange');
+            colors.push('yellow');
+            colors.push('green');
+            colors.push('blue');
+            colors.push('navy');
+            colors.push('purple');
+
+        window.onload = function(){
+            var tds = document.querySelectorAll('td');
+            for(var i in tds){
+                tds[i].style = 'background-color:'+colors[i];
+            }
+        };
+        
+        function backChange(n){
+            document.body.style.backgroundColor = colors[n];
+        }
+
+        function backWhite(){
+            document.body.style.backgroundColor = 'white';
+        }
+
+    </script>
+</head>
+<body>
+    <table>
+        <tr>
+            <td onmouseover="backChange(0)" onmouseout="backWhite()"></td>
+            <td onmouseover="backChange(1)" onmouseout="backWhite()"></td>
+            <td onmouseover="backChange(2)" onmouseout="backWhite()"></td>
+            <td onmouseover="backChange(3)" onmouseout="backWhite()"></td>
+            <td onmouseover="backChange(4)" onmouseout="backWhite()"></td>
+            <td onmouseover="backChange(5)" onmouseout="backWhite()"></td>
+            <td onmouseover="backChange(6)" onmouseout="backWhite()"></td>
+        </tr>
+    </table>
+</body>
+</html>

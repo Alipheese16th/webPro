@@ -63,7 +63,7 @@ on으로 시작되는 변수들이 많다. 이 on으로 시작되는변수는 �
  - onmouseout  마우스 치웠을때 실행
 
 onmouseover를 이용해 마우스를 갖다대면 커다란 사진이 open되는 스크립트 만들어보기
-
+---------------------------------------
  - moveTo(x,y) x,y좌표에 위치 지정.
  - moveBy(x,y) x,y 만큼 움직여라.
  - resizeTo(width,height) 윈도우 크기 조정

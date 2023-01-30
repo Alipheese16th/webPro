@@ -7,7 +7,7 @@
 본 훈련생의 [요약정리](https://github.com/Alipheese16th/webPro/tree/main/%EC%9A%94%EC%95%BD%EC%A0%95%EB%A6%AC) 
 문서는 이곳에서 확인하실 수 있습니다.
   
-단, 이론만 정리했으므로 소스코드를 보려면 아래에서 확인하실수 있습니다.
+단, 이론만 정리했으므로 소스코드를 보려면 아래에서 확인하실 수 있습니다.
   
 [- 자바 소스 코드 모음](https://github.com/Alipheese16th/webPro/tree/main/source/01_Java)
 

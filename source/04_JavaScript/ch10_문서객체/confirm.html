@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        #wrap{
+            text-align: center;
+            width:300px;
+            margin:30px auto;
+        }
+    </style>
+    <script>
+        window.onload = function(){
+            var pid = opener.document.getElementById('id').value;
+            var cid = document.getElementById('id');
+            cid.value = pid;
+        }
+        function godata(){
+            var cid = document.getElementById('id').value;
+            opener.document.getElementById('id').value = cid;
+            close();
+        }
+    </script>
+</head>
+<body>
+    <div id="wrap">
+        <p>
+            ID 
+            <input type="text" id="id">
+            <button>체크</button>
+        </p>
+        <button onclick="godata()">아이디사용</button>
+    </div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body{
+            text-align: center;
+            width:500px;
+            margin: 10px auto;
+        }
+    </style>
+    <script>
+        var urls = [];
+        urls.push('http://naver.com');
+        urls.push('http://daum.com');
+        urls.push('http://google.com');
+        urls.push('http://youtube.com');
+
+        function goUrl(n){
+            location.href = urls[n];
+        }
+    </script>
+</head>
+<body>
+    <h1>중간예제2. 메뉴</h1>
+    <button onclick="goUrl(0)">네이버</button>
+    <button onclick="goUrl(1)">다음</button>
+    <button onclick="goUrl(2)">구글</button>
+    <button onclick="goUrl(3)">유튜브</button>
+</body>
+</html>
