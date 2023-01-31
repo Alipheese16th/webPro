@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        window.onload = function(){
+            var header = document.getElementsByClassName('header');
+            var temp = 0;
+            for(var key in header){
+                header[key].onclick = function(){
+                    if(temp == 0){
+                        this.style.color = 'red';
+                        this.style.border = '1px solid orange';
+                        temp++;
+                    }else{
+                        this.style.color = 'black';
+                        this.style.border = 'none';
+                        temp--;
+                    }
+                };
+            }
+        };
+    </script>
+</head>
+<body>
+    <h1 class="header">click1</h1>
+    <h1 class="header">click2</h1>
+    <h1 class="header">click3</h1>
+    <h1 class="header">click4</h1>
+    <h1 class="header">click5</h1>
+</body>
+</html>

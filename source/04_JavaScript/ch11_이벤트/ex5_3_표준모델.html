@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body{width:1000px; margin:20px auto; text-align: center;}
+        img{cursor: pointer;}
+    </style>
+    <script>
+        var buts = ["img/but1.gif","img/but2.gif",];
+
+        window.onload = ()=>{
+            document.querySelector('img').addEventListener('mousedown',function(){
+                this.setAttribute('src',buts[1]);
+            });
+            document.querySelector('img').addEventListener('mouseup',function(){
+                this.setAttribute('src',buts[0]);
+            });
+        };
+    </script>
+</head>
+<body>
+    <div>
+        <img src="img/but1.gif">
+    </div>
+</body>
+</html>

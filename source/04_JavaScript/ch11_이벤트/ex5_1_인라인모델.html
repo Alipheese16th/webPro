@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body{width:1000px; margin:20px auto; text-align: center;}
+        img{cursor: pointer;}
+    </style>
+    <script>
+        var img;
+        window.onload = ()=>{
+            img = document.querySelector('img');
+        };
+        function method1(){
+            img.setAttribute('src','img/but2.gif');
+        }
+        function method2(){
+            img.setAttribute('src','img/but1.gif');
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <img src="img/but1.gif" onmousedown="method1()" onmouseup="method2()">
+    </div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body{width:1000px; margin:20px auto; text-align: center;}
+    </style>
+    <script> 
+
+        window.onload = ()=>{
+            var imgs = document.querySelectorAll('img');
+            for(let i=0; i<imgs.length;i++){
+                imgs[i].addEventListener('mouseover',function(){
+                    this.setAttribute('src','img/'+i+'over.jpg');
+                });
+                imgs[i].addEventListener('mouseout',function(){
+                    this.setAttribute('src','img/'+i+'out.jpg');
+                });
+            }
+        };
+    </script>
+</head>
+<body>
+    <div>
+        <img src="img/0out.jpg">
+        <img src="img/1out.jpg">
+        <img src="img/2out.jpg">
+        <img src="img/3out.jpg">
+    </div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body{width:1000px; margin:20px auto; text-align: center;}
+    </style>
+    <script>
+        var imgs;
+        window.onload = function(){
+            imgs = document.getElementsByTagName('img');
+        };
+        function method1(n){
+            imgs[n].setAttribute('src','img/'+n+'over.jpg');
+        }
+        function method2(n){
+            imgs[n].setAttribute('src','img/'+n+'out.jpg');
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <img src="img/0out.jpg" onmouseover="method1(0)" onmouseout="method2(0)">
+        <img src="img/1out.jpg" onmouseover="method1(1)" onmouseout="method2(1)">
+        <img src="img/2out.jpg" onmouseover="method1(2)" onmouseout="method2(2)">
+        <img src="img/3out.jpg" onmouseover="method1(3)" onmouseout="method2(3)">
+    </div>
+</body>
+</html>

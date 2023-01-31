@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        table{
+            width:500px;
+            margin:10px auto;
+            background-color: darkgreen;
+        }
+        td{
+            background-color: white;
+            text-align: center;
+            padding:50px;
+        }
+        p{text-align: center;}
+    </style>
+    <script>
+        var tds;
+        var p;
+        var num = 4;
+
+        window.onload = function(){
+            tds = document.getElementsByTagName('td');
+            tds[num].style.backgroundColor = 'yellow';
+            p = document.getElementsByTagName('p')[0];
+            p.innerHTML = '현위치 : <b>4<b>';
+        }
+
+        window.onkeyup = function(){
+            var key = event.keyCode;
+            switch(key){
+                case 37: //좌측 화살표 -1
+                if(num%3 ==0){
+                    num += 2;
+                }else{
+                    --num;
+                }
+                break;
+                
+                case 38: //상 화살표 -3
+                if(num>=0 && num<=2){
+                    num += 6;
+                }else{
+                    num -= 3;
+                }
+                break;
+
+                case 39: //우측 화살표 +1
+                if(num%3 == 2){
+                    num -= 2;
+                }else{
+                    ++num;
+                }
+                break;
+
+                case 40: //아래 화살표 +3
+                if(num>=6 && num<=8){
+                    num -= 6;
+                }else{
+                    num += 3;
+                }
+                break;
+                default: return;
+            }
+            for(let i=0;i<tds.length;i++){
+                    tds[i].style.backgroundColor = 'white';
+            }
+            tds[num].style.backgroundColor = 'yellow';
+            p.innerHTML = '현위치 : <b>'+num+'<b>';
+        };
+    </script>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>0</td>
+            <td>1</td>
+            <td>2</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>4</td>
+            <td>5</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>7</td>
+            <td>8</td>
+        </tr>
+    </table>
+    <p></p>
+</body>
+</html>
