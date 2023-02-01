@@ -113,8 +113,9 @@ window.onclick 윈도우에서 클릭시
 img.style.left = event.offsetX+'px';
 img.style.top = event.offsetY+'px';
 
-
-
+-------------------------
+예외처리
+자바랑 같다 생략 
 
 ---------------------복습 
 화살표함수를 쓰지못하는 경우

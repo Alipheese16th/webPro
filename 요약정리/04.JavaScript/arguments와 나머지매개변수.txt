@@ -42,3 +42,5 @@ arguments 객체는 실제 배열이 아닙니다. 그러나 나머지 매개변
 https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Functions/rest_parameters
 
 
+스프레드 문법 
+https://ko.javascript.info/rest-parameters-spread
