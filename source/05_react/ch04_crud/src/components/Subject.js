@@ -1,16 +1,21 @@
 import React,{Component} from 'react';
 import './Subject.css';
 class Subject extends Component{
+  shouldComponentUpdate(newProps){
+    if(newProps.data === this.props.data){
+      return false;
+    }
+    return true;
+  }
   render(){
-    console.log('subject render');
-    // this.props.title = 'React'; readOnly
     return(
       <header className='subject_h'>
         <h1>
-          <a href="/" onClick={function(event){
-            event.preventDefault();
-            this.props.onChangePage();
-          }.bind(this)}>
+          <a href="/" 
+              onClick={function(event){
+                event.preventDefault();
+                this.props.onChangePage();
+              }.bind(this)}>
             {this.props.title}
           </a>
         </h1>
