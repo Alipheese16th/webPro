@@ -45,7 +45,7 @@ clock2.style.fontSize = '32px';
 clock2.style.cssText = 'color:red; font-size:32px';
 
 3. name을 이용
-document.ElementsByName('name');
+document.getElementsByName('name');
 해당 이름의 배열 리턴. 
 Elements(뒤에 s붙는거 생각해야함. name또한 중복 될수있는 속성임)
 

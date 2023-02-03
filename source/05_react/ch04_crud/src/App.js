@@ -69,8 +69,7 @@ class App extends Component{
 
     }else if(this.state.mode === 'update'){
       if(this.state.selected_content_id === 0){
-        alert('a');
-        debugger;
+        alert('업데이트할 내용이 없습니다');
         return;
       }
       var _content = this.getReadContent();
@@ -99,21 +98,25 @@ class App extends Component{
   render(){
     return(
       <div>
-        <Subject title={this.state.subject.title} 
-                  sub={this.state.subject.sub} 
-                  onChangePage={function(){
-                    this.setState({
-                      mode : 'welcome',
-                    });
-                  }.bind(this)}>
+        <Subject 
+          title={this.state.subject.title} 
+          sub={this.state.subject.sub} 
+          onChangePage={()=>{
+            this.setState({
+              mode : 'welcome',
+            });
+          }}
+        >
         </Subject>
-        <TOC data={this.state.contents} 
-              onChangePage={function(id){
-                this.setState({
-                  mode : 'read',
-                  selected_content_id : Number(id),
-                });
-              }.bind(this)}>
+        <TOC 
+          data={this.state.contents} 
+          onChangePage={function(id){
+            this.setState({
+              mode : 'read',
+              selected_content_id : Number(id),
+            });
+          }.bind(this)}
+        >
         </TOC>
         <Control onChangePage={function(_mode){
           if(_mode === 'delete'){

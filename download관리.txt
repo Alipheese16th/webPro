@@ -1,0 +1,18 @@
+01. jdk-8u351-windows-x64   (Java SE (Standard Edition)
+02. eclipse   (2020.06 (java1.8ver과의 호환))
+03. git-scm
+04. jdk-8u351-docs-all  (자바 사전 document)
+05. OracleXE112_Win64
+06. sqldeveloper-22.2.1.234.1810-x64
+07. eXERD_Installer_v3.3.22.20220414-1109_x86
+08. mysql-installer-community-8.0.31.0
+09. VisualStudioSetup
+10. VSCodeSetup-x64-1.74.2
+
+
+
+
+
+
+
+
