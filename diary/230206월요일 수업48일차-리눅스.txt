@@ -213,17 +213,6 @@ window preference - web - jsp files - editer - templates 설정  new jsp file (h
 
 jsp 는 html 처럼 작성하지만 자바언어를 넣으려면 <% %> 스크립트릿 안에 넣어야한다.
 
-<body>
-  <h1>이 파일은 hello.jsp입니다</h1>
-  <%
-    int total = 0;
-    for(int cnt=1;cnt<=100;cnt++){
-    	total += cnt;
-    }
-  %>
-  <h2>1부터 100까지 누적한 값은 <%=total %>입니다</h2>
-</body>
-
 <%= %> 변수값 출력
 
 jsp를 java 컴파일러가 읽어서 자바를 컴파일하고 톰캣이 같이 읽고 전부 html로 변환한다. 결과적으로 브라우저에는 html으로서만 출력됨.

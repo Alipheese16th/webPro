@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+</head>
+<body>
+	<a href="../Ex1?name=홍길동&pw=1111">Ex1 서블릿에게 name과 pw 전송(G)</a>
+	<hr>
+	<button onclick="location.href='../Ex1?name=홍&pw=1'">Ex1 서블릿에게 name과 pw 전송(G)</button>
+	<hr>
+<!-- 	<form action="../Ex1"> -->
+	<form action="/ch04_servlet/Ex1">
+		<p>이름 <input type="text" name="name"></p>
+		<p>비번 <input type="password" name="pw"></p>
+		<p><input type="submit" value="Ex1서블릿에게name과pw넘기기(G)"></p>
+	</form>
+	<hr>
+	<form action="/ch04_servlet/Ex1" method="post">
+		<p>이름 <input type="text" name="name"></p>
+		<p>비번 <input type="password" name="pw"></p>
+		<p><input type="submit" value="Ex1서블릿에게name과pw넘기기(POST)"></p>
+	</form>
+	<hr>
+</body>
+</html>

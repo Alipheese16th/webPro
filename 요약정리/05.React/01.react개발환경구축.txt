@@ -1,0 +1,46 @@
+# Create react app을 이용한 개발환경 구축
+
+React : 사용자 정의 태그를 만들어 주는 기술 중 하나이고 이를 component라 합니다.  
+Component의 장점 : ①가독성 ②재사용성 ③유지보수 용이성
+Component 중심의 현대적 웹 애플리케이션 UI를 만드는 방법을 익혀 나만의 component도 만들고 남이 만든 component도 사용하자
+
+### 개발환경 구축
+
+ - 사용자 컴퓨터 환경에 node.js 설치되어있는지 확인, cmd 관리자 권한으로 실행 
+ - node -v  버전 확인
+ - npm -v
+ - npm install –g create-react-app : 어디서나 global하게 create-react-app 가능(npm install tar@6 –g로 tar version을 업그레이드)
+ - create-react-app –V : 버전 확인
+ - create-react-app my-app  : 원하는 폴더(my-app)에 api 다운로드 ( . 은 현재 폴더)
+ - npm run start 또는 npm start  (실행)
+
+### npx
+
+npx는 자바스크립트 패키지 관리 모듈인 npm(Node Package Module)의 npm 5.2.0 버전부터 새로 추가된 도구입니다. 따라서 npm 5.2.0 이상 버전만 깔려 있다면 npx 커맨드를 사용 가능합니다.
+
+위의 과정에서 create-react-app 의 경우 npm으로 global하게 설치하게되면 여러가지 문제가 생깁니다.
+ - 자주 사용하지 않는 무거운 패키지가 로컬 스토리지에 남게 됩니다.
+ - 로컬 스토리지에 있는 패키지도 새로운 버전이 나왔을 시 이미 존재한 패키지를 제거하고 다시 설치해야 합니다.
+  
+하지만 npx를 사용하면 이 문제를 해결할 수 있습니다. npx는 최신 버전에 해당하는 패키지를 설치하여 실행하고, 실행된 이후에 해당 패키지를 제거합니다.
+이러한 방식으로 pc에 무거운 패키지들을 남기지 않게 되고, 항상 최신 버전의 패키지를 사용할 수 있습니다.
+
+### npx로 실행
+ - npx create-react-app my-app  원하는 폴더(my-app)에 지정( . 은 현재 디렉토리)
+ - cd my-app
+ - npm start
+
+### npm 패키지 삭제
+npm uninstall -g create-react-app  
+  
+결론 : npx 사용합시다.
+
+
+----------
+##### 기타
+
+리엑트 프로젝트 폴더 만들 때 주의점  
+대문자 혹은 'react' 키워드는 문제가 생길수 있기 때문에 사용을 자제하는것이 좋습니다.
+
+
+

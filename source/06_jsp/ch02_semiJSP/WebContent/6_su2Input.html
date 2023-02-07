@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+	input[type="number"]{
+		width:80px;
+	}
+	p{
+		text-align:center;
+	}
+</style>
+<script>
+	window.onload = function(){
+		document.getElementsByTagName("form")[0].onsubmit = function(){
+			var su1 = this.su1.value;
+			var su2 = this.su2.value;
+			if(!su1 || !su2){
+				alert("값을 입력하세요");
+				return false;
+			}else if(su1>su2){
+				alert("앞의 수가 더 큽니다. 순서를 지켜주세요");
+				return false;
+			}else if(su1>9 || su1<1 || su2>9 || su2<1){
+				alert("1~9사이의 수를 입력하세요");
+				return false;
+			}
+			return true;
+		};
+	};
+</script>
+</head>
+<body>
+	<form action="6_su2gugudanout.jsp" method="get">
+		<p>
+			단수 : <input type="number" name="su1"/> 단 ~ <input type="number" name="su2"/> 단까지
+		</p>
+		<p>
+			<input type="submit" value="구구단 출력"/>
+		</p>
+	</form>
+</body>
+</html>
