@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<script>
+		window.onload = function(){
+			var forms = document.getElementsByTagName('form');
+			
+			for(var i=0;i<forms.length;i++){ // form 태그 2개 반복문
+				forms[i].onsubmit = function(){ // form[0], form[1] 의 onsubmit 재정의
+					var colors = this.color;
+					var cnt = 0;
+					for(var i=0; i<colors.length; i++){
+						if(colors[i].checked){
+							cnt++;
+						}
+					}
+					if(!cnt){
+						alert("색상을 선택하셔야 합니다.");
+						return false;
+					}
+					return true;
+					
+				}; // onsubmit
+			} // form태그 반복문
+		}; // window.onload
+	</script>
+</head>
+<body>
+
+	<form action="../quiz4" method="get">
+		<fieldset>
+			<legend>배경색 선택(GET방식)</legend>
+			빨강<input type="radio" name="color" value="0">
+			주황<input type="radio" name="color" value="1">
+			노랑<input type="radio" name="color" value="2">
+			초록<input type="radio" name="color" value="3">
+			파랑<input type="radio" name="color" value="4">
+			남색<input type="radio" name="color" value="5">
+			보라<input type="radio" name="color" value="6">
+			<input type="submit" value="선택확인">
+		</fieldset>
+	</form>
+	
+	<form action="../quiz4" method="post">
+		<fieldset>
+			<legend>배경색 선택(POST방식)</legend>
+			빨강<input type="radio" name="color" value="0">
+			주황<input type="radio" name="color" value="1">
+			노랑<input type="radio" name="color" value="2">
+			초록<input type="radio" name="color" value="3">
+			파랑<input type="radio" name="color" value="4">
+			남색<input type="radio" name="color" value="5">
+			보라<input type="radio" name="color" value="6">
+			<input type="submit" value="선택확인">
+		</fieldset>
+	</form>
+	
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<script>
+		window.onload = ()=>{
+			document.getElementsByTagName('form')[0].onsubmit = ()=>{
+				var agreeYes = document.querySelector('input[type="radio"]');
+// 				var agreeYes = document.getElementsByName('agree')[0];
+				if(!agreeYes.checked){
+					alert('동의를 하셔야 진행됩니다');
+					return false;
+				}
+			};
+		};
+	</script>
+</head>
+<body>
+	<fieldset>
+		얼음이 청춘의 커다란 아니다. 생명을 주며, 갑 미인을 무엇을 인생에 원대하고, 그들에게 이것이다. 원대하고, 같은 그들의 뜨고, 이상, 풀밭에 뛰노는 크고 말이다. 뛰노는 주는 피어나기 장식하는 것이 이상이 것은 듣는다. 풀이 심장의 위하여 가는 않는 든 이 같이 것이다. 발휘하기 어디 불어 시들어 끝까지 것이다. 인간에 청춘의 그것을 인생에 이상, 내려온 그들의 피다.
+	</fieldset>
+	<form action="" method="get">
+		<input type="radio" name="agree" value="yes">동의합니다
+		<input type="radio" name="agree" value="no" checked="checked">동의하지 않습니다
+		<input type="submit" value="다음">
+	</form>
+</body>
+</html>
