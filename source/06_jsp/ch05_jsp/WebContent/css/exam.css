@@ -1,0 +1,27 @@
+@charset "UTF-8";
+*{margin:0;padding:0;}
+header{
+	font-size:1.3em;
+	font-weight:bold;
+	border-bottom:1px solid blue;
+	padding:5px;
+	padding-left:20px;
+}
+form, h3{
+	text-align:center;
+}
+button{
+	font-weight:bold;
+	background-color:lightblue;
+	padding:10px 20px;
+	margin:30px;
+}
+div#msg{
+	color:red;
+	text-align:center;
+	font-size:1.3em;
+	font-weight:bold;
+}
+h3#good{
+	margin-top:30px;
+}

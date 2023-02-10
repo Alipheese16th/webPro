@@ -142,7 +142,7 @@ service()
 카운트변수를 0으로 두고, 체크박스가 checked되어있는지 불리언변수를 + 더하면
 true 라면 1 더하고 false면 0 더한다. 자바스크립트는 형변환을 자유자재로 해준다. 
 
-html  fieldset 태그
+html  fieldset태그 legend태그
 
 submit 유효성검사는 자바스크립트로 구현하는게 좋다. 페이지 넘어가고나서 검사하는건 부하가 많기때문
 
@@ -152,5 +152,5 @@ get방식은 글자안깨짐
 ctrl + t  클래스 계보
 alt + shift + s   각종편의성소스제공 
 
-context_root는 server.xml에서 관명시
+context_root는 server.xml에서 명시한다.
 servlet 매핑url은 web.xml에서 명시하거나 서블릿 내에서 어노테이션으로 명시

@@ -35,6 +35,12 @@ npm uninstall -g create-react-app
   
 결론 : npx 사용합시다.
 
+### 배포(deploy)
+ - F12의 Network 탭을 열고, 캐시비우기 및 강력 새로고침하면 약 2.7M 다운로드(react의 여러 기능 포함)
+ - 위와 같이 상당히 용량을 많이 잡아먹기때문에 그냥 사용하기엔 부담이 큽니다. 따라서 배포용 버전으로 빌드하는 기능이 있습니다.
+ - npm run build 를 하면 build 디렉토리가 생성.
+ - npm install -g serve   npm을 통해 설치된 간단한 웹 서버가 가능하도록(serve명령을 사용가능하도록)
+ - npx serve -s build  : build가 root로서 웹서버를 실행합니다.
 
 ----------
 ##### 기타
