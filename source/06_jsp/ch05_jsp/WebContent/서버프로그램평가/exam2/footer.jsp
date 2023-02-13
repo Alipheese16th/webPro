@@ -1,12 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<% String conPath = request.getContextPath(); %>
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="UTF-8">
 	<title>Insert title here</title>
-	<link href="<%=conPath %>/서버프로그램평가/exam2/footer2.css" rel="stylesheet">
+	<link href="footer.css" rel="stylesheet">
 </head>
 <body>
 	<footer>

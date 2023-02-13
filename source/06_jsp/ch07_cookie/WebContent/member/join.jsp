@@ -1,11 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<% String conPath = request.getContextPath(); %>
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="UTF-8">
 	<title>Insert title here</title>
-	<link href="join.css" rel="stylesheet">
+	<link href="<%=conPath %>/css/join.css" rel="stylesheet">
 	<script>
 		var patternMail = /^\w+@\w+(\.\w+){1,2}$/;  // 이메일 패턴
 		
@@ -33,23 +34,23 @@
           this.pwChk.value='';
           return false;
 					
-				}else if(!this.email.value.match(patternMail)){ 
+				}else if(this.email.value && !this.email.value.match(patternMail)){ 
           alert('메일 형식에 맞춰주세요');
           this.email.focus();
           return false;
 					
 				}else {
-// 					var opt = document.querySelectorAll('option');
-// 					var cnt = 0;
-// 					for(var i=0; i<opt.length; i++){
-// 						if(opt[i].selected){
-// 							cnt++;
-// 						}
-// 					}
-// 					if(!cnt){
-// 						alert('메일수신 항목을 1개 이상 체크하세요');
-// 						return false;
-// 					}
+/* 					var opt = document.querySelectorAll('option');
+  					var cnt = 0;
+  					for(var i=0; i<opt.length; i++){
+  						if(opt[i].selected){
+  							cnt++;
+  						}
+  					}
+  					if(!cnt){
+  						alert('메일수신 항목을 1개 이상 체크하세요');
+  						return false;
+  					} */
 				
 				} // else if 
 				
@@ -60,6 +61,7 @@
 	</script>
 </head>
 <body>
+	<jsp:include page="header.jsp"/>
 	<div id="joinForm_wrap">
 		<div id="join_title">회원가입</div>
 		
@@ -122,10 +124,11 @@
 			<div>
 				<input type="submit" value="가입하기" class="joinBtn_style">
 				<input type="reset" value="다시하기" class="joinBtn_style">
-				<input type="button" value="뒤로가기" onclick="history.back()" class="joinBtn_style">
+				<input type="button" value="로그인" onclick="location.href='<%=conPath %>/member/login.jsp'" class="joinBtn_style">
 			</div>
 		</form>
 	</div>
-<%@include file="footer.jsp" %>
+<jsp:include page="footer.jsp"/>
+<%--<%@include file="footer.jsp" %>--%>
 </body>
 </html>
