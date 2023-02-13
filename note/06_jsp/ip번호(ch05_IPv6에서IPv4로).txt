@@ -7,7 +7,7 @@ IPV6 문제이다. WIN7 이상은 기본이 IPV6
 0:0:0:0:0:0:0:1  이거랑 127.0.0.1 이랑 같다고..
 
 eclipse > Run > Run Configurations > Apache Tomcat > Tomcat v9.0 Server >
-Arguiments > 
+Arguments > 
 Program arguments에 "-Djava.net.preferIPv4Stack=true" 입력
 VM arguments:에 "-Djava.net.preferIPv4Stack=true" 입력
 
