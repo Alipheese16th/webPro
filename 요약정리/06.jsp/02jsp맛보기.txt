@@ -1,0 +1,51 @@
+ JSP 란 JavaServer Pages 의 약자이며 
+ HTML 코드에 JAVA 코드를 넣어 동적인 웹페이지를 생성하는 웹어플리케이션 도구입니다.
+ 
+### 문서 작성하기
+
+#### JSP 특징
+- 동적 웹어플리케이션 컴포넌트(컴포넌트는 JSP, HTML 등 웹 어플리케이션을 이루는 요소를 컴포넌트라 하고 그 컴포넌트를 담고 있는 것을 컨테이너라고 합니다)
+- .jsp 확장자.
+- 클라이언트의 요청에 동적으로 작동하고, 응답은 html을 이용
+- jsp는 서블릿으로 변환되어 실행(컴파일되면 톰캣서버가 변환)
+
+![jsp1](https://blog.kakaocdn.net/dn/rO9Fe/btrZkSg8m58/GICALurOi5pZtJ4HxPvkKk/img.png)
+
+- MVC패턴(각자의 역할을 분담)에서 View로 이용됩니다
+
+![jsp2](https://blog.kakaocdn.net/dn/AWAZS/btrZkSuFvL6/LZzhaHvyRioXzT7LDq7kQ0/img.png)
+
+Request – Controller-Model(DB연동 포함) –View-response
+
+#### 프로젝트 생성
+
+- Dynamic Web Project ; Generate web.xml deployment descriptor 체크
+- Context root : 서버 입장에서 각 프로젝트를 구분해 주는 이름(프로젝트명은 첫문자를 소문자로) 
+- index.html에 대해 – web.xml에 의해 프로젝트를 실행시키면 첫페이지로 실행됩니다 (디폴트 페이지)
+
+
+<<<<<추가 작성>>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

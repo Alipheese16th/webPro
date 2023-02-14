@@ -31,12 +31,15 @@
 		<div id="nav">
 		<%
 			String id = null; // id쿠키가 있을 경우 쿠키값을 저장 용도
+			String name = null;
 			Cookie[] cs = request.getCookies();
+			
 			if(cs!=null){
 				for(Cookie c : cs){
 					if(c.getName().equals("id")){
 						id = c.getValue();
-						break;
+					}else if(c.getName().equals("name")){
+						name = c.getValue();
 					}
 				}
 			}//if

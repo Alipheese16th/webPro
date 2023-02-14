@@ -1,0 +1,104 @@
+### 웹 프로그래밍이랑?
+
+ - 웹프로그래밍이란, 웹을 기반으로 작동되는 프로그램입니다.
+ 
+­ - 웹이란, 1개 이상의 사이트가 연결되어있는 인터넷 서비스의 한가지 형태를 말합니다.
+
+![web](https://blog.kakaocdn.net/dn/KpLbA/btrZkzBRzzj/XufgJgfr3waBk5eVrsjVt0/img.png)
+
+­ - 인터넷이란, 1개 이상의 네트워크가 연결되어 있는 형태를 말합니다.
+
+­ - 서로 서로 컴퓨터가 연결된 것을 네트워크가 연결되어 있다고 하고 이 네트워크를 통해 서비스 하는 것을 우리는 인터넷 서비스라 합니다. 인터넷 서비스에는 종류가 굉장히 다양합니다. 그 다양한 서비스 종류 중에 web이 있죠. 브라우저에서 www.~을 통해서 사이트에 방문하여 서비스 받습니다.
+
+ - 웹 어플리케이션을 만든다는 것은 한 컴퓨터에서만 구동되는 프로그램이 아니고, 만들기는 하나의 컴퓨터에서 만들었지만, 웹 인터넷 서비스를 통해 네트워크에 연결된 컴퓨터에서 어플리케이션을 서비스 해 줄 수 있는 것을 만드는 일입니다.
+ 
+­ - JSP나 Servlet에서 아래의 내용을 매번 따지면서 구현하지 않습니다. 하지만 웹 프로그래밍을 개발한다하면 아래의 사전 지식은 꼭 알고 가야한다는 마음에 추가하였습니다.
+
+1. 프로토콜(Protocol) : 네트워크상에서 약속한 통신규약 (Http;hypertext transfer protocol 받은 정보를 화면에 출력하기를 원하는 프로토콜, FTP;file Transfer protocol, SMTP;simple mail transfer protocol, POP;Post Office Protocol)  
+
+2. IP : 네트워크상에서 컴퓨터를 식별할 수 있는 주소  
+
+3. DNS : IP주소를 인간이 쉽게 외우도록 맵핑한 문자열  
+
+4. Port : IP주소가 컴퓨터를 식별할 수 있게 해준다면, Port번호는 해당컴퓨터의 구동되고 있는 프로그램을 구분할 수 있는 번호  
+
+5. URL의 일반적인 구성  
+http://www.11st.co.kr:80/html/category/1.jsp?xzone=ctgr1 
+프로토콜. 서버주소. 포트번호. 경로(웹페이지상세주소)?쿼리문자열(추가로 서버에 보내는 데이터. 같은 경로라 해도 입력한 값에 따라 다른 결과를 보여줘야 할 때 쿼리 문자열을 사용합니다)
+
+
+### Java 웹 프로젝트
+
+­ - JAVA플랫폼(Java SE, Java EE)중에서 엔터프라이즈 에디션(Java EE)를 이용한 웹프로그래밍
+   JEE -> 컨테이너(컴포넌트 관리는 Tomcat이 맡습니다) -> 웹 컨테이너안에는 JSP, Servlet, HTML이 담겨 있습니다. 이 JSP나 Servlet이나 HTML 하나 하나를 컴포넌트라하고 , 이 컴포넌트를 하나하나 완성해 가는 것을 웹 프로그래밍이라 합니다.
+ - 컴포넌트 : JSP, Servlet, HTML 등의 웹어플리케이션을 구현하기 위한 구성요소
+­ - JSP(Java Server Page) ; HTML 파일 내에 java 언어를 삽입한 문서
+­ - Servlet(Server Applet) ; Java 언어로 이루어진 웹 프로그래밍 문서
+
+![jee](https://blog.kakaocdn.net/dn/c6bspa/btrZkSnMtJI/MnipkTvyr26pn9sNK3k3ik/img.png)
+
+### 웹 프로그램의 동작
+
+­ - 웹서버 : 클라이언트의 요청에 의해 정보를 제공해 주는 서버
+별도의 구현이 필요한 로직이 있을 경우 웹어플리케이션 서버에 요청.
+
+­ - 웹브라우저 : 웹서버에 정보를 요청하고, 웹서로부터 정보를 받는 매개체. 이때 HTTP 프로토콜을 사용합니다
+
+­ - HTTP 프로토콜과 Servlet 동작원리
+  HTTP 프로토콜 : HTTP는 비연결(Connectionless: 클라이언트의 요청에 응답한 후 바로 연결을 끊음)과 비상태(Stateless: 서버의 상태가 어떤지 간에 상관없이 요청을 함)의 특징을 가집니다.
+
+
+### 필요한 학습
+­ - JAVA : JAVA웹어플리케이션을 구현하기 위한 선행 학습 필요
+­ - HTML : 웹 페이지를 구현하기 위한 기본 언어
+­ - JavaScript : 클라이언트 기능을 구현하기 위한 언어
+­ - Jquery : JavaScript의 대표적인 라이브러리로써, 클라이언트 사이드 스크립트 언어를 단순화 할 수 있습니다.
+­ - CSS : 웹어플리케이션의 레이아웃 및 스타일을 지정하는 언어
+
+### 개발 환경 설정
+­ - JDK 설치
+   JSP및 Servlet은 JAVA를 기본언어로 사용됩니다. JAVA언어로 작성한 프로그램을 컴파일하기 위해서는 JDK(Java Development Kit)가 필요 합니다 
+­ - path 설정
+   환경변수 PATH에 javac.exe가 있는 폴더를 포함시켜 어느 디렉토리에서나 bin/javac.exe가 실행될 수 있도록 설정합니다. (시스템-고급 시스템 설정 - 고급 - 환경변수 - 시스템 변수 - 새로 만들기 - JAVA_HOME (값 : C\Program Files\Java\jdk)
+­ - 이클립스 다운로드
+   www.eclipse.org에 접속하여 엔터프라이즈 버전(Eclipse IDE for EE Developers) 다운로드
+­ - 톰캣설치
+   아파치 톰캣 사이트에 접속하여 사용자의 자바 버전과 맞는 버전으로 (Tomcat 9.0.x zip) 파일 다운받아 압축을 풀기
+
+### 톰캣 디렉토리별 분류
+bin : 톰캣을 실행하고 종료시키는 스크립트 파일
+conf : server.xml을 포함한 설정 파일
+lib : 톰캣을 실행하는데 필요한 라이브러리(.jar) 파일위치
+logs : 톰캣이 실행되는 동안 임시 파일이 위치
+temp : 톰캣이 실행되는 동안 임시파일이 위치
+webapps ; 웹 어플리케이션이 위치
+work : 톰캣이 실행되는 동안 사용되는 작업 파일이 위
+
+### ­톰캣 환경 설정
+- 이클립스에 연동. 하단 servers 탭
+-  No server are available. Click this link to….. 이용하여 server 생성
+- apache에 있는 tomcat을 선택하고 tomcat9.0을 연결하고 8090포트 등 정보수정
+- Server Locations -> use Tomcat (takes control to Tomcat installation)
+- Server Options –> Publish module contexts to separate XML files도 체크
+- Server Options –> Modules auto reload by default도 체크
+- Ports -> http/1.1 Port number 8090 (8080포트는 오라클 등 충돌날 경우가 많습니다)
+
+­- 톰캣 서버 start
+- 서버 구동 확인  http://localhost:8090 or http://127.0.0.1:8090 
+­- 서버 stop
+­- 이클립스 한글 코드 설정
+- General – Workspace 선택 후 utf-8
+  - Web – CSS files 선택 후 Encoding에 utf-8
+  - Web - HTML 선택 후 Encoding에 utf-8
+  - Web – JSP 선택 후 Encoding에 utf-8
+
+
+
+
+
+
+
+
+
+
+

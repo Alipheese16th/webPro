@@ -22,3 +22,11 @@ eclipse > Run > Run Configuration > Apache Tomcat > Tomcat v8.5 Server >
 	Arguiments > 
 	Program arguments에 "-Djava.net.preferIPv4Stack=true" 입력
 	VM arguments:에 "-Djava.net.preferIPv4Stack=true" 입력
+
+
+
+### 추가 개인설정
+다크모드
+들여쓰기 2칸으로
+web - jsp - editer - 템플레이트 설정
+
