@@ -1,0 +1,6 @@
+-- ex2_oracle.jsp
+SELECT * FROM EMP;
+SELECT * FROM DEPT;
+-- ex3
+SELECT * FROM EMP WHERE DEPTNO LIKE '%' || '10';
+
