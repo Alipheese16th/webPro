@@ -11,11 +11,6 @@
 	<meta charset="UTF-8">
 <title>Insert title here</title>
 <link href="<%=conPath %>/css/style.css" rel="stylesheet">
-	<style>
-		p{
-			text-align : center;
-		}
-	</style>
 </head>
 <body>
 	<%!
