@@ -53,7 +53,7 @@
 				</td>
 			</tr>
 			<tr>
-				<th>바꿀비밀번호</th>
+				<th>바꿀비번확인</th>
 				<td>
 					<input type="password" name="pwChk">
 				</td>
@@ -124,7 +124,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2">
+				<td colspan="2" class="submit">
 					<input type="submit" value="정보수정">
 					<input type="reset" value="취소" onclick="history.back()">
 					<input type="button" value="로그아웃" onclick="location.href='logout.jsp'">

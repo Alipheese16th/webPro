@@ -1,0 +1,34 @@
+-- 시퀀스와 테이블 DROP & CREATE
+
+DROP TABLE FRIEND;
+DROP SEQUENCE FRIEND_NO_SEQ;
+
+CREATE TABLE FRIEND(
+    NO      NUMBER(4) PRIMARY KEY,
+    NAME    VARCHAR2(30) NOT NULL,
+    TEL     VARCHAR2(30)
+);
+
+CREATE SEQUENCE FRIEND_NO_SEQ
+    START WITH 1
+    INCREMENT BY 1
+    MAXVALUE 9999
+    MINVALUE 1
+    NOCACHE
+    NOCYCLE;
+
+
+-- 친구 추가 public int addFriend(String name,String tel)
+INSERT INTO FRIEND (NO,NAME,TEL) VALUES(FRIEND_NO_SEQ.NEXTVAL,'아이브','032-7777-7777');
+
+-- 친구 목록 출력 public ArrayList<FriendDto> getList()
+SELECT * FROM FRIEND;
+
+-- 친구 검색(추후 추가)
+SELECT * FROM FRIEND WHERE NAME LIKE '%'||'김치'||'%' AND TEL LIKE '%'||'4656'||'%';
+
+
+COMMIT;
+
+
+

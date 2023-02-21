@@ -18,10 +18,10 @@
 	<form action="<%=conPath %>/lect1_member/joinOk.jsp" method="post" name="join_frm">
 		<table>
 			<caption>회원가입</caption>
-			<tr><th>아이디</th><td><input type="text" name="id"></td></tr>
-			<tr><th>비밀번호</th><td><input type="password" name="pw"></td></tr>
+			<tr><th>아이디</th><td><input type="text" name="id" required="required"></td></tr>
+			<tr><th>비밀번호</th><td><input type="password" name="pw" required="required"></td></tr>
 			<tr><th>비번확인</th><td><input type="password" name="pwChk"></td></tr>
-			<tr><th>이름</th><td><input type="text" name="name"></td></tr>
+			<tr><th>이름</th><td><input type="text" name="name" required="required"></td></tr>
 			<tr>
 				<th>전화번호</th>
 				<td>

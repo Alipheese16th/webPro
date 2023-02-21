@@ -16,3 +16,9 @@
 16. apache-tomcat-9.0.71-windows-x64
 
 
+
+
+이클립스 jee 버전 (jsp과정중에 했음)
+플러그인 tern
+플러그인 exerd
+
