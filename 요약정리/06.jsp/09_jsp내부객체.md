@@ -69,7 +69,6 @@ uri 와 contextpath 를 리턴하는 메서드는 쓰임새가 많습니다.
 하나의 서블릿에 매핑을 (*.do) 로하면 한곳에 모이게 됩니다.
 여기서 request(요청)의 uri를 구해서 subString을 하면 어디서 접근했는지 확인이 되기 때문에 분류하고 따로 작업을 처리할수 있습니다.
 
-
 ## response
 웹브라우저의 요청에 응답하는 것을 response한다고 하며, 이러한 응답(response)의 정보는 response 내부객체가 갖고 있습니다.
 
@@ -78,7 +77,6 @@ uri 와 contextpath 를 리턴하는 메서드는 쓰임새가 많습니다.
 - sendRedirect(URL) : 지정한 URL로 이동합니다.
 
 페이지 전환을 원한다면 자바스크립트에서는 location객체로 간단하게 사용할수 있지만 jsp에서는 response객체의 메서드로도 사용할수 있습니다.
-
 
 ## out
 웹 브라우저로 HTML 코드를 출력하는 기능
@@ -98,39 +96,40 @@ page 지시자의 buffer 속성을 이용하면 출력 버퍼의 크기를 바�
 out.println은 사실 버퍼공간에 작성을 하는것입니다. flush를 하면 화면에 출력하는 것.  
 하지만 flush는 자동적으로 해주니까 특별한 경우가 아니면 직접 신경 쓸필요가 없습니다.
 
+## application
+getContextPath 메서드가 있긴하지만 request에서도 쓸수있기 때문에 알아만 두고 갑시다.
+
+중요한건 getRealPath입니다. 현재 프로젝트(컨텍스트)가 실행되는 절대경로를 구할수 있습니다.
+
+```
+String conPath = application.getContextPath()
+String absolutePath = application.getRealPath(".");
+String filePath = application.getRealPath("WEB-INF/test.txt");
+
+conPath = /ch05_jsp
+absolutePath = D:\webPro\IDE\apache-tomcat-9.0.71\wtpwebapps\ch05_jsp
+filePath = D:\webPro\IDE\apache-tomcat-9.0.71\wtpwebapps\ch05_jsp\WEB-INF\test.txt
+
+```
+이 절대경로를 사용해서 WEB-INF에 있는 첨부파일을 IO(입출력) 할수 있습니다.
 
 
+-----
+### 기타
 
+### session
+세션에 관련된 기능  
+객체 타입 : javax.servlet.http.httpSession
+### exception
+예외 객체  
+객체 타입 : java.lang.Throwable
 
-<<<<<<<<<<추가작성>>>>>>>>>>>>>>>
+이클립스에서 작업 중 코드 수정시에 서블릿은 서버를 재부팅해야하지만  
+JSP는 알아서 서버에 재업로드가 되기때문에 브라우저에서 새로고침만 해도 확인이 가능합니다.
 
+서블릿은 url 주소에서 .java생략가능  
+JSP는 생략불가능
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
------기타
-코드 수정시 서블릿은 서버를 재부팅해야하지만 JSP는 알아서 적용이된다.
-
-서블릿은 url 주소에서 .java생략가능
-JSP는 생략불가능 
-
-
-
-톰캣은 소스폴더가 수정되면 다시 통채로 서버폴더에 복사합니다.
-이런식으로 계속 갱신되기때문에 후에 파일첨부게시판을 만들때 파일첨부를 서버폴더에 하면 다시 지워집니다.
-따라서 WEB-INF 디렉토리에 저장해야합니다 
-
-
-
+톰캣은 소스폴더가 수정되면 다시 통채로 서버폴더에 복사합니다.  
+이런식으로 계속 갱신되기때문에 후에 파일첨부게시판을 만들때 파일첨부를 서버폴더에 하면 다시 지워집니다.  
+따라서 WEB-INF 디렉토리에 저장해야합니다.
