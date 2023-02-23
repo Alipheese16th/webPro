@@ -152,23 +152,6 @@ if(endPage<pageCnt){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ---------
 복습
 form태그 안에서 <button></button>태그를 사용하면 submit이 일어나버리기때문에

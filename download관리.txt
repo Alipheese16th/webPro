@@ -1,5 +1,5 @@
 01. jdk-8u351-windows-x64   (Java SE (Standard Edition)
-02. eclipse   (2020.06 (java1.8ver과의 호환))
+02. eclipse --java,jee 2가지 (2020.06 (java1.8ver과의 호환))
 03. git-scm
 04. jdk-8u351-docs-all  (자바 사전 document)
 05. OracleXE112_Win64
@@ -14,7 +14,7 @@
 14. VirtualBox-6.1.26-145957-Win
 15. ubuntu-16.04.1-desktop-amd64
 16. apache-tomcat-9.0.71-windows-x64
-
+17. openSourceLib    -- cos-22.05 (파일첨부 가능한 라이브러리 jar)
 
 
 
