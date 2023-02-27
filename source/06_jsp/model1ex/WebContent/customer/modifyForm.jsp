@@ -1,4 +1,4 @@
-<%@page import="com.lec.customer.CustomerDto"%>
+<%@page import="com.lec.dto.CustomerDto"%>
 <%@page import="java.sql.Date"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -36,7 +36,6 @@
       return false;
 			}
 			return true;
-
 		}; // onsubmit
 	}; // onload
 	</script>
@@ -48,18 +47,18 @@
 	<%
 		CustomerDto customer = (CustomerDto)session.getAttribute("customer");
 		if(customer==null){ // 로그인상태가 아님
-			response.sendRedirect("login.jsp?method=modify"); // method 파라미터 추가후 보내기
+			response.sendRedirect("loginForm.jsp?method=modify"); // method 파라미터 추가후 보내기
 		}else{
 			cid = customer.getCid();
 			cname = customer.getCname();
 			ctel = customer.getCtel();
 			cemail = customer.getCemail();
 			caddress = customer.getCaddress();
-			cbirth = customer.getCbirth();
 			cgender = customer.getCgender();
+			cbirth = customer.getCbirth();
 		}
 	%>
-	<jsp:include page="../customer/header.jsp"/>
+	<jsp:include page="../main/header.jsp"/>
 	<div id="joinForm_wrap">
 	<form action="modifyPro.jsp" method="post">
 		<table>
@@ -77,7 +76,7 @@
 			<tr>
 				<th>새비밀번호</th>
 				<td>
-					<input type="password" name="cpw" class="pw">
+					<input type="password" name="cpw" class="pw" placeholder="미작성시 변경무">
 				</td>
 			</tr>
 			<tr>
@@ -143,6 +142,6 @@
 		</table>
 	</form>
 	</div>
-	<jsp:include page="../customer/footer.jsp"/>
+	<jsp:include page="../main/footer.jsp"/>
 </body>
 </html>
