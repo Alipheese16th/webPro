@@ -2,171 +2,171 @@
 SELECT * FROM SALGRADE;
 
 
--- SELECT¹® ¿¬½À¹®Á¦
---1. EMP Å×ÀÌºí¿¡¼­ salÀÌ 3000ÀÌ»óÀÎ »ç¿øÀÇ empno, ename, job, salÀ» Ãâ·Â
+-- SELECTë¬¸ ì—°ìŠµë¬¸ì œ
+--1. EMP í…Œì´ë¸”ì—ì„œ salì´ 3000ì´ìƒì¸ ì‚¬ì›ì˜ empno, ename, job, salì„ ì¶œë ¥
 SELECT EMPNO, ENAME, JOB, SAL FROM EMP WHERE SAL >= 3000;
---2. EMP Å×ÀÌºí¿¡¼­ empno°¡ 7788ÀÎ »ç¿øÀÇ ename°ú deptno¸¦ Ãâ·Â
+--2. EMP í…Œì´ë¸”ì—ì„œ empnoê°€ 7788ì¸ ì‚¬ì›ì˜ enameê³¼ deptnoë¥¼ ì¶œë ¥
 SELECT ENAME, DEPTNO FROM EMP WHERE EMPNO = 7788;
---3. ¿¬ºÀ(SAL*12+COMM)ÀÌ 24000 ÀÌ»óÀÎ »ç¹ø, ÀÌ¸§, ±Þ¿© Ãâ·Â (±Þ¿©¼øÁ¤·Ä)
+--3. ì—°ë´‰(SAL*12+COMM)ì´ 24000 ì´ìƒì¸ ì‚¬ë²ˆ, ì´ë¦„, ê¸‰ì—¬ ì¶œë ¥ (ê¸‰ì—¬ìˆœì •ë ¬)
 SELECT EMPNO, ENAME, SAL FROM EMP 
     WHERE (SAL*12+NVL(COMM,0)) >= 2000 ORDER BY SAL;
---4. ÀÔ»çÀÏÀÌ 1981³â 2¿ù 20°ú 1981³â 5¿ù 1ÀÏ »çÀÌ¿¡ ÀÔ»çÇÑ »ç¿øÀÇ ÀÌ¸§, Á÷Ã¥, ÀÔ»çÀÏÀ» Ãâ·Â (´Ü hiredate ¼øÀ¸·Î Ãâ·Â)
+--4. ìž…ì‚¬ì¼ì´ 1981ë…„ 2ì›” 20ê³¼ 1981ë…„ 5ì›” 1ì¼ ì‚¬ì´ì— ìž…ì‚¬í•œ ì‚¬ì›ì˜ ì´ë¦„, ì§ì±…, ìž…ì‚¬ì¼ì„ ì¶œë ¥ (ë‹¨ hiredate ìˆœìœ¼ë¡œ ì¶œë ¥)
 SELECT ENAME, JOB, HIREDATE FROM EMP 
     WHERE HIREDATE BETWEEN TO_DATE('1981-02-20','YYYY-MM-DD') AND 
     TO_DATE('1981-05-01','YYYY-MM-DD') ORDER BY HIREDATE;
---5. deptno°¡ 10,20ÀÎ »ç¿øÀÇ ¸ðµç Á¤º¸¸¦ Ãâ·Â (´Ü ename¼øÀ¸·Î Á¤·Ä)
+--5. deptnoê°€ 10,20ì¸ ì‚¬ì›ì˜ ëª¨ë“  ì •ë³´ë¥¼ ì¶œë ¥ (ë‹¨ enameìˆœìœ¼ë¡œ ì •ë ¬)
 SELECT * FROM EMP WHERE DEPTNO IN (10,20) ORDER BY ENAME;
---6. salÀÌ 1500ÀÌ»óÀÌ°í deptno°¡ 10,30ÀÎ »ç¿øÀÇ ename°ú sal¸¦ Ãâ·Â(´Ü TITLEÀ» employee°ú Monthly Salary·Î Ãâ·Â)
+--6. salì´ 1500ì´ìƒì´ê³  deptnoê°€ 10,30ì¸ ì‚¬ì›ì˜ enameê³¼ salë¥¼ ì¶œë ¥(ë‹¨ TITLEì„ employeeê³¼ Monthly Salaryë¡œ ì¶œë ¥)
 SELECT ENAME "employee", SAL "Monthly Salary" FROM EMP 
     WHERE SAL >= 1500 AND DEPTNO IN (10,30);
---7. hiredate°¡ 1982³âÀÎ »ç¿øÀÇ ¸ðµç Á¤º¸¸¦ Ãâ·Â
+--7. hiredateê°€ 1982ë…„ì¸ ì‚¬ì›ì˜ ëª¨ë“  ì •ë³´ë¥¼ ì¶œë ¥
 SELECT * FROM EMP WHERE TO_CHAR(HIREDATE,'YYYY') = '1982';
---8. ÀÌ¸§ÀÇ Ã¹ÀÚ°¡ CºÎÅÍ P·Î ½ÃÀÛÇÏ´Â »ç¶÷ÀÇ ÀÌ¸§, ±Þ¿© Ãâ·Â(ÀÌ¸§¼ø Á¤·Ä)
+--8. ì´ë¦„ì˜ ì²«ìžê°€ Cë¶€í„° Pë¡œ ì‹œìž‘í•˜ëŠ” ì‚¬ëžŒì˜ ì´ë¦„, ê¸‰ì—¬ ì¶œë ¥(ì´ë¦„ìˆœ ì •ë ¬)
 SELECT ENAME, SAL FROM EMP WHERE ENAME 
     BETWEEN 'C' AND 'Q' AND ENAME != 'Q' ORDER BY ENAME;
---9. commÀÌ salº¸´Ù 10%ÀÌ»ó ¸¹Àº ¸ðµç »ç¿ø¿¡ ´ëÇÏ¿© ÀÌ¸§, ±Þ¿©, »ó¿©±ÝÀ» Ãâ·Â
+--9. commì´ salë³´ë‹¤ 10%ì´ìƒ ë§Žì€ ëª¨ë“  ì‚¬ì›ì— ëŒ€í•˜ì—¬ ì´ë¦„, ê¸‰ì—¬, ìƒì—¬ê¸ˆì„ ì¶œë ¥
 SELECT ENAME, SAL, COMM FROM EMP WHERE COMM > SAL*1.1;
---10. jobÀÌ CLERKÀÌ°Å³ª ANALYSTÀÌ°í salÀÌ 1000,3000,5000ÀÌ ¾Æ´Ñ ¸ðµç »ç¿øÀÇ Á¤º¸¸¦ Ãâ·Â
+--10. jobì´ CLERKì´ê±°ë‚˜ ANALYSTì´ê³  salì´ 1000,3000,5000ì´ ì•„ë‹Œ ëª¨ë“  ì‚¬ì›ì˜ ì •ë³´ë¥¼ ì¶œë ¥
 SELECT * FROM EMP WHERE JOB IN ('CLERK','ANALYST') AND SAL NOT IN (1000,3000,5000);
--- 11. ename¿¡ LÀÌ µÎ ÀÚ°¡ ÀÖ°í deptno°¡ 30ÀÌ°Å³ª ¶Ç´Â mgrÀÌ 7782ÀÎ »ç¿øÀÇ ¸ðµç Á¤º¸¸¦ Ãâ·Â
+-- 11. enameì— Lì´ ë‘ ìžê°€ ìžˆê³  deptnoê°€ 30ì´ê±°ë‚˜ ë˜ëŠ” mgrì´ 7782ì¸ ì‚¬ì›ì˜ ëª¨ë“  ì •ë³´ë¥¼ ì¶œë ¥
 SELECT * FROM EMP WHERE ENAME LIKE '%L%L%' AND DEPTNO = 30 OR MGR = 7782;
--- 12. ÀÔ»çÀÏÀÌ81³âÀÌ°í ¾÷¹«°¡ 'SALESMAN'ÀÌ ¾Æ´Ñ Á÷¿øÀÇ »ç¹ø, »ç¿ø¸í, ÀÔ»çÀÏ, ¾÷¹«, ±Þ¿©¸¦ Ãâ·Â.
+-- 12. ìž…ì‚¬ì¼ì´81ë…„ì´ê³  ì—…ë¬´ê°€ 'SALESMAN'ì´ ì•„ë‹Œ ì§ì›ì˜ ì‚¬ë²ˆ, ì‚¬ì›ëª…, ìž…ì‚¬ì¼, ì—…ë¬´, ê¸‰ì—¬ë¥¼ ì¶œë ¥.
 SELECT EMPNO, ENAME, HIREDATE, JOB, SAL FROM EMP WHERE TO_CHAR(HIREDATE,'RR')=81 AND JOB != 'SALESMAN';
--- 13. »ç¹ø, »ç¿ø¸í, ÀÔ»çÀÏ, ¾÷¹«, ±Þ¿©¸¦ ±Þ¿©°¡ ³ôÀº ¼øÀ¸·Î Á¤·ÄÇÏ°í, ±Þ¿©°¡ °°À¸¸é ÀÔ»çÀÏÀÌ ºü¸¥ »ç¿øÀ¸·Î Á¤·ÄÇÏ¿© Ãâ·Â
+-- 13. ì‚¬ë²ˆ, ì‚¬ì›ëª…, ìž…ì‚¬ì¼, ì—…ë¬´, ê¸‰ì—¬ë¥¼ ê¸‰ì—¬ê°€ ë†’ì€ ìˆœìœ¼ë¡œ ì •ë ¬í•˜ê³ , ê¸‰ì—¬ê°€ ê°™ìœ¼ë©´ ìž…ì‚¬ì¼ì´ ë¹ ë¥¸ ì‚¬ì›ìœ¼ë¡œ ì •ë ¬í•˜ì—¬ ì¶œë ¥
 SELECT EMPNO, ENAME, HIREDATE, JOB, SAL FROM EMP ORDER BY SAL DESC, HIREDATE;
--- 14. »ç¿ø¸íÀÇ ¼¼ ¹øÂ° ¾ËÆÄºªÀÌ £§N£§ÀÎ »ç¿øÀÇ »ç¹ø, »ç¿ø¸íÀ» Ãâ·Â
+-- 14. ì‚¬ì›ëª…ì˜ ì„¸ ë²ˆì§¸ ì•ŒíŒŒë²³ì´ ï¼‡Nï¼‡ì¸ ì‚¬ì›ì˜ ì‚¬ë²ˆ, ì‚¬ì›ëª…ì„ ì¶œë ¥
 SELECT EMPNO, ENAME FROM EMP WHERE ENAME LIKE '__N%';
--- 15. »ç¿ø¸í¿¡ ¡®A¡¯°¡ µé¾î°£ »ç¿øÀÇ »ç¹ø, »ç¿ø¸íÀ» Ãâ·Â
+-- 15. ì‚¬ì›ëª…ì— â€˜Aâ€™ê°€ ë“¤ì–´ê°„ ì‚¬ì›ì˜ ì‚¬ë²ˆ, ì‚¬ì›ëª…ì„ ì¶œë ¥
 SELECT EMPNO, ENAME FROM EMP WHERE ENAME LIKE '%A%';
--- 16. ¿¬ºÀ(SAL*12)ÀÌ 35000 ÀÌ»óÀÎ »ç¹ø, »ç¿ø¸í, ¿¬ºÀÀ» °Ë»ö
+-- 16. ì—°ë´‰(SAL*12)ì´ 35000 ì´ìƒì¸ ì‚¬ë²ˆ, ì‚¬ì›ëª…, ì—°ë´‰ì„ ê²€ìƒ‰
 SELECT EMPNO, ENAME, SAL*12 FROM EMP WHERE SAL*12 > 35000;
 
--- JOIN ¿¬½À¹®Á¦
--- ¿¹Á¦ PART1
---1. EMPÅ×ÀÌºíÀÇ ¸ðµç »ç¿ø¿¡ ´ëÇØ »ç¿ø¸í°ú Á÷¼Ó»ó»ç¸íÀ» Ãâ·ÂÇÏ½Ã¿À.
+-- JOIN ì—°ìŠµë¬¸ì œ
+-- ì˜ˆì œ PART1
+--1. EMPí…Œì´ë¸”ì˜ ëª¨ë“  ì‚¬ì›ì— ëŒ€í•´ ì‚¬ì›ëª…ê³¼ ì§ì†ìƒì‚¬ëª…ì„ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT W.ENAME, M.ENAME FROM EMP W, EMP M WHERE W.MGR = M.EMPNO;
---2. »ó»ç°¡ ÀÖ´Â Á÷¿ø¿¡ ´ëÇØ »ç¿ø¸í, ±Þ¿©, Á÷Ã¥, Á÷¼Ó»ó»ç¸íÀ» Ãâ·ÂÇÏ½Ã¿À.
+--2. ìƒì‚¬ê°€ ìžˆëŠ” ì§ì›ì— ëŒ€í•´ ì‚¬ì›ëª…, ê¸‰ì—¬, ì§ì±…, ì§ì†ìƒì‚¬ëª…ì„ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT W.ENAME, W.SAL, W.JOB, M.ENAME FROM EMP W, EMP M WHERE W.MGR = M.EMPNO;
---3. »ó»ç°¡ ¾ø´Â Á÷¿ø°ú »ó»ç°¡ ÀÖ´Â Á÷¿øµé ¸ðµÎ¿¡ ´ëÇØ »ç¿ø¸í, ±Þ¿©, Á÷Ã¥, Á÷¼Ó»ó»ç¸íÀ» Ãâ·ÂÇÏ½Ã¿À.
+--3. ìƒì‚¬ê°€ ì—†ëŠ” ì§ì›ê³¼ ìƒì‚¬ê°€ ìžˆëŠ” ì§ì›ë“¤ ëª¨ë‘ì— ëŒ€í•´ ì‚¬ì›ëª…, ê¸‰ì—¬, ì§ì±…, ì§ì†ìƒì‚¬ëª…ì„ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT W.ENAME, W.SAL, W.JOB, M.ENAME FROM EMP W, EMP M WHERE W.MGR = M.EMPNO(+);
---4. »ó»ç°¡ ÀÖ´Â Á÷¿ø¿¡ ´ëÇØ »ç¿ø¸í, »ç¿ø¸í, ±Þ¿©, ºÎ¼­¸í, Á÷¼Ó»ó»ç¸íÀ» Ãâ·ÂÇÏ½Ã¿À.
+--4. ìƒì‚¬ê°€ ìžˆëŠ” ì§ì›ì— ëŒ€í•´ ì‚¬ì›ëª…, ì‚¬ì›ëª…, ê¸‰ì—¬, ë¶€ì„œëª…, ì§ì†ìƒì‚¬ëª…ì„ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT W.ENAME, W.SAL, DNAME, M.ENAME FROM EMP W, EMP M, DEPT D WHERE W.MGR = M.EMPNO AND W.DEPTNO = D.DEPTNO;
---5. »ó»ç°¡ ¾ø´Â Á÷¿ø°ú »ó»ç°¡ ÀÖ´Â Á÷¿ø ¸ðµÎ¿¡ ´ëÇØ »ç¿ø¸í, ±Þ¿©, ºÎ¼­ÄÚµå, ºÎ¼­¸í, ±Ù¹«Áö, Á÷¼Ó»ó»ç¸íÀ» Ãâ·ÂÇÏ½Ã¿À.
---´Ü, Á÷¼Ó»ó»ç°¡ ¾øÀ» °æ¿ì Á÷¼Ó»ó»ç¸í¿¡´Â ¡®¾øÀ½¡¯À¸·Î ´ë½Å Ãâ·ÂÇÏ½Ã¿À.
-SELECT W.ENAME, W.SAL, W.DEPTNO, DNAME, LOC, NVL(M.ENAME,'¾øÀ½') FROM EMP W, EMP M, DEPT D WHERE W.MGR = M.EMPNO(+) AND W.DEPTNO = D.DEPTNO;
---6. ±Þ¿©°¡ 2000ÀÌ»óÀÎ »ç¿ø¿¡ ´ëÇØ »ç¿ø¸í, ±Þ¿©, ±Þ¿©µî±Þ, ºÎ¼­¸í, Á÷¼Ó»ó»ç¸íÀ» Ãâ·ÂÇÏ½Ã¿À.
+--5. ìƒì‚¬ê°€ ì—†ëŠ” ì§ì›ê³¼ ìƒì‚¬ê°€ ìžˆëŠ” ì§ì› ëª¨ë‘ì— ëŒ€í•´ ì‚¬ì›ëª…, ê¸‰ì—¬, ë¶€ì„œì½”ë“œ, ë¶€ì„œëª…, ê·¼ë¬´ì§€, ì§ì†ìƒì‚¬ëª…ì„ ì¶œë ¥í•˜ì‹œì˜¤.
+--ë‹¨, ì§ì†ìƒì‚¬ê°€ ì—†ì„ ê²½ìš° ì§ì†ìƒì‚¬ëª…ì—ëŠ” â€˜ì—†ìŒâ€™ìœ¼ë¡œ ëŒ€ì‹  ì¶œë ¥í•˜ì‹œì˜¤.
+SELECT W.ENAME, W.SAL, W.DEPTNO, DNAME, LOC, NVL(M.ENAME,'ì—†ìŒ') FROM EMP W, EMP M, DEPT D WHERE W.MGR = M.EMPNO(+) AND W.DEPTNO = D.DEPTNO;
+--6. ê¸‰ì—¬ê°€ 2000ì´ìƒì¸ ì‚¬ì›ì— ëŒ€í•´ ì‚¬ì›ëª…, ê¸‰ì—¬, ê¸‰ì—¬ë“±ê¸‰, ë¶€ì„œëª…, ì§ì†ìƒì‚¬ëª…ì„ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT W.ENAME, W.SAL, GRADE, DNAME, M.ENAME FROM EMP W, EMP M, SALGRADE, DEPT D
     WHERE W.DEPTNO = D.DEPTNO AND W.MGR = M.EMPNO AND W.SAL BETWEEN LOSAL AND HISAL AND W.SAL >= 2000;
---7. »ó»ç°¡ ÀÖ´Â Á÷¿ø°ú »ó»ç°¡ ¾ø´Â Á÷¿ø ¸ðµÎ¿¡ ´ëÇØ »ç¿ø¸í, ±Þ¿©, ±Þ¿©µî±Þ, ºÎ¼­¸í, Á÷¼Ó»ó»ç¸íÀ» ºÎ¼­¸í ¾ËÆÄºª ¼øÀ¸
---·Î Á¤·ÄÇÏ¿© Ãâ·ÂÇÏ½Ã¿À.
+--7. ìƒì‚¬ê°€ ìžˆëŠ” ì§ì›ê³¼ ìƒì‚¬ê°€ ì—†ëŠ” ì§ì› ëª¨ë‘ì— ëŒ€í•´ ì‚¬ì›ëª…, ê¸‰ì—¬, ê¸‰ì—¬ë“±ê¸‰, ë¶€ì„œëª…, ì§ì†ìƒì‚¬ëª…ì„ ë¶€ì„œëª… ì•ŒíŒŒë²³ ìˆœìœ¼
+--ë¡œ ì •ë ¬í•˜ì—¬ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT W.ENAME, W.SAL, GRADE, DNAME, M.ENAME FROM EMP W, EMP M, SALGRADE, DEPT D
     WHERE W.DEPTNO = D.DEPTNO AND W.MGR = M.EMPNO AND W.SAL BETWEEN LOSAL AND HISAL ORDER BY DNAME;
---8. »ç¿ø¸í, ±Þ¿©, ±Þ¿©µî±Þ, ºÎ¼­¸í, ¿¬ºÀ, Á÷¼Ó»ó»ç¸íÀ» Ãâ·ÂÇÏ½Ã¿À. ´Ü ¿¬ºÀÀº (SAL+COMM)*12·Î °è»êÇÑ´Ù.
+--8. ì‚¬ì›ëª…, ê¸‰ì—¬, ê¸‰ì—¬ë“±ê¸‰, ë¶€ì„œëª…, ì—°ë´‰, ì§ì†ìƒì‚¬ëª…ì„ ì¶œë ¥í•˜ì‹œì˜¤. ë‹¨ ì—°ë´‰ì€ (SAL+COMM)*12ë¡œ ê³„ì‚°í•œë‹¤.
 SELECT W.ENAME, W.SAL, GRADE, DNAME, (W.SAL+NVL(W.COMM,0))*12, M.ENAME FROM EMP W, EMP M, SALGRADE, DEPT D
     WHERE W.DEPTNO = D.DEPTNO AND W.MGR = M.EMPNO AND W.SAL BETWEEN LOSAL AND HISAL;
---9. À§ 8¹øÀ» ºÎ¼­¸í ¾ËÆÄºª ¼øÀ¸·Î Á¤·ÄÇÏ°í ºÎ¼­¸íÀÌ °°À¸¸é ±Þ¿©°¡ Å« »ç¿ø¿¡¼­ ÀÛÀº »ç¿ø ¼øÀ¸·Î Á¤·ÄÇÏ¿© Ãâ·ÂÇÏ½Ã¿À.
+--9. ìœ„ 8ë²ˆì„ ë¶€ì„œëª… ì•ŒíŒŒë²³ ìˆœìœ¼ë¡œ ì •ë ¬í•˜ê³  ë¶€ì„œëª…ì´ ê°™ìœ¼ë©´ ê¸‰ì—¬ê°€ í° ì‚¬ì›ì—ì„œ ìž‘ì€ ì‚¬ì› ìˆœìœ¼ë¡œ ì •ë ¬í•˜ì—¬ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT W.ENAME, W.SAL, GRADE, DNAME, (W.SAL+NVL(W.COMM,0))*12, M.ENAME FROM EMP W, EMP M, SALGRADE, DEPT D
     WHERE W.DEPTNO = D.DEPTNO AND W.MGR = M.EMPNO AND W.SAL BETWEEN LOSAL AND HISAL
     ORDER BY DNAME, SAL DESC;
---¿¹Á¦PART2
---1. EMPÅ×ÀÌºíÀÇ ¸ðµç »ç¿ø¿¡ ´ëÇØ »ç¿ø¸í, ºÎ¼­¹øÈ£ ºÎ¼­¸íÀ» Ãâ·ÂÇÏ½Ã¿À.
+--ì˜ˆì œPART2
+--1. EMPí…Œì´ë¸”ì˜ ëª¨ë“  ì‚¬ì›ì— ëŒ€í•´ ì‚¬ì›ëª…, ë¶€ì„œë²ˆí˜¸ ë¶€ì„œëª…ì„ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT ENAME,E.DEPTNO,DNAME FROM EMP E,DEPT D WHERE E.DEPTNO = D.DEPTNO;
---2. EMPÅ×ÀÌºí¿¡¼­ NEW YORK¿¡¼­ ±Ù¹«ÇÏ°í ÀÖ´Â »ç¿ø¿¡ ´ëÇØ »ç¿ø¸í, Á÷Ã¥, ±Þ¿©, ºÎ¼­¸íÀ» Ãâ·ÂÇÏ½Ã¿À.
+--2. EMPí…Œì´ë¸”ì—ì„œ NEW YORKì—ì„œ ê·¼ë¬´í•˜ê³  ìžˆëŠ” ì‚¬ì›ì— ëŒ€í•´ ì‚¬ì›ëª…, ì§ì±…, ê¸‰ì—¬, ë¶€ì„œëª…ì„ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT ENAME,JOB,SAL,DNAME FROM EMP E,DEPT D WHERE E.DEPTNO = D.DEPTNO AND LOC = 'NEW YORK';
---3. EMPÅ×ÀÌºí¿¡¼­ »ó¿©(COMM)¸¦ ¹Þ´Â »ç¿ø¿¡ ´ëÇØ »ç¿ø¸í, ºÎ¼­¸í, À§Ä¡¸¦ Ãâ·ÂÇÏ½Ã¿À.
+--3. EMPí…Œì´ë¸”ì—ì„œ ìƒì—¬(COMM)ë¥¼ ë°›ëŠ” ì‚¬ì›ì— ëŒ€í•´ ì‚¬ì›ëª…, ë¶€ì„œëª…, ìœ„ì¹˜ë¥¼ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT ENAME,DNAME,LOC FROM EMP E,DEPT D WHERE E.DEPTNO = D.DEPTNO AND COMM IS NOT NULL AND COMM > 0;
---4. EMPÅ×ÀÌºí¿¡¼­ »ç¿ø¸í¿¡ ¾ËÆÄºª LÀÌ ÀÖ´Â »ç¿ø¿¡ ´ëÇØ »ç¿ø¸í, Á÷Ã¥, ºÎ¼­¸í, ±Ù¹«Áö¸¦ Ãâ·ÂÇÏ½Ã¿À.
+--4. EMPí…Œì´ë¸”ì—ì„œ ì‚¬ì›ëª…ì— ì•ŒíŒŒë²³ Lì´ ìžˆëŠ” ì‚¬ì›ì— ëŒ€í•´ ì‚¬ì›ëª…, ì§ì±…, ë¶€ì„œëª…, ê·¼ë¬´ì§€ë¥¼ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT ENAME,JOB,DNAME,LOC FROM EMP E,DEPT D WHERE E.DEPTNO = D.DEPTNO AND ENAME LIKE '%L%';
---5. EMPÅ×ÀÌºí¿¡¼­ »ç¹ø, »ç¿ø¸í, ºÎ¼­¹øÈ£, ºÎ¼­¸íÀ» Ãâ·ÂÇÏµÇ »ç¿ø¸í ¾ËÆÄºª ¼øÀ¸·Î Ãâ·ÂÇÏ½Ã¿À.
+--5. EMPí…Œì´ë¸”ì—ì„œ ì‚¬ë²ˆ, ì‚¬ì›ëª…, ë¶€ì„œë²ˆí˜¸, ë¶€ì„œëª…ì„ ì¶œë ¥í•˜ë˜ ì‚¬ì›ëª… ì•ŒíŒŒë²³ ìˆœìœ¼ë¡œ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT EMPNO,ENAME,E.DEPTNO,DNAME FROM EMP E,DEPT D WHERE E.DEPTNO = D.DEPTNO ORDER BY ENAME;
---6. ±Þ¿©°¡ 2000ÀÌ»óÀÎ »ç¿ø¿¡ ´ëÇØ »ç¹ø, »ç¿ø¸í, ±Þ¿©, ºÎ¼­¸íÀ» ±Þ¿©±âÁØÀ¸·Î ³»¸²Â÷¼ø Á¤·ÄÇÏ¿© Ãâ·ÂÇÏ½Ã¿À.
+--6. ê¸‰ì—¬ê°€ 2000ì´ìƒì¸ ì‚¬ì›ì— ëŒ€í•´ ì‚¬ë²ˆ, ì‚¬ì›ëª…, ê¸‰ì—¬, ë¶€ì„œëª…ì„ ê¸‰ì—¬ê¸°ì¤€ìœ¼ë¡œ ë‚´ë¦¼ì°¨ìˆœ ì •ë ¬í•˜ì—¬ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT EMPNO,ENAME,SAL,DNAME FROM EMP E,DEPT D WHERE E.DEPTNO = D.DEPTNO ORDER BY SAL DESC;
---7. Á÷Ã¥ÀÌ MANAGERÀÌ¸ç ±Þ¿©°¡ 2500ÀÌ»óÀÎ »ç¿ø¿¡ ´ëÇØ »ç¹ø, »ç¿ø¸í, Á÷Ã¥, ±Þ¿©, ºÎ¼­¸íÀ» »ç¹ø ±âÁØÀ¸·Î
---¿À¸§Â÷¼ø Á¤·ÄÇÏ¿© Ãâ·ÂÇÏ½Ã¿À.
+--7. ì§ì±…ì´ MANAGERì´ë©° ê¸‰ì—¬ê°€ 2500ì´ìƒì¸ ì‚¬ì›ì— ëŒ€í•´ ì‚¬ë²ˆ, ì‚¬ì›ëª…, ì§ì±…, ê¸‰ì—¬, ë¶€ì„œëª…ì„ ì‚¬ë²ˆ ê¸°ì¤€ìœ¼ë¡œ
+--ì˜¤ë¦„ì°¨ìˆœ ì •ë ¬í•˜ì—¬ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT EMPNO,ENAME,JOB,SAL,DNAME FROM EMP E,DEPT D WHERE E.DEPTNO = D.DEPTNO AND SAL >= 2500 ORDER BY EMPNO;
---8. »ç¹ø, »ç¿ø¸í, Á÷Ã¥, ±Þ¿©, ±Þ¿©µî±ÞÀ» ±Þ¿©±âÁØÀ¸·Î ³»¸²Â÷¼ø Á¤·ÄÇÏ¿© Ãâ·ÂÇÏ½Ã¿À
+--8. ì‚¬ë²ˆ, ì‚¬ì›ëª…, ì§ì±…, ê¸‰ì—¬, ê¸‰ì—¬ë“±ê¸‰ì„ ê¸‰ì—¬ê¸°ì¤€ìœ¼ë¡œ ë‚´ë¦¼ì°¨ìˆœ ì •ë ¬í•˜ì—¬ ì¶œë ¥í•˜ì‹œì˜¤
 SELECT EMPNO,ENAME,JOB,SAL,GRADE FROM EMP,SALGRADE WHERE SAL BETWEEN LOSAL AND HISAL ORDER BY SAL DESC;
---9. »ó»ç°¡ ¾ø´Â Á÷¿ø°ú »ó»ç°¡ ÀÖ´Â Á÷¿ø ¸ðµÎ¿¡ ´ëÇØ, »ç¿ø¸í, Á÷¼Ó»ó»ç¸íÀ» Ãâ·ÂÇÏ½Ã¿À.
+--9. ìƒì‚¬ê°€ ì—†ëŠ” ì§ì›ê³¼ ìƒì‚¬ê°€ ìžˆëŠ” ì§ì› ëª¨ë‘ì— ëŒ€í•´, ì‚¬ì›ëª…, ì§ì†ìƒì‚¬ëª…ì„ ì¶œë ¥í•˜ì‹œì˜¤.
 SELECT W.ENAME, M.ENAME FROM EMP W, EMP M
     WHERE W.MGR = M.EMPNO(+);
---10.»ó»ç°¡ ¾ø´Â Á÷¿ø°ú »ó»ç°¡ ÀÖ´Â Á÷¿ø ¸ðµÎ¿¡ ´ëÇØ, »ç¿ø¸í, »ó»ç¸í, »ó»çÀÇ »ó»ç¸íÀ» Ãâ·ÂÇÏ½Ã¿À
+--10.ìƒì‚¬ê°€ ì—†ëŠ” ì§ì›ê³¼ ìƒì‚¬ê°€ ìžˆëŠ” ì§ì› ëª¨ë‘ì— ëŒ€í•´, ì‚¬ì›ëª…, ìƒì‚¬ëª…, ìƒì‚¬ì˜ ìƒì‚¬ëª…ì„ ì¶œë ¥í•˜ì‹œì˜¤
 SELECT W.ENAME, M.ENAME, MM.ENAME FROM EMP W, EMP M, EMP MM
     WHERE W.MGR = M.EMPNO(+) AND M.MGR = MM.EMPNO(+);
 
--- ´ÜÀÏÇàÇÔ¼ö ¿¬½À¹®Á¦
---1. ÇöÀç ³¯Â¥¸¦ TITLE¿¡ Current Date·Î º°ÄªÀ¸·Î Ãâ·ÂÇÏ´Â SELECT ¹®ÀåÀ» ±â¼úÇÏ½Ã¿À.
+-- ë‹¨ì¼í–‰í•¨ìˆ˜ ì—°ìŠµë¬¸ì œ
+--1. í˜„ìž¬ ë‚ ì§œë¥¼ TITLEì— Current Dateë¡œ ë³„ì¹­ìœ¼ë¡œ ì¶œë ¥í•˜ëŠ” SELECT ë¬¸ìž¥ì„ ê¸°ìˆ í•˜ì‹œì˜¤.
 SELECT SYSDATE "Current Date" FROM DUAL;
---2. EMP Å×ÀÌºí¿¡¼­ ÇöÀç ±Þ¿©¿¡ 15%°¡ Áõ°¡µÈ ±Þ¿©¸¦ »ç¿ø¹øÈ£,ÀÌ¸§,¾÷¹«,±Þ¿©,Áõ°¡µÈ ±Þ¿©(New Salary),Áõ°¡¾×(Increase)¸¦ Ãâ·ÂÇÏ´Â SELECT ¹®ÀåÀ» ±â¼úÇÏ½Ã¿À.
+--2. EMP í…Œì´ë¸”ì—ì„œ í˜„ìž¬ ê¸‰ì—¬ì— 15%ê°€ ì¦ê°€ëœ ê¸‰ì—¬ë¥¼ ì‚¬ì›ë²ˆí˜¸,ì´ë¦„,ì—…ë¬´,ê¸‰ì—¬,ì¦ê°€ëœ ê¸‰ì—¬(New Salary),ì¦ê°€ì•¡(Increase)ë¥¼ ì¶œë ¥í•˜ëŠ” SELECT ë¬¸ìž¥ì„ ê¸°ìˆ í•˜ì‹œì˜¤.
 SELECT EMPNO,ENAME,JOB,SAL,SAL*1.15 "New Salary",SAL*0.15 "Increase" FROM EMP;
---3. EMP Å×ÀÌºí¿¡¼­ ÀÌ¸§,ÀÔ»çÀÏ,ÀÔ»çÀÏ·ÎºÎÅÍ 6°³¿ù ÈÄ µ¹¾Æ¿À´Â ¿ù¿äÀÏ ±¸ÇÏ¿© Ãâ·ÂÇÏ´Â SELECT ¹®ÀåÀ» ±â¼úÇÏ½Ã¿À.
-SELECT ENAME,HIREDATE, NEXT_DAY(ADD_MONTHS(HIREDATE,6),'¿ù') FROM EMP;
---4. EMP Å×ÀÌºí¿¡¼­ ÀÌ¸§,ÀÔ»çÀÏ, ÀÔ»çÀÏ·ÎºÎÅÍ ÇöÀç±îÁöÀÇ ¿ù¼ö,±Þ¿©, ÀÔ»çÀÏºÎÅÍ ÇöÀç±îÁöÀÇ ±Þ¿©ÀÇ ÃÑ°è¸¦ Ãâ·ÂÇÏ´Â SELECT ¹®ÀåÀ» ±â¼úÇÏ½Ã¿À.
+--3. EMP í…Œì´ë¸”ì—ì„œ ì´ë¦„,ìž…ì‚¬ì¼,ìž…ì‚¬ì¼ë¡œë¶€í„° 6ê°œì›” í›„ ëŒì•„ì˜¤ëŠ” ì›”ìš”ì¼ êµ¬í•˜ì—¬ ì¶œë ¥í•˜ëŠ” SELECT ë¬¸ìž¥ì„ ê¸°ìˆ í•˜ì‹œì˜¤.
+SELECT ENAME,HIREDATE, NEXT_DAY(ADD_MONTHS(HIREDATE,6),'ì›”') FROM EMP;
+--4. EMP í…Œì´ë¸”ì—ì„œ ì´ë¦„,ìž…ì‚¬ì¼, ìž…ì‚¬ì¼ë¡œë¶€í„° í˜„ìž¬ê¹Œì§€ì˜ ì›”ìˆ˜,ê¸‰ì—¬, ìž…ì‚¬ì¼ë¶€í„° í˜„ìž¬ê¹Œì§€ì˜ ê¸‰ì—¬ì˜ ì´ê³„ë¥¼ ì¶œë ¥í•˜ëŠ” SELECT ë¬¸ìž¥ì„ ê¸°ìˆ í•˜ì‹œì˜¤.
 SELECT ENAME, HIREDATE, TRUNC(MONTHS_BETWEEN(SYSDATE,HIREDATE)),SAL,TRUNC(MONTHS_BETWEEN(SYSDATE,HIREDATE))*SAL FROM EMP;
---5. EMP Å×ÀÌºí¿¡¼­ ¸ðµç »ç¿øÀÇ ÀÌ¸§°ú ±Þ¿©(15ÀÚ¸®·Î Ãâ·Â ÁÂÃøÀÇ ºó °÷Àº ¡°*¡±·Î ´ëÄ¡)¸¦ Ãâ·ÂÇÏ´Â SELECT ¹®ÀåÀ» ±â¼úÇÏ½Ã¿À.
+--5. EMP í…Œì´ë¸”ì—ì„œ ëª¨ë“  ì‚¬ì›ì˜ ì´ë¦„ê³¼ ê¸‰ì—¬(15ìžë¦¬ë¡œ ì¶œë ¥ ì¢Œì¸¡ì˜ ë¹ˆ ê³³ì€ â€œ*â€ë¡œ ëŒ€ì¹˜)ë¥¼ ì¶œë ¥í•˜ëŠ” SELECT ë¬¸ìž¥ì„ ê¸°ìˆ í•˜ì‹œì˜¤.
 SELECT ENAME,LPAD(SAL,15,'*') FROM EMP;
---6. EMP Å×ÀÌºí¿¡¼­ ¸ðµç »ç¿øÀÇ Á¤º¸¸¦ ÀÌ¸§,¾÷¹«,ÀÔ»çÀÏ,ÀÔ»çÇÑ ¿äÀÏÀ» Ãâ·ÂÇÏ´Â SELECT ¹®ÀåÀ» ±â¼úÇÏ½Ã¿À.
+--6. EMP í…Œì´ë¸”ì—ì„œ ëª¨ë“  ì‚¬ì›ì˜ ì •ë³´ë¥¼ ì´ë¦„,ì—…ë¬´,ìž…ì‚¬ì¼,ìž…ì‚¬í•œ ìš”ì¼ì„ ì¶œë ¥í•˜ëŠ” SELECT ë¬¸ìž¥ì„ ê¸°ìˆ í•˜ì‹œì˜¤.
 SELECT ENAME,JOB,HIREDATE,TO_CHAR(HIREDATE,'DY') FROM EMP;
---7. EMP Å×ÀÌºí¿¡¼­ ÀÌ¸§ÀÇ ±æÀÌ°¡ 6ÀÚ ÀÌ»óÀÎ »ç¿øÀÇ Á¤º¸¸¦ ÀÌ¸§,ÀÌ¸§ÀÇ ±ÛÀÚ¼ö,¾÷¹«¸¦ Ãâ·ÂÇÏ´Â SELECT ¹®ÀåÀ» ±â¼úÇÏ½Ã¿À.
+--7. EMP í…Œì´ë¸”ì—ì„œ ì´ë¦„ì˜ ê¸¸ì´ê°€ 6ìž ì´ìƒì¸ ì‚¬ì›ì˜ ì •ë³´ë¥¼ ì´ë¦„,ì´ë¦„ì˜ ê¸€ìžìˆ˜,ì—…ë¬´ë¥¼ ì¶œë ¥í•˜ëŠ” SELECT ë¬¸ìž¥ì„ ê¸°ìˆ í•˜ì‹œì˜¤.
 SELECT ENAME,LENGTH(ENAME),JOB FROM EMP WHERE LENGTH(ENAME) >= 6;
---8. EMP Å×ÀÌºí¿¡¼­ ¸ðµç »ç¿øÀÇ Á¤º¸¸¦ ÀÌ¸§, ¾÷¹«, ±Þ¿©, º¸³Ê½º, ±Þ¿©+º¸³Ê½º¸¦ Ãâ·ÂÇÏ´Â SELECT ¹®ÀåÀ» ±â¼úÇÏ½Ã¿À
+--8. EMP í…Œì´ë¸”ì—ì„œ ëª¨ë“  ì‚¬ì›ì˜ ì •ë³´ë¥¼ ì´ë¦„, ì—…ë¬´, ê¸‰ì—¬, ë³´ë„ˆìŠ¤, ê¸‰ì—¬+ë³´ë„ˆìŠ¤ë¥¼ ì¶œë ¥í•˜ëŠ” SELECT ë¬¸ìž¥ì„ ê¸°ìˆ í•˜ì‹œì˜¤
 SELECT ENAME,JOB,SAL,COMM,SAL+NVL(COMM,0) FROM EMP;
---9. »ç¿ø Å×ÀÌºíÀÇ »ç¿ø¸í¿¡¼­ 2¹øÂ° ¹®ÀÚºÎÅÍ 3°³ÀÇ ¹®ÀÚ¸¦ ÃßÃâÇÏ½Ã¿À. 
+--9. ì‚¬ì› í…Œì´ë¸”ì˜ ì‚¬ì›ëª…ì—ì„œ 2ë²ˆì§¸ ë¬¸ìžë¶€í„° 3ê°œì˜ ë¬¸ìžë¥¼ ì¶”ì¶œí•˜ì‹œì˜¤. 
 SELECT SUBSTR(ENAME,2,3) FROM EMP;
---10. »ç¿ø Å×ÀÌºí¿¡¼­ ÀÔ»çÀÏÀÌ 12¿ùÀÎ »ç¿øÀÇ »ç¹ø, »ç¿ø¸í, ÀÔ»çÀÏÀ» °Ë»öÇÏ½Ã¿À (EXTRACTÇÔ¼ö, TO_CHARÇÔ¼ö)
+--10. ì‚¬ì› í…Œì´ë¸”ì—ì„œ ìž…ì‚¬ì¼ì´ 12ì›”ì¸ ì‚¬ì›ì˜ ì‚¬ë²ˆ, ì‚¬ì›ëª…, ìž…ì‚¬ì¼ì„ ê²€ìƒ‰í•˜ì‹œì˜¤ (EXTRACTí•¨ìˆ˜, TO_CHARí•¨ìˆ˜)
 SELECT EMPNO, ENAME, HIREDATE FROM EMP WHERE TO_CHAR(HIREDATE,'MM')=12;
---11. ´ÙÀ½°ú °°Àº °á°ú¸¦ °Ë»öÇÒ ¼ö ÀÖ´Â SQL ¹®ÀåÀ» ÀÛ¼ºÇÏ½Ã¿À
---EMPNO ENAME ±Þ¿©
+--11. ë‹¤ìŒê³¼ ê°™ì€ ê²°ê³¼ë¥¼ ê²€ìƒ‰í•  ìˆ˜ ìžˆëŠ” SQL ë¬¸ìž¥ì„ ìž‘ì„±í•˜ì‹œì˜¤
+--EMPNO ENAME ê¸‰ì—¬
 --7369 SMITH *******800
 --7499 ALLEN ******1600
 --7521 WARD ******1250
---¡¦¡¦.
+--â€¦â€¦.
 SELECT EMPNO, ENAME, LPAD(SAL,10,'*') FROM EMP;
---12. ´ÙÀ½°ú °°Àº °á°ú¸¦ °Ë»öÇÒ ¼ö ÀÖ´Â SQL ¹®ÀåÀ» ÀÛ¼ºÇÏ½Ã¿À
---EMPNO ENAME ÀÔ»çÀÏ
+--12. ë‹¤ìŒê³¼ ê°™ì€ ê²°ê³¼ë¥¼ ê²€ìƒ‰í•  ìˆ˜ ìžˆëŠ” SQL ë¬¸ìž¥ì„ ìž‘ì„±í•˜ì‹œì˜¤
+--EMPNO ENAME ìž…ì‚¬ì¼
 --7369 SMITH 1980-12-17
---¡¦.
+--â€¦.
 SELECT EMPNO, ENAME, TO_CHAR(HIREDATE,'YYYY-MM-DD') FROM EMP;
---13. »ç¿ø Å×ÀÌºí¿¡¼­ ºÎ¼­¹øÈ£°¡ 20ÀÎ »ç¿øÀÇ »ç¹ø, ÀÌ¸§, Á÷¹«, ±Þ¿©¸¦ Ãâ·ÂÇÏ½Ã¿À(±Þ¿©´Â ¾Õ¿¡ $¸¦ »ðÀÔÇÏ°í 3ÀÚ¸®¸¶´Ù , ¸¦ Ãâ·ÂÇÑ´Ù
+--13. ì‚¬ì› í…Œì´ë¸”ì—ì„œ ë¶€ì„œë²ˆí˜¸ê°€ 20ì¸ ì‚¬ì›ì˜ ì‚¬ë²ˆ, ì´ë¦„, ì§ë¬´, ê¸‰ì—¬ë¥¼ ì¶œë ¥í•˜ì‹œì˜¤(ê¸‰ì—¬ëŠ” ì•žì— $ë¥¼ ì‚½ìž…í•˜ê³  3ìžë¦¬ë§ˆë‹¤ , ë¥¼ ì¶œë ¥í•œë‹¤
 SELECT EMPNO, ENAME, JOB, TO_CHAR(SAL,'$99,999') FROM EMP WHERE DEPTNO = 20;
 
 
--- ±×·ìÇÔ¼ö <¿¬½À¹®Á¦>
--- 1. ÀÎ¿ø¼ö,ÃÖ´ë ±Þ¿©,ÃÖ¼Ò ±Þ¿©,±Þ¿©ÀÇ ÇÕÀ» Ãâ·Â
+-- ê·¸ë£¹í•¨ìˆ˜ <ì—°ìŠµë¬¸ì œ>
+-- 1. ì¸ì›ìˆ˜,ìµœëŒ€ ê¸‰ì—¬,ìµœì†Œ ê¸‰ì—¬,ê¸‰ì—¬ì˜ í•©ì„ ì¶œë ¥
 SELECT COUNT(*), MAX(SAL), MIN(SAL), SUM(SAL) FROM EMP;
--- 2. ¾÷¹«º° ÀÎ¿ø¼ö¸¦ ±¸ÇÏ¿© Ãâ·Â
+-- 2. ì—…ë¬´ë³„ ì¸ì›ìˆ˜ë¥¼ êµ¬í•˜ì—¬ ì¶œë ¥
 SELECT JOB, COUNT(*) FROM EMP GROUP BY JOB;
---- 3. ÃÖ°í ±Þ¿©¿Í ÃÖ¼Ò ±Þ¿©ÀÇ Â÷ÀÌ´Â ¾ó¸¶ÀÎ°¡ Ãâ·Â
+--- 3. ìµœê³  ê¸‰ì—¬ì™€ ìµœì†Œ ê¸‰ì—¬ì˜ ì°¨ì´ëŠ” ì–¼ë§ˆì¸ê°€ ì¶œë ¥
 SELECT MAX(SAL) - MIN(SAL) FROM EMP;
--- 4. °¢ ºÎ¼­º°·Î ÀÎ¿ø¼ö, ±Þ¿© Æò±Õ, ÃÖÀú ±Þ¿©, ÃÖ°í ±Þ¿©, ±Þ¿©ÀÇ ÇÕÀ» Ãâ·Â(±Þ¿©ÀÇ ÇÕÀÌ ¸¹Àº ¼øÀ¸·Î)
+-- 4. ê° ë¶€ì„œë³„ë¡œ ì¸ì›ìˆ˜, ê¸‰ì—¬ í‰ê· , ìµœì € ê¸‰ì—¬, ìµœê³  ê¸‰ì—¬, ê¸‰ì—¬ì˜ í•©ì„ ì¶œë ¥(ê¸‰ì—¬ì˜ í•©ì´ ë§Žì€ ìˆœìœ¼ë¡œ)
 SELECT DEPTNO, COUNT(*), ROUND(AVG(SAL),1), MIN(SAL), MAX(SAL), SUM(SAL) 
     FROM EMP GROUP BY DEPTNO
     ORDER BY SUM(SAL) DESC;
--- 5. ºÎ¼­º°, ¾÷¹«º° ±×·ìÇÏ¿© °á°ú¸¦ ºÎ¼­¹øÈ£, ¾÷¹«, ÀÎ¿ø¼ö, ±Þ¿©ÀÇ Æò±Õ, ±Þ¿©ÀÇ ÇÕÀ» Ãâ·Â(ºÎ¼­¹øÈ£, ¾÷¹«¼øÀ¸·Î ¿À¸§Â÷¼ø Á¤·Ä)
+-- 5. ë¶€ì„œë³„, ì—…ë¬´ë³„ ê·¸ë£¹í•˜ì—¬ ê²°ê³¼ë¥¼ ë¶€ì„œë²ˆí˜¸, ì—…ë¬´, ì¸ì›ìˆ˜, ê¸‰ì—¬ì˜ í‰ê· , ê¸‰ì—¬ì˜ í•©ì„ ì¶œë ¥(ë¶€ì„œë²ˆí˜¸, ì—…ë¬´ìˆœìœ¼ë¡œ ì˜¤ë¦„ì°¨ìˆœ ì •ë ¬)
 SELECT DEPTNO,JOB,COUNT(*),AVG(SAL),SUM(SAL) FROM EMP
     GROUP BY DEPTNO, JOB
     ORDER BY DEPTNO, JOB;
--- 6. ¾÷¹«º°, ºÎ¼­º° ±×·ìÇÏ¿© °á°ú¸¦  ¾÷¹«, ºÎ¼­¹øÈ£, ÀÎ¿ø¼ö, ±Þ¿©ÀÇ Æò±Õ, ±Þ¿©ÀÇ ÇÕÀ» Ãâ·Â(Ãâ·Â°á°ú´Â ¾÷¹«¼ø, ºÎ¼­¹øÈ£ ¼ø ¿À¸§Â÷¼ø Á¤·Ä)
+-- 6. ì—…ë¬´ë³„, ë¶€ì„œë³„ ê·¸ë£¹í•˜ì—¬ ê²°ê³¼ë¥¼  ì—…ë¬´, ë¶€ì„œë²ˆí˜¸, ì¸ì›ìˆ˜, ê¸‰ì—¬ì˜ í‰ê· , ê¸‰ì—¬ì˜ í•©ì„ ì¶œë ¥(ì¶œë ¥ê²°ê³¼ëŠ” ì—…ë¬´ìˆœ, ë¶€ì„œë²ˆí˜¸ ìˆœ ì˜¤ë¦„ì°¨ìˆœ ì •ë ¬)
 SELECT JOB, DEPTNO, COUNT(*), AVG(SAL), SUM(SAL) FROM EMP
     GROUP BY JOB, DEPTNO ORDER BY JOB, DEPTNO;
---7. »ç¿ø¼ö°¡ 5¸íÀÌ»ó ³Ñ´Â ºÎ¼­¹øÈ£¿Í »ç¿ø¼ö¸¦ Ãâ·Â
+--7. ì‚¬ì›ìˆ˜ê°€ 5ëª…ì´ìƒ ë„˜ëŠ” ë¶€ì„œë²ˆí˜¸ì™€ ì‚¬ì›ìˆ˜ë¥¼ ì¶œë ¥
 SELECT DEPTNO, COUNT(*) FROM EMP GROUP BY DEPTNO HAVING COUNT(*) >= 5;
--- 8. »ç¿ø¼ö°¡ 5¸íÀÌ»ó ³Ñ´Â ºÎ¼­¸í°ú »ç¿ø¼ö¸¦ Ãâ·Â
+-- 8. ì‚¬ì›ìˆ˜ê°€ 5ëª…ì´ìƒ ë„˜ëŠ” ë¶€ì„œëª…ê³¼ ì‚¬ì›ìˆ˜ë¥¼ ì¶œë ¥
 SELECT DNAME, COUNT(*) FROM EMP, DEPT WHERE EMP.DEPTNO = DEPT.DEPTNO 
     GROUP BY DNAME HAVING COUNT(*) >= 5;
---9. ¾÷¹«º° ±Þ¿©ÀÇ Æò±ÕÀÌ 3000ÀÌ»óÀÎ ¾÷¹«¿¡ ´ëÇØ¼­ ¾÷¹«¸í, Æò±Õ ±Þ¿©, ±Þ¿©ÀÇ ÇÕÀ» Ãâ·Â
+--9. ì—…ë¬´ë³„ ê¸‰ì—¬ì˜ í‰ê· ì´ 3000ì´ìƒì¸ ì—…ë¬´ì— ëŒ€í•´ì„œ ì—…ë¬´ëª…, í‰ê·  ê¸‰ì—¬, ê¸‰ì—¬ì˜ í•©ì„ ì¶œë ¥
 SELECT JOB, AVG(SAL), SUM(SAL) FROM EMP
     GROUP BY JOB HAVING AVG(SAL) >= 3000;
---10. ±Þ¿© ÇÕÀÌ 5000À» ÃÊ°úÇÏ´Â °¢ ¾÷¹«¿¡ ´ëÇØ¼­ ¾÷¹«¿Í ±Þ¿©ÇÕÀ» Ãâ·Â(±Þ¿© ÇÕ°è¼ø ³»¸²Â÷¼ø Á¤·Ä)
+--10. ê¸‰ì—¬ í•©ì´ 5000ì„ ì´ˆê³¼í•˜ëŠ” ê° ì—…ë¬´ì— ëŒ€í•´ì„œ ì—…ë¬´ì™€ ê¸‰ì—¬í•©ì„ ì¶œë ¥(ê¸‰ì—¬ í•©ê³„ìˆœ ë‚´ë¦¼ì°¨ìˆœ ì •ë ¬)
 SELECT JOB, SUM(SAL) FROM EMP
     GROUP BY JOB HAVING SUM(SAL) > 5000 
     ORDER BY SUM(SAL) DESC;
---11. ºÎ¼­º° ±Þ¿©Æò±Õ, ºÎ¼­º° ±Þ¿©ÇÕ°è, ºÎ¼­º° ÃÖ¼Ò±Þ¿©¸¦ Ãâ·Â
+--11. ë¶€ì„œë³„ ê¸‰ì—¬í‰ê· , ë¶€ì„œë³„ ê¸‰ì—¬í•©ê³„, ë¶€ì„œë³„ ìµœì†Œê¸‰ì—¬ë¥¼ ì¶œë ¥
 SELECT DEPTNO, AVG(SAL), SUM(SAL), MIN(SAL) FROM EMP
     GROUP BY DEPTNO;
---12. À§ÀÇ 11¹øÀ» ¼öÁ¤ÇÏ¿©, ºÎ¼­º° ±Þ¿©Æò±Õ ÃÖ´ëÄ¡, ºÎ¼­º° ±Þ¿©ÇÕÀÇ ÃÖ´ëÄ¡, ºÎ¼­º° ÃÖ¼Ò±Þ¿©ÀÇ ÃÖ´ëÄ¡¸¦ Ãâ·Â
+--12. ìœ„ì˜ 11ë²ˆì„ ìˆ˜ì •í•˜ì—¬, ë¶€ì„œë³„ ê¸‰ì—¬í‰ê·  ìµœëŒ€ì¹˜, ë¶€ì„œë³„ ê¸‰ì—¬í•©ì˜ ìµœëŒ€ì¹˜, ë¶€ì„œë³„ ìµœì†Œê¸‰ì—¬ì˜ ìµœëŒ€ì¹˜ë¥¼ ì¶œë ¥
 SELECT MAX(AVG(SAL)), MAX(SUM(SAL)), MAX(MIN(SAL)) FROM EMP
     GROUP BY DEPTNO;
---13. »ç¿ø Å×ÀÌºí¿¡¼­ ¾Æ·¡ÀÇ °á°ú¸¦ Ãâ·Â
+--13. ì‚¬ì› í…Œì´ë¸”ì—ì„œ ì•„ëž˜ì˜ ê²°ê³¼ë¥¼ ì¶œë ¥
 --H_YEAR COUNT(*)	MIN(SAL)	MAX(SAL)	AVG(SAL)	SUM(SAL)
 --  80	  1		    800		    800		    800		    800
 --	81	 10		    950		    5000	    2282.5	  22825
@@ -175,7 +175,7 @@ SELECT MAX(AVG(SAL)), MAX(SUM(SAL)), MAX(MIN(SAL)) FROM EMP
 SELECT TO_CHAR(HIREDATE,'RR') H_YEAR, COUNT(*), MIN(SAL), MAX(SAL), AVG(SAL), SUM(SAL)
     FROM EMP GROUP BY TO_CHAR(HIREDATE,'RR')
     ORDER BY H_YEAR;
--- 14.  ¾Æ·¡ÀÇ °á°ú¸¦ Ãâ·Â(ÀÔ»ç³âµµº° »ç¿ø¼ö)
+-- 14.  ì•„ëž˜ì˜ ê²°ê³¼ë¥¼ ì¶œë ¥(ìž…ì‚¬ë…„ë„ë³„ ì‚¬ì›ìˆ˜)
 --  1980     1	
 --  1981     10
 --  1982     2
@@ -184,173 +184,173 @@ SELECT TO_CHAR(HIREDATE,'RR') H_YEAR, COUNT(*), MIN(SAL), MAX(SAL), AVG(SAL), SU
 SELECT NVL(TO_CHAR(HIREDATE,'YYYY'),'total') YEAR, COUNT(*) 
     FROM EMP GROUP BY ROLLUP(TO_CHAR(HIREDATE,'YYYY'))
     ORDER BY YEAR;
---15. ÃÖ´ë±Þ¿©, ÃÖ¼Ò±Þ¿©, ÀüÃ¼±Þ¿©ÇÕ, Æò±ÕÀ» Ãâ·Â
+--15. ìµœëŒ€ê¸‰ì—¬, ìµœì†Œê¸‰ì—¬, ì „ì²´ê¸‰ì—¬í•©, í‰ê· ì„ ì¶œë ¥
 SELECT MAX(SAL), MIN(SAL), SUM(SAL), AVG(SAL) FROM EMP;
---16. ºÎ¼­º° ÀÎ¿ø¼ö Ãâ·Â
+--16. ë¶€ì„œë³„ ì¸ì›ìˆ˜ ì¶œë ¥
 SELECT DEPTNO, COUNT(*) FROM EMP GROUP BY DEPTNO;
---17. ºÎ¼­º° ÀÎ¿ø¼ö°¡ 6¸íÀÌ»óÀÎ ºÎ¼­¹øÈ£ Ãâ·Â
+--17. ë¶€ì„œë³„ ì¸ì›ìˆ˜ê°€ 6ëª…ì´ìƒì¸ ë¶€ì„œë²ˆí˜¸ ì¶œë ¥
 SELECT DEPTNO, COUNT(*) FROM EMP GROUP BY DEPTNO HAVING COUNT(*) >=6 ;
---18. ±Þ¿©°¡ ³ôÀº ¼ø¼­´ë·Î µî¼ö¸¦ ºÎ¿©ÇÏ¿© ´ÙÀ½°ú °°Àº °á°ú°¡ ³ª¿À°Ô ÇÏ½Ã¿À. 
--- (ÈùÆ® self join, group by, count»ç¿ë)
---ENAME	    µî¼ö
+--18. ê¸‰ì—¬ê°€ ë†’ì€ ìˆœì„œëŒ€ë¡œ ë“±ìˆ˜ë¥¼ ë¶€ì—¬í•˜ì—¬ ë‹¤ìŒê³¼ ê°™ì€ ê²°ê³¼ê°€ ë‚˜ì˜¤ê²Œ í•˜ì‹œì˜¤. 
+-- (ížŒíŠ¸ self join, group by, countì‚¬ìš©)
+--ENAME	    ë“±ìˆ˜
 --________________________
 --KING		1
 --SCOTT		2
---¡¦¡¦
-SELECT E1.ENAME, COUNT(E2.ENAME)+1 "µî¼ö"
+--â€¦â€¦
+SELECT E1.ENAME, COUNT(E2.ENAME)+1 "ë“±ìˆ˜"
     FROM EMP E1, EMP E2
     WHERE E1.SAL < E2.SAL(+)
     GROUP BY E1.ENAME
-    ORDER BY µî¼ö;
+    ORDER BY ë“±ìˆ˜;
 
--- ¼­ºêÄõ¸®¹®Á¦ 
---1. »ç¿øÅ×ÀÌºí¿¡¼­ °¡Àå ¸ÕÀú ÀÔ»çÇÑ »ç¶÷ÀÇ ÀÌ¸§, ±Þ¿©, ÀÔ»çÀÏ
+-- ì„œë¸Œì¿¼ë¦¬ë¬¸ì œ 
+--1. ì‚¬ì›í…Œì´ë¸”ì—ì„œ ê°€ìž¥ ë¨¼ì € ìž…ì‚¬í•œ ì‚¬ëžŒì˜ ì´ë¦„, ê¸‰ì—¬, ìž…ì‚¬ì¼
 SELECT ENAME, SAL, HIREDATE FROM EMP WHERE HIREDATE = (SELECT MIN(HIREDATE) FROM EMP);
 
--- 2. È¸»ç¿¡¼­ °¡Àå ±Þ¿©°¡ ÀûÀº »ç¶÷ÀÇ ÀÌ¸§, ±Þ¿©
+-- 2. íšŒì‚¬ì—ì„œ ê°€ìž¥ ê¸‰ì—¬ê°€ ì ì€ ì‚¬ëžŒì˜ ì´ë¦„, ê¸‰ì—¬
 SELECT ENAME, SAL FROM EMP WHERE SAL = (SELECT MIN(SAL) FROM EMP);
 
--- 3. È¸»ç Æò±Õº¸´Ù ±Þ¿©¸¦ ¸¹ÀÌ ¹Þ´Â »ç¶÷ÀÇ ÀÌ¸§, ±Þ¿©, ºÎ¼­ÄÚµå
+-- 3. íšŒì‚¬ í‰ê· ë³´ë‹¤ ê¸‰ì—¬ë¥¼ ë§Žì´ ë°›ëŠ” ì‚¬ëžŒì˜ ì´ë¦„, ê¸‰ì—¬, ë¶€ì„œì½”ë“œ
 SELECT ENAME, SAL, DEPTNO FROM EMP WHERE SAL > (SELECT AVG(SAL) FROM EMP);
 
---4. È¸»ç Æò±Õ ÀÌÇÏÀÇ ±Þ¿©¸¦ ¹Þ´Â »ç¶÷ÀÇ ÀÌ¸§, ±Þ¿©, ºÎ¼­¸í
+--4. íšŒì‚¬ í‰ê·  ì´í•˜ì˜ ê¸‰ì—¬ë¥¼ ë°›ëŠ” ì‚¬ëžŒì˜ ì´ë¦„, ê¸‰ì—¬, ë¶€ì„œëª…
 SELECT ENAME, SAL, DNAME FROM EMP, DEPT WHERE EMP.DEPTNO = DEPT.DEPTNO AND SAL <= (SELECT AVG(SAL) FROM EMP);
 
---5. SCOTTº¸´Ù ¸ÕÀú ÀÔ»çÇÑ »ç¶÷ÀÇ ÀÌ¸§, ±Þ¿©, ÀÔ»çÀÏ, ±Þ¿© µî±Þ
+--5. SCOTTë³´ë‹¤ ë¨¼ì € ìž…ì‚¬í•œ ì‚¬ëžŒì˜ ì´ë¦„, ê¸‰ì—¬, ìž…ì‚¬ì¼, ê¸‰ì—¬ ë“±ê¸‰
 SELECT ENAME, SAL, HIREDATE, GRADE 
     FROM EMP, SALGRADE WHERE SAL BETWEEN LOSAL AND HISAL 
     AND HIREDATE < (SELECT HIREDATE FROM EMP WHERE ENAME = 'SCOTT');
     
---6. 5¹ø(SCOTTº¸´Ù ¸ÕÀú ÀÔ»çÇÑ »ç¶÷ÀÇ ÀÌ¸§, ±Þ¿©, ÀÔ»çÀÏ, ±Þ¿© µî±Þ)¿¡ ºÎ¼­¸í Ãß°¡ÇÏ°í ±Þ¿©°¡ Å« ¼ø Á¤·Ä
+--6. 5ë²ˆ(SCOTTë³´ë‹¤ ë¨¼ì € ìž…ì‚¬í•œ ì‚¬ëžŒì˜ ì´ë¦„, ê¸‰ì—¬, ìž…ì‚¬ì¼, ê¸‰ì—¬ ë“±ê¸‰)ì— ë¶€ì„œëª… ì¶”ê°€í•˜ê³  ê¸‰ì—¬ê°€ í° ìˆœ ì •ë ¬
 SELECT ENAME, SAL, HIREDATE, GRADE, DNAME
     FROM EMP, SALGRADE, DEPT WHERE SAL BETWEEN LOSAL AND HISAL AND EMP.DEPTNO = DEPT.DEPTNO
     AND HIREDATE < (SELECT HIREDATE FROM EMP WHERE ENAME = 'SCOTT')
     ORDER BY SAL DESC;
     
---7. BLAKE º¸´Ù ±Þ¿©°¡ ¸¹Àº »ç¿øµéÀÇ »ç¹ø, ÀÌ¸§, ±Þ¿©
+--7. BLAKE ë³´ë‹¤ ê¸‰ì—¬ê°€ ë§Žì€ ì‚¬ì›ë“¤ì˜ ì‚¬ë²ˆ, ì´ë¦„, ê¸‰ì—¬
 SELECT EMPNO, ENAME, SAL FROM EMP
     WHERE SAL < (SELECT SAL FROM EMP WHERE ENAME = 'BLAKE');
     
---8. MILLERº¸´Ù ´Ê°Ô ÀÔ»çÇÑ »ç¿øÀÇ »ç¹ø, ÀÌ¸§, ÀÔ»çÀÏ
+--8. MILLERë³´ë‹¤ ëŠ¦ê²Œ ìž…ì‚¬í•œ ì‚¬ì›ì˜ ì‚¬ë²ˆ, ì´ë¦„, ìž…ì‚¬ì¼
 SELECT EMPNO, ENAME, HIREDATE FROM EMP
     WHERE HIREDATE > (SELECT HIREDATE FROM EMP WHERE ENAME = 'MILLER');
     
---9. »ç¿øÀüÃ¼ Æò±Õ ±Þ¿©º¸´Ù ±Þ¿©°¡ ¸¹Àº »ç¿øµéÀÇ »ç¹ø, ÀÌ¸§, ±Þ¿©
+--9. ì‚¬ì›ì „ì²´ í‰ê·  ê¸‰ì—¬ë³´ë‹¤ ê¸‰ì—¬ê°€ ë§Žì€ ì‚¬ì›ë“¤ì˜ ì‚¬ë²ˆ, ì´ë¦„, ê¸‰ì—¬
 SELECT EMPNO, ENAME, SAL FROM EMP
     WHERE SAL > (SELECT AVG(SAL) FROM EMP);
     
---10. CLARK¿Í °°Àº ºÎ¼­¹øÈ£ÀÌ¸ç, »ç¹øÀÌ 7698ÀÎ Á÷¿øÀÇ ±Þ¿©º¸´Ù ¸¹Àº ±Þ¿©¸¦ ¹Þ´Â »ç¿øµéÀÇ »ç¹ø, ÀÌ¸§, ±Þ¿©
+--10. CLARKì™€ ê°™ì€ ë¶€ì„œë²ˆí˜¸ì´ë©°, ì‚¬ë²ˆì´ 7698ì¸ ì§ì›ì˜ ê¸‰ì—¬ë³´ë‹¤ ë§Žì€ ê¸‰ì—¬ë¥¼ ë°›ëŠ” ì‚¬ì›ë“¤ì˜ ì‚¬ë²ˆ, ì´ë¦„, ê¸‰ì—¬
 SELECT EMPNO, ENAME, SAL FROM EMP
     WHERE DEPTNO = (SELECT DEPTNO FROM EMP WHERE ENAME = 'CLARK')
     AND SAL > (SELECT SAL FROM EMP WHERE EMPNO = 7698);
     
---11. CLARK¿Í °°Àº ºÎ¼­¸íÀÌ¸ç, »ç¹øÀÌ 7698ÀÎ Á÷¿øÀÇ ±Þ¿©º¸´Ù ¸¹Àº ±Þ¿©¸¦ ¹Þ´Â »ç¿øµéÀÇ »ç¹ø, ÀÌ¸§, ±Þ¿©
+--11. CLARKì™€ ê°™ì€ ë¶€ì„œëª…ì´ë©°, ì‚¬ë²ˆì´ 7698ì¸ ì§ì›ì˜ ê¸‰ì—¬ë³´ë‹¤ ë§Žì€ ê¸‰ì—¬ë¥¼ ë°›ëŠ” ì‚¬ì›ë“¤ì˜ ì‚¬ë²ˆ, ì´ë¦„, ê¸‰ì—¬
 SELECT EMPNO, ENAME, SAL FROM EMP E, DEPT D
     WHERE E.DEPTNO = D.DEPTNO
     AND DNAME = (SELECT DNAME FROM EMP E,DEPT D WHERE E.DEPTNO=D.DEPTNO AND ENAME = 'CLARK')
     AND SAL > (SELECT SAL FROM EMP WHERE EMPNO = 7698);
     
---12. BLAKE¿Í °°Àº ºÎ¼­¿¡ ÀÖ´Â ¸ðµç »ç¿øÀÇ ÀÌ¸§°ú ÀÔ»çÀÏÀÚ
+--12. BLAKEì™€ ê°™ì€ ë¶€ì„œì— ìžˆëŠ” ëª¨ë“  ì‚¬ì›ì˜ ì´ë¦„ê³¼ ìž…ì‚¬ì¼ìž
 SELECT ENAME, HIREDATE FROM EMP
     WHERE DEPTNO = (SELECT DEPTNO FROM EMP WHERE ENAME = 'BLAKE')
     AND ENAME != 'BLAKE';
     
---13. Æò±Õ ±Þ¿© ÀÌ»óÀ» ¹Þ´Â ¸ðµç Á¾¾÷¿ø¿¡ ´ëÇØ¼­ »ç¿ø¹øÈ£¿Í ÀÌ¸§ ´Ü ±Þ¿©°¡ ¸¹Àº ¼øÀ¸·Î Ãâ·Â)
+--13. í‰ê·  ê¸‰ì—¬ ì´ìƒì„ ë°›ëŠ” ëª¨ë“  ì¢…ì—…ì›ì— ëŒ€í•´ì„œ ì‚¬ì›ë²ˆí˜¸ì™€ ì´ë¦„ ë‹¨ ê¸‰ì—¬ê°€ ë§Žì€ ìˆœìœ¼ë¡œ ì¶œë ¥)
 SELECT EMPNO, ENAME FROM EMP
     WHERE SAL > (SELECT AVG(SAL) FROM EMP)
     ORDER BY SAL DESC;
     
--- 14. ÀÌ¸§¿¡ ¡°T¡±°¡ ÀÖ´Â »ç¿øÀÌ ±Ù¹«ÇÏ´Â ºÎ¼­¿¡¼­ ±Ù¹«ÇÏ´Â ¸ðµç Á÷¿øÀÇ »ç¿ø ¹øÈ£,ÀÌ¸§,±Þ¿©(´Ü »ç¹ø ¼ø Ãâ·Â)
+-- 14. ì´ë¦„ì— â€œTâ€ê°€ ìžˆëŠ” ì‚¬ì›ì´ ê·¼ë¬´í•˜ëŠ” ë¶€ì„œì—ì„œ ê·¼ë¬´í•˜ëŠ” ëª¨ë“  ì§ì›ì˜ ì‚¬ì› ë²ˆí˜¸,ì´ë¦„,ê¸‰ì—¬(ë‹¨ ì‚¬ë²ˆ ìˆœ ì¶œë ¥)
 SELECT EMPNO, ENAME, SAL FROM EMP
     WHERE DEPTNO IN (SELECT DEPTNO FROM EMP WHERE ENAME LIKE '%T%')
     ORDER BY EMPNO;
     
--- 15. ºÎ¼­ À§Ä¡°¡ DallasÀÎ ¸ðµç Á¾¾÷¿ø¿¡ ´ëÇØ ÀÌ¸§,¾÷¹«,±Þ¿©
+-- 15. ë¶€ì„œ ìœ„ì¹˜ê°€ Dallasì¸ ëª¨ë“  ì¢…ì—…ì›ì— ëŒ€í•´ ì´ë¦„,ì—…ë¬´,ê¸‰ì—¬
 SELECT ENAME, JOB, SAL FROM EMP
     WHERE DEPTNO IN (SELECT E.DEPTNO FROM EMP E, DEPT D 
                         WHERE E.DEPTNO=D.DEPTNO
-                        AND INITCAP(LOC) = 'Dallas'); -- ¼­ºêÄõ¸® ÀÌ¿ë
+                        AND INITCAP(LOC) = 'Dallas'); -- ì„œë¸Œì¿¼ë¦¬ ì´ìš©
                         
-SELECT ENAME, JOB, SAL FROM EMP E, DEPT D -- EQUI JOIN ÀÌ¿ë
+SELECT ENAME, JOB, SAL FROM EMP E, DEPT D -- EQUI JOIN ì´ìš©
     WHERE E.DEPTNO = D.DEPTNO
     AND LOC = 'DALLAS';
     
--- 16. EMP Å×ÀÌºí¿¡¼­ King¿¡°Ô º¸°íÇÏ´Â ¸ðµç »ç¿øÀÇ ÀÌ¸§°ú ±Þ¿©
+-- 16. EMP í…Œì´ë¸”ì—ì„œ Kingì—ê²Œ ë³´ê³ í•˜ëŠ” ëª¨ë“  ì‚¬ì›ì˜ ì´ë¦„ê³¼ ê¸‰ì—¬
 SELECT ENAME, SAL FROM EMP
     WHERE MGR IN (SELECT EMPNO FROM EMP WHERE ENAME = 'KING');
     
--- 17. SALESºÎ¼­ »ç¿øÀÇ ÀÌ¸§, ¾÷¹«
+-- 17. SALESë¶€ì„œ ì‚¬ì›ì˜ ì´ë¦„, ì—…ë¬´
 SELECT ENAME, JOB FROM EMP
     WHERE DEPTNO IN (SELECT DEPTNO FROM DEPT WHERE DNAME = 'SALES');
     
--- 18. ¿ù±ÞÀÌ ºÎ¼­ 30ÀÇ ÃÖÀú ¿ù±Þº¸´Ù ³ôÀº »ç¿øÀÇ ¸ðµç ÇÊµå
+-- 18. ì›”ê¸‰ì´ ë¶€ì„œ 30ì˜ ìµœì € ì›”ê¸‰ë³´ë‹¤ ë†’ì€ ì‚¬ì›ì˜ ëª¨ë“  í•„ë“œ
 SELECT * FROM EMP WHERE SAL > (SELECT MIN(SAL) FROM EMP WHERE DEPTNO = 30);
 
--- 19. ºÎ¼­ 10¿¡¼­ ºÎ¼­ 30ÀÇ »ç¿ø°ú °°Àº ¾÷¹«¸¦ ¸Ã°í ÀÖ´Â »ç¿øÀÇ ÀÌ¸§°ú ¾÷¹«
+-- 19. ë¶€ì„œ 10ì—ì„œ ë¶€ì„œ 30ì˜ ì‚¬ì›ê³¼ ê°™ì€ ì—…ë¬´ë¥¼ ë§¡ê³  ìžˆëŠ” ì‚¬ì›ì˜ ì´ë¦„ê³¼ ì—…ë¬´
 SELECT ENAME, JOB FROM EMP WHERE DEPTNO = 10
     AND JOB IN (SELECT JOB FROM EMP WHERE DEPTNO = 30);
     
--- 20. FORD¿Í ¾÷¹«µµ ¿ù±Þµµ °°Àº »ç¿øÀÇ ¸ðµç ÇÊµå
+-- 20. FORDì™€ ì—…ë¬´ë„ ì›”ê¸‰ë„ ê°™ì€ ì‚¬ì›ì˜ ëª¨ë“  í•„ë“œ
 SELECT * FROM EMP WHERE (JOB,SAL) =
     (SELECT JOB, SAL FROM EMP WHERE ENAME = 'FORD')
     AND ENAME <> 'FORD';
     
--- 21. ÀÌ¸§ÀÌ JONESÀÎ Á÷¿øÀÇ JOB°ú °°°Å³ª FORDÀÇ SAL ÀÌ»óÀ» ¹Þ´Â »ç¿øÀÇ Á¤º¸¸¦ ÀÌ¸§, ¾÷¹«, ºÎ¼­¹øÈ£, ±Þ¿©
--- ´Ü, ¾÷¹«º° ¾ËÆÄºª ¼ø, ¿ù±ÞÀÌ ¸¹Àº ¼øÀ¸·Î Ãâ·Â
+-- 21. ì´ë¦„ì´ JONESì¸ ì§ì›ì˜ JOBê³¼ ê°™ê±°ë‚˜ FORDì˜ SAL ì´ìƒì„ ë°›ëŠ” ì‚¬ì›ì˜ ì •ë³´ë¥¼ ì´ë¦„, ì—…ë¬´, ë¶€ì„œë²ˆí˜¸, ê¸‰ì—¬
+-- ë‹¨, ì—…ë¬´ë³„ ì•ŒíŒŒë²³ ìˆœ, ì›”ê¸‰ì´ ë§Žì€ ìˆœìœ¼ë¡œ ì¶œë ¥
 SELECT ENAME,JOB,DEPTNO,SAL FROM EMP
     WHERE JOB = (SELECT JOB FROM EMP WHERE ENAME = 'JONES')
     OR SAL >= (SELECT SAL FROM EMP WHERE ENAME = 'FORD')
     ORDER BY JOB, SAL DESC;
     
--- 22. SCOTT ¶Ç´Â WARD¿Í ¿ù±ÞÀÌ °°Àº »ç¿øÀÇ Á¤º¸¸¦ ÀÌ¸§,¾÷¹«,±Þ¿©
+-- 22. SCOTT ë˜ëŠ” WARDì™€ ì›”ê¸‰ì´ ê°™ì€ ì‚¬ì›ì˜ ì •ë³´ë¥¼ ì´ë¦„,ì—…ë¬´,ê¸‰ì—¬
 SELECT ENAME, JOB, SAL FROM EMP
     WHERE SAL IN (SELECT SAL FROM EMP WHERE ENAME IN ('SCOTT','WARD'))
     AND ENAME NOT IN ('SCOTT','WARD');
     
--- 23. CHICAGO¿¡¼­ ±Ù¹«ÇÏ´Â »ç¿ø°ú °°Àº ¾÷¹«¸¦ ÇÏ´Â »ç¿øµéÀÇ ÀÌ¸§,¾÷¹«
+-- 23. CHICAGOì—ì„œ ê·¼ë¬´í•˜ëŠ” ì‚¬ì›ê³¼ ê°™ì€ ì—…ë¬´ë¥¼ í•˜ëŠ” ì‚¬ì›ë“¤ì˜ ì´ë¦„,ì—…ë¬´
 SELECT ENAME, JOB FROM EMP
     WHERE JOB IN (SELECT JOB 
                     FROM EMP, DEPT 
                     WHERE EMP.DEPTNO = DEPT.DEPTNO 
                     AND LOC ='CHICAGO');
                     
--- 24. ºÎ¼­º° Æò±Õ ¿ù±Þº¸´Ù ³ôÀº »ç¿øÀ» »ç¹ø, ÀÌ¸§, ±Þ¿©
+-- 24. ë¶€ì„œë³„ í‰ê·  ì›”ê¸‰ë³´ë‹¤ ë†’ì€ ì‚¬ì›ì„ ì‚¬ë²ˆ, ì´ë¦„, ê¸‰ì—¬
 SELECT EMPNO, ENAME, SAL FROM EMP E
     WHERE SAL > (SELECT AVG(SAL) FROM EMP WHERE DEPTNO = E.DEPTNO);
     
--- 25. ¾÷¹«º° Æò±Õ ¿ù±Þº¸´Ù ÀûÀº ¿ù±ÞÀ» ¹Þ´Â »ç¿øÀ» ºÎ¼­¹øÈ£, ÀÌ¸§, ±Þ¿©
+-- 25. ì—…ë¬´ë³„ í‰ê·  ì›”ê¸‰ë³´ë‹¤ ì ì€ ì›”ê¸‰ì„ ë°›ëŠ” ì‚¬ì›ì„ ë¶€ì„œë²ˆí˜¸, ì´ë¦„, ê¸‰ì—¬
 SELECT DEPTNO, ENAME, SAL FROM EMP E
     WHERE SAL < (SELECT AVG(SAL) FROM EMP WHERE JOB = E.JOB);
     
--- 26. Àû¾îµµ ÇÑ ¸í ÀÌ»óÀ¸·ÎºÎÅÍ º¸°í¸¦ ¹ÞÀ» ¼ö ÀÖ´Â »ç¿øÀ» ¾÷¹«, ÀÌ¸§, »ç¹ø, ºÎ¼­¹øÈ£¸¦ Ãâ·Â
---(´Ü, ºÎ¼­¹øÈ£ ¼øÀ¸·Î ¿À¸§Â÷¼ø Á¤·Ä)
+-- 26. ì ì–´ë„ í•œ ëª… ì´ìƒìœ¼ë¡œë¶€í„° ë³´ê³ ë¥¼ ë°›ì„ ìˆ˜ ìžˆëŠ” ì‚¬ì›ì„ ì—…ë¬´, ì´ë¦„, ì‚¬ë²ˆ, ë¶€ì„œë²ˆí˜¸ë¥¼ ì¶œë ¥
+--(ë‹¨, ë¶€ì„œë²ˆí˜¸ ìˆœìœ¼ë¡œ ì˜¤ë¦„ì°¨ìˆœ ì •ë ¬)
 SELECT JOB, ENAME, EMPNO, DEPTNO FROM EMP E
     WHERE EXISTS (SELECT * FROM EMP WHERE E.EMPNO = MGR)
-    ORDER BY DEPTNO;    -- EXISTS ÀÌ¿ë
+    ORDER BY DEPTNO;    -- EXISTS ì´ìš©
     
 SELECT DISTINCT M.JOB, M.ENAME, M.EMPNO, M.DEPTNO
     FROM EMP W, EMP M
     WHERE W.MGR = M.EMPNO
-    ORDER BY DEPTNO;    -- SELF JOIN ÀÌ¿ë
+    ORDER BY DEPTNO;    -- SELF JOIN ì´ìš©
 
--- 27. ¸»´Ü »ç¿øÀÇ »ç¹ø, ÀÌ¸§, ¾÷¹«, ºÎ¼­¹ø
+-- 27. ë§ë‹¨ ì‚¬ì›ì˜ ì‚¬ë²ˆ, ì´ë¦„, ì—…ë¬´, ë¶€ì„œë²ˆ
 SELECT EMPNO, ENAME, JOB, DEPTNO FROM EMP E
-    WHERE NOT EXISTS (SELECT * FROM EMP WHERE E.EMPNO = MGR); -- EXISTS ÀÌ¿ë
+    WHERE NOT EXISTS (SELECT * FROM EMP WHERE E.EMPNO = MGR); -- EXISTS ì´ìš©
     
 SELECT M.EMPNO, M.ENAME, M.JOB, M.DEPTNO
     FROM EMP W, EMP M
     WHERE W.MGR(+) = M.EMPNO
-    AND W.ENAME IS NULL; -- SELF JOIN ÀÌ¿ë
+    AND W.ENAME IS NULL; -- SELF JOIN ì´ìš©
 
 ROLLBACK;
--- DML ¿¬½À¹®Á¦ ±½Àº±Û¾¾
--- ±Þ¿©°¡ 3000ÀÌ»óÀÎ »ç¿ø¸¸ ±Þ¿©¸¦ 10%ÀÎ»ó
+-- DML ì—°ìŠµë¬¸ì œ êµµì€ê¸€ì”¨
+-- ê¸‰ì—¬ê°€ 3000ì´ìƒì¸ ì‚¬ì›ë§Œ ê¸‰ì—¬ë¥¼ 10%ì¸ìƒ
 UPDATE EMP01 SET SAL = SAL*1.1 WHERE SAL >= 3000;
--- EMP01Å×ÀÌºí¿¡¼­ ¡®DALLAS¡¯¿¡¼­ ±Ù¹«ÇÏ´Â Á÷¿øµéÀÇ ¿¬ºÀÀ» 1000ÀÎ»ó
+-- EMP01í…Œì´ë¸”ì—ì„œ â€˜DALLASâ€™ì—ì„œ ê·¼ë¬´í•˜ëŠ” ì§ì›ë“¤ì˜ ì—°ë´‰ì„ 1000ì¸ìƒ
 UPDATE EMP01 SET SAL = SAL+1000 WHERE DEPTNO = (SELECT DEPTNO FROM DEPT WHERE LOC = 'DALLAS');
--- SCOTT»ç¿øÀÇ ºÎ¼­¹øÈ£´Â 20¹øÀ¸·Î, Á÷±ÞÀº MANAGER·Î ÇÑ²¨¹ø¿¡ ¼öÁ¤
+-- SCOTTì‚¬ì›ì˜ ë¶€ì„œë²ˆí˜¸ëŠ” 20ë²ˆìœ¼ë¡œ, ì§ê¸‰ì€ MANAGERë¡œ í•œêº¼ë²ˆì— ìˆ˜ì •
 UPDATE EMP01 SET DEPTNO = 20, JOB = 'MANAGER' WHERE ENAME = 'SCOTT';
--- »ç¿ø¸íÀÌ ¡®FORD¡¯ÀÎ »ç¿øÀ» »èÁ¦ÇÏ´Â SQL ÀÛ¼º
+-- ì‚¬ì›ëª…ì´ â€˜FORDâ€™ì¸ ì‚¬ì›ì„ ì‚­ì œí•˜ëŠ” SQL ìž‘ì„±
 DELETE FROM EMP01 WHERE ENAME = 'FORD';
 
 SELECT ENAME, JOB, HIREDATE 
@@ -379,7 +379,7 @@ select e1.ENAME,
        (select e2.ENAME
          from EMP e2
         where e1.MGR = e2.EMPNO
-        AND ENAME != 'KING') AS »óÀ§°ü¸®ÀÚ
+        AND ENAME != 'KING') AS ìƒìœ„ê´€ë¦¬ìž
   from EMP e1 
 ;
 

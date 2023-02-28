@@ -1,4 +1,4 @@
--- ½ÃÄö½º¿Í Å×ÀÌºí DROP & CREATE
+-- ì‹œí€€ìŠ¤ì™€ í…Œì´ë¸” DROP & CREATE
 
 DROP TABLE FRIEND;
 DROP SEQUENCE FRIEND_NO_SEQ;
@@ -18,14 +18,14 @@ CREATE SEQUENCE FRIEND_NO_SEQ
     NOCYCLE;
 
 
--- Ä£±¸ Ãß°¡ public int addFriend(String name,String tel)
-INSERT INTO FRIEND (NO,NAME,TEL) VALUES(FRIEND_NO_SEQ.NEXTVAL,'¾ÆÀÌºê','032-7777-7777');
+-- ì¹œêµ¬ ì¶”ê°€ public int addFriend(String name,String tel)
+INSERT INTO FRIEND (NO,NAME,TEL) VALUES(FRIEND_NO_SEQ.NEXTVAL,'ì•„ì´ë¸Œ','032-7777-7777');
 
--- Ä£±¸ ¸ñ·Ï Ãâ·Â public ArrayList<FriendDto> getList()
+-- ì¹œêµ¬ ëª©ë¡ ì¶œë ¥ public ArrayList<FriendDto> getList()
 SELECT * FROM FRIEND;
 
--- Ä£±¸ °Ë»ö(ÃßÈÄ Ãß°¡)
-SELECT * FROM FRIEND WHERE NAME LIKE '%'||'±èÄ¡'||'%' AND TEL LIKE '%'||'4656'||'%';
+-- ì¹œêµ¬ ê²€ìƒ‰(ì¶”í›„ ì¶”ê°€)
+SELECT * FROM FRIEND WHERE NAME LIKE '%'||'ê¹€ì¹˜'||'%' AND TEL LIKE '%'||'4656'||'%';
 
 
 COMMIT;

@@ -6,7 +6,7 @@ SELECT * FROM EMP WHERE DEPTNO LIKE '%' || '10';
 
 
 -- ex4
-select UPPER(TRIM('  s  ')) from dual; -- upper¿Í trim Áßº¹Àû¿ë ½ÇÇè - °¡´ÉÇÏ³×
+select UPPER(TRIM('  s  ')) from dual; -- upperì™€ trim ì¤‘ë³µì ìš© ì‹¤í—˜ - ê°€ëŠ¥í•˜ë„¤
 
 SELECT EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, D.DEPTNO, DNAME 
     FROM EMP E, DEPT D

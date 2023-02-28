@@ -47,7 +47,7 @@
 	<%
 		CustomerDto customer = (CustomerDto)session.getAttribute("customer");
 		if(customer==null){ // 로그인상태가 아님
-			response.sendRedirect("loginForm.jsp?method=modify"); // method 파라미터 추가후 보내기
+			response.sendRedirect("loginForm.jsp?method=customer/modifyForm"); // method 파라미터 추가후 보내기
 		}else{
 			cid = customer.getCid();
 			cname = customer.getCname();

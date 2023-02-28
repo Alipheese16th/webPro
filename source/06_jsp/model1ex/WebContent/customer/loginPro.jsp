@@ -24,7 +24,7 @@
 			if(method.equals("null")){
 				response.sendRedirect(conPath+"/main/main.jsp");
 			}else{
-				response.sendRedirect(conPath+"/customer/modifyForm.jsp");
+				response.sendRedirect(conPath+"/"+method+".jsp");
 			}
 		}else{ // 로그인 실패
 			response.sendRedirect(conPath+"/customer/loginForm.jsp?msg=xx");

@@ -14,27 +14,27 @@ CREATE TABLE CUSTOMER (
 );
 SELECT * FROM CUSTOMER;
 
--- 1. È¸¿ø°¡ÀÔ½Ã idÁßº¹Ã¼Å© : public int confirmId(String cid)
+-- 1. íšŒì›ê°€ì…ì‹œ idì¤‘ë³µì²´í¬ : public int confirmId(String cid)
 SELECT COUNT(*) cnt FROM CUSTOMER WHERE CID='aab';
 --SELECT * FROM CUSTOMER WHERE CID='aaa';
 
--- 2. È¸¿ø°¡ÀÔ : public int joinCustomer(CustomerDto dto)
+-- 2. íšŒì›ê°€ì… : public int joinCustomer(CustomerDto dto)
 INSERT INTO CUSTOMER (CID, CPW, CNAME, CTEL, CEMAIL, CADDRESS, CBIRTH, CGENDER)
-  VALUES ('aaa', '111', 'È«', '010-9999-9999', 'h@h.com',
-    '¼­¿ï', '1995-12-12', 'm');
+  VALUES ('aaa', '111', 'í™', '010-9999-9999', 'h@h.com',
+    'ì„œìš¸', '1995-12-12', 'm');
 
--- 3. ·Î±×ÀÎ : public int loginCheck(String cid, String cpw)
+-- 3. ë¡œê·¸ì¸ : public int loginCheck(String cid, String cpw)
 SELECT CID, CPW FROM CUSTOMER WHERE CID = 'aaa' AND CPW = '111';
 
--- 4. cid·Î DTO °¡Á®¿À±â : public CustomerDto getCustomer(String cid)
+-- 4. cidë¡œ DTO ê°€ì ¸ì˜¤ê¸° : public CustomerDto getCustomer(String cid)
 SELECT * FROM CUSTOMER WHERE CID = 'aaa';
 
--- 5. Á¤º¸¼öÁ¤ : public int modifyCustomer(CustomerDto dto)
+-- 5. ì •ë³´ìˆ˜ì • : public int modifyCustomer(CustomerDto dto)
 UPDATE CUSTOMER SET CPW = '111',
-                    CNAME = 'È«±æµ¿',
+                    CNAME = 'í™ê¸¸ë™',
                     CTEL = '02-111-1111',
                     CEMAIL = 'GIL@H.COM',
-                    CADDRESS = 'Á¦ÁÖµµ',
+                    CADDRESS = 'ì œì£¼ë„',
                     CBIRTH = '1990-12-12',
                     CGENDER = 'f'
                 WHERE CID = 'aaa';

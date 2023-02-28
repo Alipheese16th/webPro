@@ -1,7 +1,7 @@
 -- TABLE DROP & CREATE
-SELECT * FROM MEMBER; -- ÀÌ¹Ì Á¸ÀçÇÏ°í ÀÖ´Â Å×ÀÌºí
-DROP TABLE MEMBER; -- ´Ù¸¥ Å×ÀÌºí¿¡¼­ ÂüÁ¶ÇÏ°í ÀÖ¾î¼­ ¿À·ù°¡ ³­´Ù.
-DROP TABLE MEMBER CASCADE CONSTRAINTS; -- ¾ïÁö·Î Á¦°ÅÇÏ´Â°Å. Á¶±Ý À§ÇèÇÒ¼öÀÖÀ½ ÇÔºÎ·Î ³²¿ë ¤¤
+SELECT * FROM MEMBER; -- ì´ë¯¸ ì¡´ìž¬í•˜ê³  ìžˆëŠ” í…Œì´ë¸”
+DROP TABLE MEMBER; -- ë‹¤ë¥¸ í…Œì´ë¸”ì—ì„œ ì°¸ì¡°í•˜ê³  ìžˆì–´ì„œ ì˜¤ë¥˜ê°€ ë‚œë‹¤.
+DROP TABLE MEMBER CASCADE CONSTRAINTS; -- ì–µì§€ë¡œ ì œê±°í•˜ëŠ”ê±°. ì¡°ê¸ˆ ìœ„í—˜í• ìˆ˜ìžˆìŒ í•¨ë¶€ë¡œ ë‚¨ìš© ã„´
 
 CREATE TABLE MEMBER(
     ID VARCHAR2(30) PRIMARY KEY,
@@ -14,35 +14,35 @@ CREATE TABLE MEMBER(
     EMAIL VARCHAR2(30),
     BIRTH DATE,
     ADDRESS VARCHAR2(200),
-    RDATE DATE NOT NULL -- °¡ÀÔÀÏ
+    RDATE DATE NOT NULL -- ê°€ìž…ì¼
 );
 SELECT * FROM MEMBER;
 
--- 1. È¸¿ø°¡ÀÔ½Ã idÁßº¹Ã¼Å© : public int confirmId(String id)
+-- 1. íšŒì›ê°€ìž…ì‹œ idì¤‘ë³µì²´í¬ : public int confirmId(String id)
 SELECT * FROM MEMBER WHERE ID='aaa';
--- 2. È¸¿ø°¡ÀÔ : public int joinMember(MemberDto dto)
+-- 2. íšŒì›ê°€ìž… : public int joinMember(MemberDto dto)
 INSERT INTO MEMBER 
   (ID,PW,NAME,PHONE1,PHONE2,PHONE3,GENDER,EMAIL,BIRTH,ADDRESS,RDATE)
   VALUES 
-  ('bbb','222','Áö±æµ¿','032','716','7777','m','hong@hong.com','1995-12-12','¼­¿ï',SYSDATE);
+  ('bbb','222','ì§€ê¸¸ë™','032','716','7777','m','hong@hong.com','1995-12-12','ì„œìš¸',SYSDATE);
 
--- 3. ·Î±×ÀÎ public int loginCheck(String id,String pw)
+-- 3. ë¡œê·¸ì¸ public int loginCheck(String id,String pw)
 SELECT ID,PW FROM MEMBER WHERE ID='aaa';
 
--- 4. ID·Î dto°¡Á®¿À±â : ·Î±×ÀÎ ¼º°ø½Ã session¿¡ setAttribute / È¸¿øÁ¤º¸ ¼öÁ¤½Ã È¸¿øÁ¤º¸ °¡Á®¿À±â
+-- 4. IDë¡œ dtoê°€ì ¸ì˜¤ê¸° : ë¡œê·¸ì¸ ì„±ê³µì‹œ sessionì— setAttribute / íšŒì›ì •ë³´ ìˆ˜ì •ì‹œ íšŒì›ì •ë³´ ê°€ì ¸ì˜¤ê¸°
 --    : public MemberDto getMember(String id)
 SELECT * FROM MEMBER WHERE ID='aaa';
 
--- 5. È¸¿øÁ¤º¸¼öÁ¤ : public int modifyMember(MemberDto dto)
+-- 5. íšŒì›ì •ë³´ìˆ˜ì • : public int modifyMember(MemberDto dto)
 UPDATE MEMBER SET PW='111',
-                NAME='È«±æµ¿',
+                NAME='í™ê¸¸ë™',
                 PHONE1='031',
                 PHONE2='777',
                 PHONE3='1234',
                 GENDER='m',
                 EMAIL='kil@hong.com',
                 BIRTH='1995-12-12',
-                ADDRESS='°æ±âµµ ¾È¾ç'
+                ADDRESS='ê²½ê¸°ë„ ì•ˆì–‘'
                 WHERE ID='aaa';
 
 

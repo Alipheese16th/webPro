@@ -2,109 +2,109 @@
 DROP TABLE BOARD;
 
 CREATE TABLE BOARD(
-  NUM     NUMBER(5) PRIMARY KEY,  -- ±Û¹øÈ£
-  WRITER  VARCHAR2(30) NOT NULL,  -- ±ÛÀÛ¼ºÀÚ
-  SUBJECT VARCHAR2(100) NOT NULL, -- ±ÛÁ¦¸ñ
-  CONTENT VARCHAR2(100) NOT NULL, -- º»¹®
-  EMAIL   VARCHAR2(30),           -- ÀÛ¼ºÀÚ ÀÌ¸ÞÀÏ
-  READCOUNT NUMBER(5) DEFAULT 0,  -- Á¶È¸¼ö (HIT)
-  PW      VARCHAR2(30) NOT NULL,  -- ±Û »èÁ¦½Ã ¾µ ºñ¹Ð¹øÈ£
-  REF     NUMBER(5) NOT NULL,     -- ±Û±×·ì(¿ø±ÛÀÇ °æ¿ì ±Û¹øÈ£·Î/ ´äº¯±ÛÀÏ°æ¿ì ¿ø±ÛÀÇ REF·Î)
-  RE_STEP NUMBER(3) NOT NULL,     -- ±Û±×·ì³» Ãâ·Â ¼ø¼­(¿ø±Û 0)
-  RE_INDENT NUMBER(3) NOT NULL,   -- ±Û LIST Ãâ·Â½Ã ±Û Á¦¸ñ µé¿©¾²±â Á¤µµ(¿ø±Û 0)
-  IP      VARCHAR2(30) NOT NULL,  -- ±Û ÀÛ¼º½Ã ÄÄÇ»ÅÍ IP ÁÖ¼Ò
-  RDATE   DATE DEFAULT SYSDATE    -- ±Û¾´ ½ÃÁ¡(³¯Â¥+½Ã°£)
+  NUM     NUMBER(5) PRIMARY KEY,  -- ê¸€ë²ˆí˜¸
+  WRITER  VARCHAR2(30) NOT NULL,  -- ê¸€ìž‘ì„±ìž
+  SUBJECT VARCHAR2(100) NOT NULL, -- ê¸€ì œëª©
+  CONTENT VARCHAR2(100) NOT NULL, -- ë³¸ë¬¸
+  EMAIL   VARCHAR2(30),           -- ìž‘ì„±ìž ì´ë©”ì¼
+  READCOUNT NUMBER(5) DEFAULT 0,  -- ì¡°íšŒìˆ˜ (HIT)
+  PW      VARCHAR2(30) NOT NULL,  -- ê¸€ ì‚­ì œì‹œ ì“¸ ë¹„ë°€ë²ˆí˜¸
+  REF     NUMBER(5) NOT NULL,     -- ê¸€ê·¸ë£¹(ì›ê¸€ì˜ ê²½ìš° ê¸€ë²ˆí˜¸ë¡œ/ ë‹µë³€ê¸€ì¼ê²½ìš° ì›ê¸€ì˜ REFë¡œ)
+  RE_STEP NUMBER(3) NOT NULL,     -- ê¸€ê·¸ë£¹ë‚´ ì¶œë ¥ ìˆœì„œ(ì›ê¸€ 0)
+  RE_INDENT NUMBER(3) NOT NULL,   -- ê¸€ LIST ì¶œë ¥ì‹œ ê¸€ ì œëª© ë“¤ì—¬ì“°ê¸° ì •ë„(ì›ê¸€ 0)
+  IP      VARCHAR2(30) NOT NULL,  -- ê¸€ ìž‘ì„±ì‹œ ì»´í“¨í„° IP ì£¼ì†Œ
+  RDATE   DATE DEFAULT SYSDATE    -- ê¸€ì“´ ì‹œì (ë‚ ì§œ+ì‹œê°„)
 );
 
 SELECT * FROM BOARD;
 
--- 1. ±Û°¹¼ö
+-- 1. ê¸€ê°¯ìˆ˜
 SELECT COUNT(*) FROM BOARD;
 
--- 2. ±Û¸ñ·Ï(±Û±×·ìÀÌ ÃÖ½ÅÀÎ ±ÛÀÌ À§·Î)
-SELECT * FROM BOARD ORDER BY REF DESC, RE_STEP ASC;  -- ¡Ú ¡Ú ¡Ú ¡Ú ¡Ú
+-- 2. ê¸€ëª©ë¡(ê¸€ê·¸ë£¹ì´ ìµœì‹ ì¸ ê¸€ì´ ìœ„ë¡œ)
+SELECT * FROM BOARD ORDER BY REF DESC, RE_STEP ASC;  -- â˜… â˜… â˜… â˜… â˜…
 
--- 2. ±Û¸ñ·Ï (TOP-N±¸¹®) -- ÆäÀÌÂ¡
+-- 2. ê¸€ëª©ë¡ (TOP-Nêµ¬ë¬¸) -- íŽ˜ì´ì§•
 
-SELECT * FROM BOARD ORDER BY REF DESC; -- 1´Ü°è - ¼ø¼­ ÁöÁ¤
+SELECT * FROM BOARD ORDER BY REF DESC; -- 1ë‹¨ê³„ - ìˆœì„œ ì§€ì •
 
-SELECT ROWNUM RN, A.* FROM (SELECT * FROM BOARD ORDER BY REF DESC, RE_STEP ASC) A; -- 2´Ü°è -- RNºÎ¿©
+SELECT ROWNUM RN, A.* FROM (SELECT * FROM BOARD ORDER BY REF DESC, RE_STEP ASC) A; -- 2ë‹¨ê³„ -- RNë¶€ì—¬
 
 SELECT * 
   FROM (SELECT ROWNUM RN, A.* FROM (SELECT * FROM BOARD ORDER BY REF DESC, RE_STEP ASC) A)
-  WHERE RN BETWEEN 21 AND 30; -- 3´Ü°è ¿Ï¼º  -- ¡Ú ¡Ú ¡Ú ¡Ú ¡Ú
+  WHERE RN BETWEEN 21 AND 30; -- 3ë‹¨ê³„ ì™„ì„±  -- â˜… â˜… â˜… â˜… â˜…
 
--- 3. ±Û¾²±â(¿ø±Û¾²±â) - ±Û¾´ÀÌ, Á¦¸ñ, º»¹®, ÀÌ¸ÞÀÏ, PW
-SELECT NVL(MAX(NUM),0)+1 FROM BOARD; -- ½ÃÄö½º¾øÀÌ ÇÏ·Á¸é ÀÌ·¸°Ô ¼­ºêÄõ¸®¸¦ ¸¸µç´Ù
+-- 3. ê¸€ì“°ê¸°(ì›ê¸€ì“°ê¸°) - ê¸€ì“´ì´, ì œëª©, ë³¸ë¬¸, ì´ë©”ì¼, PW
+SELECT NVL(MAX(NUM),0)+1 FROM BOARD; -- ì‹œí€€ìŠ¤ì—†ì´ í•˜ë ¤ë©´ ì´ë ‡ê²Œ ì„œë¸Œì¿¼ë¦¬ë¥¼ ë§Œë“ ë‹¤
 
 INSERT INTO BOARD(NUM, WRITER, SUBJECT, CONTENT, EMAIL,
                   PW, REF, RE_STEP, RE_INDENT, IP)
-  VALUES((SELECT NVL(MAX(NUM),0)+1 FROM BOARD),'È«±æµ¿','Á¦¸ñ1','º»¹®\n¹æ°¡',null,
+  VALUES((SELECT NVL(MAX(NUM),0)+1 FROM BOARD),'í™ê¸¸ë™','ì œëª©1','ë³¸ë¬¸\në°©ê°€',null,
                 '111',(SELECT NVL(MAX(NUM),0)+1 FROM BOARD),0,0,'192.168.0.1');
 
 INSERT INTO BOARD(NUM, WRITER, SUBJECT, CONTENT, EMAIL,
                   PW, REF, RE_STEP, RE_INDENT, IP)
-  VALUES((SELECT NVL(MAX(NUM),0)+1 FROM BOARD),'Áö±æµ¿','Á¦¸ñ2','º»¹®\n¹æ°¡',null,
+  VALUES((SELECT NVL(MAX(NUM),0)+1 FROM BOARD),'ì§€ê¸¸ë™','ì œëª©2','ë³¸ë¬¸\në°©ê°€',null,
                 '111',(SELECT NVL(MAX(NUM),0)+1 FROM BOARD),0,0,'192.168.0.1');
 
 
--- 4. ±Û¹øÈ£·Î ±Û»ó¼¼º¸±â ³»¿ë(DTO) °¡Á®¿À±â
+-- 4. ê¸€ë²ˆí˜¸ë¡œ ê¸€ìƒì„¸ë³´ê¸° ë‚´ìš©(DTO) ê°€ì ¸ì˜¤ê¸°
 SELECT * FROM BOARD WHERE NUM = 2;
 
--- 5. Á¶È¸¼ö ¿Ã¸®±â
+-- 5. ì¡°íšŒìˆ˜ ì˜¬ë¦¬ê¸°
 UPDATE BOARD SET READCOUNT = READCOUNT + 1 WHERE NUM = 2;
 
--- 6. ±Û ¼öÁ¤
-UPDATE BOARD SET SUBJECT = '¼öÁ¤µÈÁ¦¸ñ1',
-                CONTENT = '¼öÁ¤µÈ º»¹®\n¹æ°¡',
+-- 6. ê¸€ ìˆ˜ì •
+UPDATE BOARD SET SUBJECT = 'ìˆ˜ì •ëœì œëª©1',
+                CONTENT = 'ìˆ˜ì •ëœ ë³¸ë¬¸\në°©ê°€',
                 EMAIL = 'hong@hong.com',
                 PW = '111',
                 IP = '127.0.0.1'
                 WHERE NUM = 1;
 
--- 7. ±Û »èÁ¦(ºñ¹Ð¹øÈ£¸¦ ¸Â°Ô ÀÔ·ÂÇÑ °æ¿ì¸¸ »èÁ¦)
+-- 7. ê¸€ ì‚­ì œ(ë¹„ë°€ë²ˆí˜¸ë¥¼ ë§žê²Œ ìž…ë ¥í•œ ê²½ìš°ë§Œ ì‚­ì œ)
 COMMIT;
 DELETE FROM BOARD WHERE NUM = 1 AND PW='111';
 ROLLBACK;
 
 
--- ´ä±Û´Þ±â
+-- ë‹µê¸€ë‹¬ê¸°
 SELECT * FROM BOARD ORDER BY REF DESC, RE_STEP ASC;
 
--- 220¹ø (¿ø±Û)
+-- 220ë²ˆ (ì›ê¸€)
 INSERT INTO BOARD(NUM, WRITER, SUBJECT, CONTENT, EMAIL, PW, REF, RE_STEP, RE_INDENT, IP)
-  VALUES(220,'È«','±Û1','º»¹®',NULL,'111',220,0,0,'168.125.1.1');
+  VALUES(220,'í™','ê¸€1','ë³¸ë¬¸',NULL,'111',220,0,0,'168.125.1.1');
   
--- 220¹øÀÇ 1¹øÂ° ´ä±Û´Þ±â
-  -- ´äº¯±Û Ãß°¡ Àü´Ü°è(¿¢¼¿ÀÇ ¨Í´Ü°è) -- ±âÁ¸¿¡ ÀÖ´ø ´äº¯±ÛÀ» ¾Æ·¡·Î ³»¸²
+-- 220ë²ˆì˜ 1ë²ˆì§¸ ë‹µê¸€ë‹¬ê¸°
+  -- ë‹µë³€ê¸€ ì¶”ê°€ ì „ë‹¨ê³„(ì—‘ì…€ì˜ â“ë‹¨ê³„) -- ê¸°ì¡´ì— ìžˆë˜ ë‹µë³€ê¸€ì„ ì•„ëž˜ë¡œ ë‚´ë¦¼
   UPDATE BOARD SET RE_STEP = RE_STEP+1
     WHERE REF = 220 AND RE_STEP > 0;
-  -- ´äº¯±Û INSERT (REF = 220, RE_STEP = 1, RE_INDENT = 1)
+  -- ë‹µë³€ê¸€ INSERT (REF = 220, RE_STEP = 1, RE_INDENT = 1)
 INSERT INTO BOARD(NUM, WRITER, SUBJECT, CONTENT, EMAIL, PW, REF, RE_STEP, RE_INDENT, IP)
-  VALUES(221,'´ä³à','±Û1-´ä1','º»¹®','R@R.COM','111',220,1,1,'123.12.12.12');
+  VALUES(221,'ë‹µë…€','ê¸€1-ë‹µ1','ë³¸ë¬¸','R@R.COM','111',220,1,1,'123.12.12.12');
 
--- 220¹øÀÇ 2¹øÂ° ´ä±Û´Þ±â
-  -- ´äº¯±Û Ãß°¡ Àü´Ü°è(¿¢¼¿ÀÇ ¨Í´Ü°è)
+-- 220ë²ˆì˜ 2ë²ˆì§¸ ë‹µê¸€ë‹¬ê¸°
+  -- ë‹µë³€ê¸€ ì¶”ê°€ ì „ë‹¨ê³„(ì—‘ì…€ì˜ â“ë‹¨ê³„)
   UPDATE BOARD SET RE_STEP = RE_STEP+1
-    WHERE REF = 220 AND RE_STEP > 0;  -- 8. ´äº¯±Û Ãß°¡ Àü ´Ü°è
+    WHERE REF = 220 AND RE_STEP > 0;  -- 8. ë‹µë³€ê¸€ ì¶”ê°€ ì „ ë‹¨ê³„
 
-  -- ´äº¯±Û INSERT (REF = 220, RE_STEP = 1, RE_INDENT = 1)
-  SELECT MAX(NUM) FROM BOARD;  -- BOARD ÃÖ°í NUM °ª È®ÀÎ
+  -- ë‹µë³€ê¸€ INSERT (REF = 220, RE_STEP = 1, RE_INDENT = 1)
+  SELECT MAX(NUM) FROM BOARD;  -- BOARD ìµœê³  NUM ê°’ í™•ì¸
 INSERT INTO BOARD(NUM, WRITER, SUBJECT, CONTENT, EMAIL, PW, REF, RE_STEP, RE_INDENT, IP)
-  VALUES(222,'ÀÌ´äÅõ','±Û1-´ä2','º»¹®','LEE@L.COM','111',220,1,1,'121.1.1.1');  -- 9. ´äº¯±Û Ãß°¡
+  VALUES(222,'ì´ë‹µíˆ¬','ê¸€1-ë‹µ2','ë³¸ë¬¸','LEE@L.COM','111',220,1,1,'121.1.1.1');  -- 9. ë‹µë³€ê¸€ ì¶”ê°€
 
 
-SELECT MAX(NUM) FROM BOARD; -- ÃÖ°í ±Û ¹øÈ£
+SELECT MAX(NUM) FROM BOARD; -- ìµœê³  ê¸€ ë²ˆí˜¸
 SELECT * FROM BOARD WHERE REF=(SELECT REF FROM BOARD WHERE NUM=222);
--- 222¹øÀÇ 1¹øÂ° ´ä±Û´Þ±â
-  -- ´äº¯±Û Ãß°¡ Àü´Ü°è(¿¢¼¿ÀÇ ¨Í´Ü°è - ¿ø±ÛÀÇ REF:220 ¿ø±ÛÀÇ RE_STEP:1)
+-- 222ë²ˆì˜ 1ë²ˆì§¸ ë‹µê¸€ë‹¬ê¸°
+  -- ë‹µë³€ê¸€ ì¶”ê°€ ì „ë‹¨ê³„(ì—‘ì…€ì˜ â“ë‹¨ê³„ - ì›ê¸€ì˜ REF:220 ì›ê¸€ì˜ RE_STEP:1)
   UPDATE BOARD SET RE_STEP = RE_STEP+1
-    WHERE REF = 220 AND RE_STEP > 1;  -- 8. ´äº¯±Û Ãß°¡ Àü ´Ü°è (DAO)
+    WHERE REF = 220 AND RE_STEP > 1;  -- 8. ë‹µë³€ê¸€ ì¶”ê°€ ì „ ë‹¨ê³„ (DAO)
 
-  -- ´äº¯±Û INSERT (¿ø±ÛÀÇ REF=220, ¿ø±ÛÀÇ RE_STEP=1, ¿ø±ÛÀÇ RE_INDENT=1)
-  SELECT MAX(NUM) FROM BOARD;  -- BOARD ÃÖ°í NUM °ª È®ÀÎ
+  -- ë‹µë³€ê¸€ INSERT (ì›ê¸€ì˜ REF=220, ì›ê¸€ì˜ RE_STEP=1, ì›ê¸€ì˜ RE_INDENT=1)
+  SELECT MAX(NUM) FROM BOARD;  -- BOARD ìµœê³  NUM ê°’ í™•ì¸
 INSERT INTO BOARD(NUM, WRITER, SUBJECT, CONTENT, EMAIL, PW, REF, RE_STEP, RE_INDENT, IP)
-  VALUES((SELECT NVL(MAX(NUM),0)+1 FROM BOARD),'ÀÌ´äÅõ','222±Û´ä','º»¹®','LEE@L.COM','111',220,2,2,'121.1.1.1');  -- 9. ´äº¯±Û Ãß°¡ (DAO)
+  VALUES((SELECT NVL(MAX(NUM),0)+1 FROM BOARD),'ì´ë‹µíˆ¬','222ê¸€ë‹µ','ë³¸ë¬¸','LEE@L.COM','111',220,2,2,'121.1.1.1');  -- 9. ë‹µë³€ê¸€ ì¶”ê°€ (DAO)
 
 
 
