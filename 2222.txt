@@ -23,3 +23,29 @@
 떼끼하기 
 
 떫떫떫쩜
+
+
+
+-------------------------
+화요일 시험
+1.딕셔너리 딕셔너리 뷰
+2.계정이 가지고 있는 테이블 목록 출력 명령어 select * from tab
+3.UPDATE문    - DML PDF문제
+UPDATE 테이블명 SET 컬럼 = 컬럼+1 등등 WHERE절 추가
+4.부모테이블 자식테이블  지울때 순서
+5.서브쿼리문제
+6.SUBSTR 단일행함수이용
+7. SCOTT TIGER 계정생성
+CREATE USER 유저명 IDENTIFIED BY tiger;
+8. VIEW 만드는 예제
+CREATE OR REPLACE VIEW 뷰이름
+	AS SELECT 서브쿼리 
+9.  TOP-N구문 6등부터 10등까지 출력 등등
+인라인뷰를 이중으로 사용
+첫번째 특정컬럼으로 정렬
+두번째 로우넘 적용
+세번째 로우넘 기준 특정행만 출력 
+
+10. INDEX 문제 
+CREATE INDEX 인덱스이름 ON 테이블(컬럼);
+11. 탑앤구문 연습문제중 6-1,6-2 문제 
