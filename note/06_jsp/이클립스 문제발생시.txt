@@ -41,6 +41,6 @@ eclipse > Run > Run Configuration > Apache Tomcat > Tomcat v8.5 Server >
 
 ### 추가 개인설정
 다크모드
-들여쓰기 2칸으로
+들여쓰기 2칸으로 general - editors - text editors
 web - jsp - editer - 템플레이트 설정
 
