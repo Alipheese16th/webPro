@@ -48,6 +48,8 @@ fn 함수관련 태그
 
 ★액션태그는 반드시 태그닫는걸 중요하게 생각하자★
 
+### c:forEach 반복문 태그
+
 <c:forEach var="i" begin="1" end="3" step="1">
 <p>${i }번째 안녕하세요</p>
 </c:forEach>

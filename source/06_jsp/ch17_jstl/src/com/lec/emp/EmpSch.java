@@ -1,7 +1,7 @@
-package com.lec.ex;
+package com.lec.emp;
 
 import java.io.IOException;
-import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/ex1_servlet")
-public class Ex1_servlet extends HttpServlet {
+@WebServlet("/empSch")
+public class EmpSch extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -20,22 +20,19 @@ public class Ex1_servlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
-		doGet(request, response);
+		actionDo(request,response);
 	}
-
+	
 	private void actionDo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id = request.getParameter("id");
-		String pw = request.getParameter("pw");
-		String name = request.getParameter("name");
-		//Member member = new Member(id, pw, name);
-		//request.setAttribute("member", member);
-		// View 단으로 이동
-		//RequestDispatcher dispatcher = request.getRequestDispatcher("1_dispatcher/ex1_view.jsp");
-		//dispatcher.forward(request, response);
-		response.sendRedirect("2_redirect/ex1_view.jsp?id="+id+"&pw="+pw+"&name="+URLEncoder.encode(name,"utf-8") );
-		
-		
+		String schName = request.getParameter("schName");
+		String schJob = request.getParameter("schJob");
+		EmpDao dao = EmpDao.getInstance();
+		ArrayList<EmpDto> emps = dao.getListEmp(schName,schJob);
+		request.setAttribute("emps", emps);
+		RequestDispatcher dispatcher = request.getRequestDispatcher("3_emp/empSch.jsp");
+		dispatcher.forward(request, response);
 		
 	}
+	
 	
 }

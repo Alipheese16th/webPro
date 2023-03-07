@@ -13,6 +13,6 @@
 	<button onclick="history.back()">이전</button>
 	<button onclick="location.href='ex2_suInput.jsp'">다시1</button>
 	<button onclick="location.href='1_dispatcher/ex2_suInput.jsp'">다시2</button>
-	<button onclick="location.href='ch16_forward/1_dispatcher/ex2_suInput.jsp'">다시3</button>
+	<button onclick="location.href='<%=conPath %>/1_dispatcher/ex2_suInput.jsp'">다시3</button>
 </body>
 </html>

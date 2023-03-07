@@ -4,12 +4,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
 <link href="<%=conPath %>/css/style.css" rel="stylesheet">
 </head>
 <body>
-	<form action="<%=conPath%>/Ex1_servlet">
+	<form action="<%=conPath%>/ex1_servlet">
 		<p>ID<input type="text" name="id"></p>
 		<p>PW<input type="password" name="pw"></p>
 		<p>NAME<input type="text" name="name"></p>

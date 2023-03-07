@@ -35,7 +35,7 @@
 	<div id="join_title">회원가입정보</div>
 	<p>name : <%=name %></p>
 	<p>id : <%=id %></p>
-	<p>pw : <%=pw %></p>
+	<p>pw :  <%=pw.replaceAll("[a-zA-Z0-9~`!@#$%^&*()\\-_+=|\\{}\\[\\]:;\"'?/<>,\\.]", "*") %></p>
 	<p>birth : <%=birthTimestamp!=null? birthTimestamp:""%></p>
 	<p>hobby : <%
 		if(hobby==null){
