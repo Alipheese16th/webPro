@@ -27,9 +27,9 @@ public class MController extends HttpServlet {
 
 	private void actionDo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// 돌아온 요청을 판별하고 그에 따라 (service.execute호출) viewPage로 forward
-		String uri = request.getRequestURI();
-		String conPath = request.getContextPath();
-		String command = uri.substring(conPath.length());
+		String 		uri = request.getRequestURI();
+		String  conPath = request.getContextPath();
+		String  command = uri.substring(conPath.length());
 		String viewPage = null;
 		Service service = null;
 		if(command.equals("/memberList.do")) {

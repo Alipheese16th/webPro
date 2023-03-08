@@ -1,5 +1,5 @@
 <%@page import="com.lec.dao.FileboardDao"%>
-<%@page import="com.lec.dto.FileboardDto"%>
+<%@page import="com.lec.ex.dto.FileboardDto"%>
 <%@page import="com.oreilly.servlet.multipart.DefaultFileRenamePolicy"%>
 <%@page import="java.io.FileOutputStream"%>
 <%@page import="java.io.FileInputStream"%>

@@ -11,7 +11,7 @@
 </head>
 <body>
 	<%request.setCharacterEncoding("utf-8");%>
-	<jsp:useBean id="dto" class="com.lec.dto.CustomerDto" scope="page"/>
+	<jsp:useBean id="dto" class="com.lec.ex.dto.CustomerDto" scope="page"/>
 	<jsp:setProperty property="*" name="dto"/>
 	<%
 		String birth = request.getParameter("birth");

@@ -1,4 +1,4 @@
-<%@page import="com.lec.dto.FileboardDto"%>
+<%@page import="com.lec.ex.dto.FileboardDto"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="com.lec.dao.FileboardDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
