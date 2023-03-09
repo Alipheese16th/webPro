@@ -1,0 +1,15 @@
+@CHARSET "UTF-8";
+
+h1, p{
+	text-align:center;
+}
+hr{
+	border-style:dotted;
+}
+
+table{
+	margin:20px auto;
+}
+table tr td{
+	text-align:center;
+}

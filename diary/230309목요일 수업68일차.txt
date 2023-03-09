@@ -1,0 +1,95 @@
+어제 이어서 0308_19-2.MVC 게시판.docx 내용 이어서
+
+### 4. 글 내용 수정
+modifyView.do 요청으로 컨트롤러로 오면
+글쓰기form과 비슷하게 form태그로 입력받는 페이지를 나타내야하는데
+수정전 내용을 가져와야함(dto)
+글번호가지고 dto가져오는 메서드가 있긴한데 그건 조회수도 올리는 상세보기페이지에서 쓰는거.
+글번호로 dto가져오는 메서드를 따로 또 필요함. 그 메서드를 만들든해서 이용해서
+dto내용을 리퀘스트객체에 실어서 modifyView.jsp문서에서 입력태그상자에 value로 값을 넣어준다. form action시에 modify.do를 요청해서 컨트롤러에서 관련된 DB작업을 실행하는 서비스클래스를 호출하면된다. 그후 상세보기페이지로 다시 이동 contentView.do 요청
+
+### 5. 글 삭제
+delete.do요청을 받으면 컨트롤러에서 해당 서비스클래스를 호출해서 dao작업후에 
+list.do를 요청해서 게시판목록으로 보내기. requestScope에 deleteResult 속성이 있다면 alert() 알림창 글삭제완료 혹은 글삭제실패
+
+### 6. 답변글 달기
+우선 replyView.jsp에서 답변글 쓰는 form을 보여줘야하는데
+원글쓰기와는 다르게 답변글쓰기는 원글의 데이터가 필요하다.
+원글의 데이터를 가져오는 메서드를 dao에서 구현해서(위에 글수정메서드랑 같음) 서비스클래스에서 데이터를 리퀘스트에 싣는다.
+그럼 원글의 dto, 파라미터로 글번호, 현재페이지 
+이렇게 3개의 데이터를 싣고 jsp문서에서 답변글을 적게 한다.
+그럼 작성자가 새로작성한 부분말고 내가 hidden으로 매개변수를 더 넣어줘야함
+현재페이지(목록 페이지 상황유지용), 원글의 ref,step,indent
+작성자가 추가로 작성한 데이터와 함께 전부 파라미터로 실어서 reply.do 요청하면
+ReplyService에서 받아온 파라미터로 dao를 호출해서 db에 작업한다.
+그리고 다시 list.do 요청해서 게시판목록으로 보내면 끝
+
+---------------------------------------
+오늘 인터페이스평가
+구현할것
+회원가입, 로그인, 로그아웃
+회원가입페이지, 로그인페이지, 메인페이지(로그인상태에 따라 화면다름)
+
+MVC_MEMBER 테이블
+아이디
+비번
+이름
+메일
+사진
+생년월일
+주소
+가입일
+
+쿼리(메서드)
+1. idConfirm (아이디중복체크)
+2. join (회원가입)
+3. login (로그인 id와pw체크)
+4. getMember  (id로 dto가져오는 쿼리)
+
+dto, dao
+
+MFrontController
+
+main.do
+main.jsp
+
+joinView.do
+join.jsp
+join.do
+MJoinService
+
+loginView.do
+login.jsp
+login.do
+MLoginService
+
+logout.do
+MLogoutService
+
+-------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----기타
+
+서블릿에서 세션객체 생성
+HttpSession session = request.getSession();
+
+
+
+
+dao 만들어주는 프레임워크 mybatis

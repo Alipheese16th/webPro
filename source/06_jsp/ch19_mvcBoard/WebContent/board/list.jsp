@@ -17,8 +17,33 @@
 		<script>alert('글쓰기 성공');</script>
 	</c:if>
 	<c:if test="${writeResult eq FAIL }">
-		<script>alert('글쓰기 실패');</script>
+		<script>
+			alert('글쓰기 실패');
+			history.go(-1);
+		</script>
 	</c:if>
+	<c:if test="${modifyResult eq SUCCESS }">
+		<script>alert('${param.bid}글 수정 성공');</script>
+	</c:if>
+	<c:if test="${modifyResult eq FAIL }">
+		<script>
+			alert('${param.bid}글 수정 실패');
+			history.back();
+		</script>
+	</c:if>
+	<c:if test="${not empty deleteResult }">
+		<script>alert('${deleteResult}');</script>
+	</c:if>
+	<c:if test="${replyResult eq SUCCESS }">
+		<script>alert('${param.bid}번 글에 대한 답글 쓰기 성공');</script>
+	</c:if>
+	<c:if test="${replyResult eq FAIL }">
+		<script>
+			alert('${param.bid}번 글에 대한 답글 쓰기 실패');
+			history.back();
+		</script>
+	</c:if>
+	
 	<table>
 		<caption>게시판</caption>
 		<tr><td><a href="${conPath}/writeView.do">글쓰기</a></td></tr>
@@ -36,13 +61,13 @@
 				<tr>
 					<td>${dto.bid }</td>
 					<td>${dto.bname }</td>
-					<td class="lfet">
+					<td class="left">
 						<c:forEach var="i" begin="1" end="${dto.bindent }">
 						<c:if test="${i ne dto.bindent }">
 							&nbsp; &nbsp; 
 						</c:if>
 						<c:if test="${i eq dto.bindent }">
-							└
+							└─
 						</c:if>
 						</c:forEach> <!-- 답글 들여쓰기 처리 -->
 						<a href="${conPath}/contentView.do?bid=${dto.bid}&pageNum=${pageNum}">
