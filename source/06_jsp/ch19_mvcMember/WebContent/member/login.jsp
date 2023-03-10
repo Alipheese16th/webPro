@@ -12,15 +12,22 @@
 </head>
 <body>
 
-	<c:if test="${not empty result }">
-		<script>alert('${result }');</script>
+	<c:if test="${not empty joinResult }">
+		<script>alert('${joinResult }');</script>
 	</c:if>
 	
-	<form action="login.do" method="post">
+	<c:if test="${not empty  joinErrorMsg}">
+		<script>
+			alert('${joinErrorMsg}');
+			history.back();
+		</script>
+	</c:if>
+	
+	<form action="${conPath}/login.do" method="post">
 		<table>
 			<tr>
 				<th>ID</th>
-				<td><input type="text" name="mid" required="required" value="${sessionScope.mid }"></td>
+				<td><input type="text" name="mid" required="required" value="${mid }"></td>
 			</tr>
 			<tr>
 				<th>PW</th>
@@ -29,7 +36,7 @@
 			<tr>
 				<td colspan="2">
 					<input type="submit" value="로그인" class="btn">
-					<input type="button" value="회원가입" class="btn" onclick="location.href='joinView.do'">
+					<input type="button" value="회원가입" class="btn" onclick="location.href='${conPath}/joinView.do'">
 				</td>
 			</tr>
 		</table>

@@ -41,10 +41,8 @@ cos.jar 를 또 다운받아야함
 jstl.jar 와 standard.jar 파일을 apache-tomcat 서버 lib폴더에 넣는다
 
 
-
-
-
-
+jquery 는 다운해도되지만 그냥 링크만 걸어도 사용할수있다
+jquery.com 사이트에서 download탭 - jQuery CDN - 원하는 버전 주소복사 
 
 
 

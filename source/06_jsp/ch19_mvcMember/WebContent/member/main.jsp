@@ -11,17 +11,33 @@
 	<link href="${conPath}/css/style.css" rel="stylesheet">
 </head>
 <body>
-
-	<c:if test="${not empty result }">
-		<script>alert('${result }');</script>
+	<c:if test="${not empty loginErrorMsg }">
+		<script>
+			alert('${loginErrorMsg }');
+			history.back();
+		</script>
+	</c:if>
+	<c:if test="${not empty modifyResult }">
+		<script>alert('${modifyResult}');</script>
+	</c:if>
+	<c:if test="${not empty modifyErrorMsg }">
+		<script>
+			alert('${modifyErrorMsg}');
+		</script>
+	</c:if>
+	<c:if test="${not empty withdrawalResult }">
+		<script>
+			alert('${withdrawalResult}');
+		</script>
 	</c:if>
 	
 	<c:if test="${empty member }">
 		<h1>로그인 상태가 아닙니다.</h1>
 		<hr>
 		<p>
-		<button onclick="location.href='loginView.do'">로그인</button>
-		<button onclick="location.href='joinView.do'">회원가입</button>
+			<button onclick="location.href='${conPath}/loginView.do'">로그인</button>
+			<button onclick="location.href='${conPath}/joinView.do'">회원가입</button>
+			<button onclick="location.href='${conPath}/allView.do'">전체회원보기</button>
 		</p>
 	</c:if>
 	
@@ -29,7 +45,9 @@
 		<h1>${member.mname }(${member.mid })님 어서오세요</h1>
 		<hr>
 		<p>
-		<button onclick="location.href='logout.do'">로그아웃</button>
+			<button onclick="location.href='${conPath}/modifyView.do'">정보수정</button>
+			<button onclick="location.href='${conPath}/logout.do'">로그아웃</button>
+			<button onclick="location.href='${conPath}/allView.do'">전체회원보기</button>
 		</p>
 	</c:if>
 	

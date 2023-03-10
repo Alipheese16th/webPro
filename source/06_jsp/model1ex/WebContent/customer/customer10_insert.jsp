@@ -1,5 +1,5 @@
 <%@page import="java.sql.Date"%>
-<%@page import="com.lec.ex.dto.CustomerDto"%>
+<%@page import="com.lec.dto.CustomerDto"%>
 <%@page import="com.lec.dao.CustomerDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>

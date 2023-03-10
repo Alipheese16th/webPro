@@ -9,9 +9,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.lec.ex.service.MAllViewService;
 import com.lec.ex.service.MJoinService;
 import com.lec.ex.service.MLoginService;
 import com.lec.ex.service.MLogoutService;
+import com.lec.ex.service.MModifyService;
+import com.lec.ex.service.MWithdrawalService;
 import com.lec.ex.service.Service;
 
 @WebServlet("*.do")
@@ -57,8 +60,24 @@ public class MFrontController extends HttpServlet {
 			service = new MLogoutService();
 			service.execute(request, response);
 			viewPage = "main.do";
+			
+		}else if(command.equals("/modifyView.do")) {	// 정보 수정하기 위한 view
+			viewPage = "member/modify.jsp";
+			
+		}else if(command.equals("/modify.do")) {	// db에 정보 수정
+			service = new MModifyService();
+			service.execute(request, response);
+			viewPage = "main.do";
+			
+		}else if(command.equals("/allView.do")) {
+			service = new MAllViewService();
+			service.execute(request, response);
+			viewPage = "member/mAllView.jsp";
+		} else if(command.equals("/withdrawal.do")) {
+			service = new MWithdrawalService();
+			service.execute(request, response);
+			viewPage = "main.do";
 		}
-		
 		
 		
 		

@@ -11,8 +11,9 @@
 	<link href="${conPath}/css/style.css" rel="stylesheet">
 </head>
 <body>
-	<form action="join.do" method="post" enctype="multipart/form-data">
+	<form action="${conPath}/join.do" method="post" enctype="multipart/form-data">
 		<table>
+			<caption>회원가입</caption>
 			<tr>
 				<th>아이디</th>
 				<td><input type="text" name="mid" required="required"></td>
@@ -43,9 +44,9 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<input type="submit" value="가입" class="btn">
-					<input type="reset" value="취소" class="btn" onclick="history.back()">
-					<input type="button" value="로그인" class="btn" onclick="location.href='loginView.do'">
+					<input type="submit" value="가입">
+					<input type="reset" value="취소" onclick="history.back()">
+					<input type="button" value="로그인" onclick="location.href='${conPath}/loginView.do'">
 				</td>
 			</tr>
 		</table>

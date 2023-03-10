@@ -1,5 +1,5 @@
 <%@page import="com.lec.dao.CustomerDao"%>
-<%@page import="com.lec.ex.dto.CustomerDto"%>
+<%@page import="com.lec.dto.CustomerDto"%>
 <%@page import="java.sql.Date"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -20,7 +20,7 @@
 	<%
 		request.setCharacterEncoding("UTF-8");
 	%>
-	<jsp:useBean id="dto" class="com.lec.ex.dto.CustomerDto" scope="page"/>
+	<jsp:useBean id="dto" class="com.lec.dto.CustomerDto" scope="page"/>
 	<jsp:setProperty name="dto" property="*"/>
 	<%
 		String birth = request.getParameter("birth");

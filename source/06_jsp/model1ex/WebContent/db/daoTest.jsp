@@ -1,9 +1,9 @@
-<%@page import="com.lec.ex.dto.BookDto"%>
+<%@page import="com.lec.dto.BookDto"%>
 <%@page import="com.lec.dao.BookDao"%>
 <%@page import="com.lec.dao.FileboardDao"%>
-<%@page import="com.lec.ex.dto.FileboardDto"%>
+<%@page import="com.lec.dto.FileboardDto"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="com.lec.ex.dto.CustomerDto"%>
+<%@page import="com.lec.dto.CustomerDto"%>
 <%@page import="com.lec.dao.CustomerDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>

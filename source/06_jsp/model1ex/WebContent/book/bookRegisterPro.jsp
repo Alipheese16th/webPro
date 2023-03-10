@@ -1,5 +1,5 @@
 <%@page import="com.lec.dao.BookDao"%>
-<%@page import="com.lec.ex.dto.BookDto"%>
+<%@page import="com.lec.dto.BookDto"%>
 <%@page import="java.io.FileOutputStream"%>
 <%@page import="java.io.FileInputStream"%>
 <%@page import="java.io.File"%>

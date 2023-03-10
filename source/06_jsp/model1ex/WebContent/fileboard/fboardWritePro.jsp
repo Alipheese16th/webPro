@@ -1,6 +1,6 @@
-<%@page import="com.lec.ex.dto.FileboardDto"%>
+<%@page import="com.lec.dto.FileboardDto"%>
 <%@page import="com.lec.dao.FileboardDao"%>
-<%@page import="com.lec.ex.dto.CustomerDto"%>
+<%@page import="com.lec.dto.CustomerDto"%>
 <%@page import="java.io.FileOutputStream"%>
 <%@page import="java.io.FileInputStream"%>
 <%@page import="java.io.File"%>
