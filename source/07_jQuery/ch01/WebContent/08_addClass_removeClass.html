@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css">
+	<style>
+		table td {
+			width:100px; height:100px; background-color: #AAFFAA;
+		}
+		.tdRed {background-color: red;}
+	</style>
+	<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+	<script>
+		$(document).ready(function(){
+			$('td').on('click',function(){
+				$('td').removeClass('tdRed'); // 모든 td의 background-color 원상복구
+				$(this).addClass('tdRed');
+				var idx = $(this).attr('id'); // 클릭한 td태그의 id속성값
+//			$(this).attr('id',Number(idx)+1); 
+// 클릭한 td태그의 id속성값을 수정. 태그의 id값을 가져온 idx변수는 문자열 String 타입이다. 
+// "0" + 1 은 "01"이 된다. 자바스크립트에서 문자와 숫자 더하기는 문자열이 우선. 숫자연산하고싶으면 Number()로 형변환
+
+				alert(idx+'번째를 선택 하셧군');
+				
+			});
+		});
+	</script>
+</head>
+<body>
+	<table>
+		<tr><td id="0"></td><td id="1"></td><td id="2"></td></tr>
+		<tr><td id="3"></td><td id="4"></td><td id="5"></td></tr>
+		<tr><td id="6"></td><td id="7"></td><td id="8"></td></tr>
+	
+	</table>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<style>
+		h1, p{text-align:center;}
+		.green{color:green;}
+	</style>
+	<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+	<script>
+		const ex = ['+','-','*','/'];
+		$(document).ready(function(){
+			
+			for(var i=4; i>=0; i--){
+				$('body').prepend('<p><input type="text" name="n'+i+'" size="5" readonly="readonly" value="'+Math.trunc(Math.random()*10)+'"> '+
+													'<span id="ex'+i+'">'+ex[parseInt(Math.random()*4)]+'</span>'+
+													' <input type="text" name="2n'+i+'" size="5" readonly="readonly" value="'+Math.trunc(Math.random()*10)+'"> '+
+													' = <input type="text" placeholder="답'+(i+1)+'" name="answer'+i+'" size="5"></p>'
+				);
+			}// for
+			
+			// 1초마다 출력
+			var second = 0;
+			var interval = setInterval(()=>{
+				second++;
+				$('#msg').html('경과시간 : '+second+'초 <span class="green">잘 풀어봐</span>');
+				if(second>=20){
+					$('#msg').css('color','red');
+				}
+			},1000);
+			
+			// 계산 버튼
+			$('#cal').click(function(){ 
+				clearInterval(interval);
+				var score = 80;
+				for(var i=4; i>=0; i--){
+					
+					var n1 = Number($('input[name="n'+i+'"]').val());
+					var n2 = Number($('input[name="2n'+i+'"]').val());
+					var answer = $('input[name="answer'+i+'"]').val();
+					var ex = $('span#ex'+i).text();
+			
+					var asdf = false;
+					if(ex == '+'){
+						asdf = (n1 + n2 == answer);
+					}else if(ex == '-'){
+						asdf = (n1 - n2 == answer);
+					}else if(ex == '*'){
+						asdf = (n1 * n2 == answer);
+					}else if(ex == '/'){
+						if(n2==0 || n1==0){
+							asdf = true;
+						}else{
+							asdf = (parseInt(n1/n2) == answer);
+						}
+					}
+					if(!asdf){
+						score -= 15;
+					}
+				} // for
+				$('.result').text('점수는 '+score+'경과시간 : '+second);
+			}); // 계산
+			
+			//다시하기 버튼 
+			$('#reset').click(function(){
+				location.reload();
+			});
+			
+		});
+	</script>
+</head>
+<body>
+	<p>
+		<button id="reset">다시해봐</button>
+		<button id="cal">채점해봐</button>
+	</p>
+	<p id="msg">
+	</p>
+	<h1 class="result"></h1>
+</body>
+</html>

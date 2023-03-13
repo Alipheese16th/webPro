@@ -9,6 +9,17 @@
 	<meta charset="UTF-8">
 	<title>Insert title here</title>
 	<link href="${conPath }/css/style.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+	<script>
+		$(document).ready(function(){
+			$('tr').click(function(){
+				var bid = $(this).children().eq(0).text();
+				if(!isNaN(bid)){
+					location.href = "${conPath}/contentView.do?bid="+bid+"&pageNum=${pageNum}";
+				}
+			});
+		});
+	</script>
 </head>
 <body>
 	<c:set var="SUCCESS" value="1"/>
@@ -61,22 +72,24 @@
 				<tr>
 					<td>${dto.bid }</td>
 					<td>${dto.bname }</td>
+					
 					<td class="left">
-						<c:forEach var="i" begin="1" end="${dto.bindent }">
-						<c:if test="${i ne dto.bindent }">
-							&nbsp; &nbsp; 
-						</c:if>
-						<c:if test="${i eq dto.bindent }">
-							└─
-						</c:if>
-						</c:forEach> <!-- 답글 들여쓰기 처리 -->
-						<a href="${conPath}/contentView.do?bid=${dto.bid}&pageNum=${pageNum}">
+						<c:forEach var="i" begin="1" end="${dto.bindent }"><!-- 답글 들여쓰기 처리 -->
+							<c:if test="${i ne dto.bindent }">
+								&nbsp; &nbsp; 
+							</c:if>
+							<c:if test="${i eq dto.bindent }">
+								└─
+							</c:if>
+						</c:forEach>
+						<!--<a href="${conPath}/contentView.do?bid=${dto.bid}&pageNum=${pageNum}">-->
 							${dto.btitle }
-						</a>
+						<!--</a>-->
 						<c:if test="${dto.bhit > 10 }">
 							<b> * </b>
 						</c:if>
 					</td>
+					
 					<td>${dto.bip }</td>
 					<td>
 						<fmt:formatDate value="${dto.bdate }" pattern="yy/MM/dd(E) hh:mm(a)"/>
