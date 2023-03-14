@@ -44,6 +44,8 @@ ctrl shift c  (범위주석)
 alt ↑ ↓       (한줄 이동)
 ctrl alt ↑ ↓  (한줄 복사)
 ctrl D 	   (한줄 삭제)
+ctrl shift y  (소문자로)
+ctrl shift x  (대문자로)
 
 -------------------------------------
 sql developer (단축키)

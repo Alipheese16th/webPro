@@ -33,7 +33,7 @@
 			// 계산 버튼
 			$('#cal').click(function(){ 
 				clearInterval(interval);
-				var score = 80;
+				var score = 100;
 				for(var i=4; i>=0; i--){
 					
 					var n1 = Number($('input[name="n'+i+'"]').val());
@@ -56,7 +56,7 @@
 						}
 					}
 					if(!asdf){
-						score -= 15;
+						score -= 20;
 					}
 				} // for
 				$('.result').text('점수는 '+score+'경과시간 : '+second);
