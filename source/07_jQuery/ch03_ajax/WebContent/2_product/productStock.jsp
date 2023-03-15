@@ -16,7 +16,6 @@
 	}else{
 		out.println(pStock+"개 재고");
 	}
-	
 %>
 </body>
 </html>
