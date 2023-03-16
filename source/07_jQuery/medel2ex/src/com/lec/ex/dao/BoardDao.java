@@ -154,7 +154,7 @@ public class BoardDao {
 		Connection 		   conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet 			 rs = null;
-		String sql = "SELECT * FROM FILEBOARD WHERE FID = ?";
+		String sql = "SELECT F.*, MNAME FROM FILEBOARD F, MVC_MEMBER M WHERE F.MID = M.MID AND FID = ?";
 		try {
 			conn = ds.getConnection();
 			pstmt = conn.prepareStatement(sql);
@@ -175,7 +175,7 @@ public class BoardDao {
 				dto = new BoardDto(fid, mid, ftitle, fcontent, ffilename, frdate, fhit, fgroup, fstep, findent, fip, mname);
 			}
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			System.out.println(e.getMessage()+fid+dto);
 		}finally {
 			try {
 				if(rs!=null)rs.close();

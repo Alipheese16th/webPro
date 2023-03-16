@@ -9,6 +9,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.lec.ex.service.ALoginService;
+import com.lec.ex.service.BoardContentService;
+import com.lec.ex.service.BoardDeleteService;
+import com.lec.ex.service.BoardListService;
+import com.lec.ex.service.BoardModifyService;
+import com.lec.ex.service.BoardModifyViewService;
+import com.lec.ex.service.BoardReplyService;
+import com.lec.ex.service.BoardReplyViewService;
+import com.lec.ex.service.BoardWriteService;
+import com.lec.ex.service.MAllViewService;
 import com.lec.ex.service.MJoinService;
 import com.lec.ex.service.MLoginService;
 import com.lec.ex.service.MLogoutService;
@@ -40,6 +50,7 @@ public class FrontController extends HttpServlet {
 		
 		if(command.equals("/main.do")) {	// 첫화면
 			viewPage = "main/main.jsp";
+			
 			
 		/* * * * * * * * * * * * * * * * * * * * * *
 		 * * * * * * * member 관련 요청 * * * * * * * * 
@@ -88,20 +99,70 @@ public class FrontController extends HttpServlet {
 			service.execute(request, response);
 			viewPage = "main/main.jsp";
 			
+			
 		/* * * * * * * * * * * * * * * * * * * * * *
 		 * * * * * * *  admin 관련 요청 * * * * * * * * 
 		 * * * * * * * * * * * * * * * * * * * * * */
-		}else if(command.equals("/")) {
+		}else if(command.equals("/adminLoginView.do")) {	// 관리자로그인 뷰 페이지
+			viewPage = "admin/adminLogin.jsp";
+			
+		}else if(command.equals("/adminLogin.do")) {	// 관리자 로그인 진행후 멤버리스트페이지
+			service = new ALoginService();
+			service.execute(request, response);
+			viewPage = "allView.do";
+			
+		}else if(command.equals("/allView.do")) {	// 멤버리스트 뷰 페이지
+			service = new MAllViewService();
+			service.execute(request, response);
+			viewPage = "member/mAllView.jsp";
 			
 			
-		}
-		
-		
-		
-		
 		/* * * * * * * * * * * * * * * * * * * * * *
 		 * * * * * 파일첨부 게시판 관련 요청 * * * * * * * * 
 		 * * * * * * * * * * * * * * * * * * * * * */
+		}else if(command.equals("/boardList.do")) {	//	게시판리스트 뷰페이지
+			service = new BoardListService();
+			service.execute(request, response);
+			viewPage = "fileBoard/boardList.jsp";
+			
+		}else if(command.equals("/boardWriteView.do")) {	// 게시판 글쓰기 뷰페이지
+			viewPage = "fileBoard/boardWrite.jsp";
+			
+		}else if(command.equals("/boardWrite.do")) {	// 글쓰기 진행 후 게시판 리스트
+			service = new BoardWriteService();
+			service.execute(request, response);
+			viewPage = "boardList.do";
+			
+		}else if(command.equals("/boardContent.do")) {	// 글 상세보기 페이지
+			service = new BoardContentService();
+			service.execute(request, response);
+			viewPage = "fileBoard/boardContent.jsp";
+			
+		}else if(command.equals("/boardModifyView.do")) {	// 글수정 뷰페이지
+			service = new BoardModifyViewService();
+			service.execute(request, response);
+			viewPage = "fileBoard/boardModify.jsp";
+			
+		}else if(command.equals("/boardModify.do")) {	// 글수정 진행후 게시판 리스트
+			service = new BoardModifyService();
+			service.execute(request, response);
+			viewPage = "boardList.do";
+			
+		}else if(command.equals("/boardDelete.do")) {	// 글삭제 실행후 게시판 페이지
+			service = new BoardDeleteService();
+			service.execute(request, response);
+			viewPage = "boardList.do";
+			
+		}else if(command.equals("/boardReplyView.do")) {	// 답글쓰기 뷰 페이지
+			service = new BoardReplyViewService();
+			service.execute(request, response);
+			viewPage = "fileBoard/boardReply.jsp";
+			
+		}else if(command.equals("/boardReply.do")) {	// 답글쓰기 진행후 게시판 페이지
+			service = new BoardReplyService();
+			service.execute(request, response);
+			viewPage = "boardList.do";
+		}
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher(viewPage);
 		dispatcher.forward(request, response);

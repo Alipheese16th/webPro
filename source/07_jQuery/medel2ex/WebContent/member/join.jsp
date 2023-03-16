@@ -17,8 +17,14 @@
   		
   		$('input[name="mid"]').keyup(function(){
   			var mid = $(this).val();
+  			var num = mid.search(/[0-9]/g);
+ 				var eng = mid.search(/[a-z]/ig);
   			if(mid.length < 2){
   				$('#midConfirmResult').text('아이디는 2글자 이상');
+  			}else if(mid.search(/\s/)!=-1){
+  				$('#midConfirmResult').text('공백 입력 금지');
+  			}else if(num < 0 || eng < 0){
+  				$('#midConfirmResult').text('아이디는 영문자와 숫자 혼합으로 입력해주세요');
   			}else{
   				$.ajax({
   					url : '${conPath}/midConfirm.do',
@@ -30,17 +36,29 @@
   					},
   				});
   			}
-  		}); // 아이디 중복검사
+  		}); // 아이디 유효성검사 + 중복검사(ajax)
   		
   		$('#mpw, #mpwChk').keyup(function(){
   			var mpw = $('#mpw').val();
   			var mpwChk = $('#mpwChk').val();
-  			if(mpw == mpwChk){
-  				$('#mpwChkResult').text('비밀번호 일치');
+	 			var num = mpw.search(/[0-9]/g);
+	 			var eng = mpw.search(/[a-z]/ig);
+	 			var spe = mpw.search(/[`~!@@#$%^&*|\\\'\";:\/?]/gi);
+	 			
+  			if(mpw.search(/\s/)!=-1){
+  				$('#mpwChkResult').text('비밀번호는 공백 없이 입력해주세요');
+  			}else if(mpw.length < 4 || mpw.length > 20){
+  				$('#mpwChkResult').text('4자리 ~ 20자리 이내로 입력해주세요');
+  			}else if(num < 0 || eng < 0 || spe < 0 ){
+  				$('#mpwChkResult').text('영문,숫자,특수문자를 혼합하여 입력하세요');
   			}else{
-  				$('#mpwChkResult').text('비밀번호 불일치');
+  				if(mpw == mpwChk){
+ 	  				$('#mpwChkResult').text('비밀번호 일치');
+ 	  			}else{
+ 	  				$('#mpwChkResult').text('비밀번호 불일치');
+ 	  			}
   			}
-  		}); // 비밀번호 일치 확인
+  		}); // 비밀번호 유효성 검사
   		
   		var patternMail = /^\w+@\w+(\.\w+){1,2}$/;
   		$('#memail').keyup(function(){

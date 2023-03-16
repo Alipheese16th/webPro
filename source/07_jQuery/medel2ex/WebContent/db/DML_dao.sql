@@ -46,7 +46,7 @@ INSERT INTO FILEBOARD (fID, mID, fTITLE, fCONTENT, fFILENAME, fGROUP, fSTEP, fIN
 -- 4. 조회수(hit) 1up
 UPDATE FILEBOARD SET FHIT = FHIT + 1 WHERE FID = 1;
 -- 5. 글번호(fid)로 글전체 내용(BoardDto) 가져오기
-SELECT * FROM FILEBOARD WHERE FID = 1;
+SELECT F.*, MNAME FROM FILEBOARD F, MVC_MEMBER M WHERE F.MID = M.MID AND FID = 1;
 -- 6. 글 수정하기(fid, ftitle, fcontent, ffilename, frdate(SYSDATE), fip 수정)
 UPDATE FILEBOARD 
   SET FTITLE = '수정제목',
@@ -56,7 +56,8 @@ UPDATE FILEBOARD
       FIP = '121.121.121.121'
   WHERE FID = 1;
 -- 7. 글 삭제하기(fid로)
-DELETE FROM FILEBOARD WHERE FID = 1;
+DELETE FROM FILEBOARD WHERE FID = 2;
+
 ROLLBACK;
 -- 8. 답변글 쓰기 전 단계(원글의 fgroup과 같고, 원글의 fstep보다 크면 fstep을 1 증가)
 UPDATE FILEBOARD SET FSTEP = FSTEP + 1

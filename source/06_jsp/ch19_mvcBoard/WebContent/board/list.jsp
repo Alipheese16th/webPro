@@ -100,9 +100,11 @@
 		</c:if>
 	</table>
 	<div class="paging">
+	
 		<c:if test="${startPage > BLOCKSIZE }">
 			<a href="${conPath}/list.do?pageNum=${startPage-1}">[ 이전 ]</a>
 		</c:if>
+		
 		<c:forEach var="i" begin="${startPage}" end="${endPage}">
 			<c:if test="${i eq pageNum }">
 				[ <b>${i}</b> ]
@@ -111,9 +113,11 @@
 				<a href="${conPath}/list.do?pageNum=${i}">[ ${i} ]</a>
 			</c:if>
 		</c:forEach>
+		
 		<c:if test="${endPage < pageCnt }">
 			<a href="${conPath}/list.do?pageNum=${endPage+1}">[ 다음 ]</a>
 		</c:if>
+		
 	</div>
 </body>
 </html>

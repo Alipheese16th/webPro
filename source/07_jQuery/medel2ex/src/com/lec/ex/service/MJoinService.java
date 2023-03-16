@@ -41,20 +41,14 @@ public class MJoinService implements Service {
 			}
 			String maddress = mRequest.getParameter("maddress");
 			MemberDao mDao = new MemberDao();
-			// mid 중복체크
-			result = mDao.idConfirm(mid);
-			if(result == MemberDao.NONE_EXISTENT) { // id 중복없으니까 가입 진행
-				MemberDto dto = new MemberDto(mid, mpw, mname, memail, mphoto, mbirth, maddress, null);
-				// 회원가입
-				result = mDao.join(dto);
-				if(result == MemberDao.SUCCESS) { // join 성공
-					request.getSession().setAttribute("mid", mid);
-					request.setAttribute("joinResult", "회원가입이 완료되었습니다");
-				}else { // join 실패
-					request.setAttribute("joinErrorMsg", "정보가 너무 길어서 회원가입 실패");
-				}
-			}else { // id중복
-				request.setAttribute("joinErrorMsg", "중복된 ID는 회원가입이 불가합니다");
+			MemberDto dto = new MemberDto(mid, mpw, mname, memail, mphoto, mbirth, maddress, null);
+			// 회원가입
+			result = mDao.join(dto);
+			if(result == MemberDao.SUCCESS) { // join 성공
+				request.getSession().setAttribute("mid", mid);
+				request.setAttribute("joinResult", "회원가입이 완료되었습니다");
+			}else { // join 실패
+				request.setAttribute("joinErrorMsg", "정보가 너무 길어서 회원가입 실패");
 			}
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
