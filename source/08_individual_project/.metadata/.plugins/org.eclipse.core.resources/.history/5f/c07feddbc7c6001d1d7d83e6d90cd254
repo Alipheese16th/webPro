@@ -1,0 +1,109 @@
+package com.ch.movie.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
+import com.ch.movie.dto.MovieDto;
+
+public class MovieDao {
+	public static final int FAIL = 0;
+	public static final int SUCCESS = 1;
+	private DataSource ds;
+
+	public MovieDao() {
+		try {
+			Context ctx = new InitialContext();
+			ds = (DataSource) ctx.lookup("java:comp/env/jdbc/Oracle11g");
+		} catch (NamingException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	// 영화등록
+	public int registerMovie(MovieDto dto) {
+		int result = FAIL;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "INSERT INTO MOVIE(MOVIEID, MOVIENAME, MOVIESUMMARY, MOVIERUNNING, MOVIEIMAGE, " + 
+				"            MOVIEDATE, MOVIEGRADE, MOVIEAUDIENCE, STATE) " + 
+				"  VALUES('m'||LPAD(MOVIE_SEQ.NEXTVAL,3,'0'),?,'아이언맨은 히어로 이야기이다. 머시기 저시기', " + 
+				"  126,'ironman.png','08/04/30','12세 관람가',4300365,3)";
+		try {
+			conn = ds.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, dto.getMovieName());
+			pstmt.setString(2,dto.getMovieSummary());
+			pstmt.setInt(3,dto.getMovieRunning());
+			pstmt.setString(4,dto.getMovieImage());
+			pstmt.setDate(5,dto.getMovieDate());
+			pstmt.setString(6,dto.getMovieGrade());
+			pstmt.setInt(7,dto.getMovieAudience());
+			pstmt.setInt(8, dto.getState());
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			System.out.println("영화등록에러:"+dto);
+		}finally {
+			try {
+				if(pstmt!=null)pstmt.close();
+				if(conn!=null)conn.close();
+			} catch (SQLException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+		return result;
+	}
+	// 영화 수정
+	public int updateMovie(MovieDto dto) {
+		int result = FAIL;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "UPDATE MOVIE " + 
+				"  SET MOVIENAME = ?, " + 
+				"      MOVIESUMMARY = ?, " + 
+				"      MOVIERUNNING = ?, " + 
+				"      MOVIEIMAGE = ?, " + 
+				"      MOVIEDATE = ?, " + 
+				"      MOVIEGRADE = ?, " + 
+				"      MOVIEAUDIENCE = ?, " + 
+				"      STATE = ? " + 
+				"  WHERE MOVIEID = ?";
+		try {
+			conn = ds.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, dto.getMovieName());
+			pstmt.setString(2,dto.getMovieSummary());
+			pstmt.setInt(3,dto.getMovieRunning());
+			pstmt.setString(4,dto.getMovieImage());
+			pstmt.setDate(5,dto.getMovieDate());
+			pstmt.setString(6,dto.getMovieGrade());
+			pstmt.setInt(7,dto.getMovieAudience());
+			pstmt.setInt(8, dto.getState());
+			pstmt.setNString(9, dto.getMovieId());
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			System.out.println("영화수정에러:"+dto);
+		}finally {
+			try {
+				if(pstmt!=null)pstmt.close();
+				if(conn!=null)conn.close();
+			} catch (SQLException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+		return result;
+	}
+	
+	
+	
+	
+	
+	
+}

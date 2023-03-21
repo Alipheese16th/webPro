@@ -1,0 +1,10 @@
+
+3월 20, 2023 15:16:34.486 NEW SESSION
+3월 20, 2023 15:16:34.486 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+3월 20, 2023 16:54:08.76 [11260:4348:0320/165408.076:ERROR:device_event_log_impl.cc(222)] [16:54:08.075] Bluetooth: bluetooth_adapter_winrt.cc:1073 Getting Default Adapter failed.
+3월 20, 2023 16:54:54.466 [11260:4348:0320/165454.466:ERROR:interface_endpoint_client.cc(695)] Message 1 rejected by interface blink.mojom.WidgetHost
+3월 20, 2023 16:56:21.722 [11260:4348:0320/165621.722:ERROR:interface_endpoint_client.cc(695)] Message 0 rejected by interface blink.mojom.WidgetHost
+3월 20, 2023 16:56:29.149 [11260:4348:0320/165629.149:ERROR:interface_endpoint_client.cc(695)] Message 1 rejected by interface blink.mojom.WidgetHost
+3월 20, 2023 17:38:41.814 [11260:4348:0320/173841.814:ERROR:interface_endpoint_client.cc(695)] Message 1 rejected by interface blink.mojom.WidgetHost
+3월 20, 2023 17:42:56.717 [11260:4348:0320/174256.717:ERROR:interface_endpoint_client.cc(695)] Message 1 rejected by interface blink.mojom.WidgetHost
+3월 20, 2023 17:47:19.908 [11260:4348:0320/174719.907:ERROR:interface_endpoint_client.cc(695)] Message 1 rejected by interface blink.mojom.WidgetHost
