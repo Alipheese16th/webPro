@@ -1,5 +1,0 @@
-추후에 깃 이그노어 
-
-/.metadata/
-
-/Servers/
