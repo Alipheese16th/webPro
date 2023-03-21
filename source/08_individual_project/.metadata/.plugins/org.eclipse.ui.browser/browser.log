@@ -8,3 +8,10 @@
 3월 20, 2023 17:38:41.814 [11260:4348:0320/173841.814:ERROR:interface_endpoint_client.cc(695)] Message 1 rejected by interface blink.mojom.WidgetHost
 3월 20, 2023 17:42:56.717 [11260:4348:0320/174256.717:ERROR:interface_endpoint_client.cc(695)] Message 1 rejected by interface blink.mojom.WidgetHost
 3월 20, 2023 17:47:19.908 [11260:4348:0320/174719.907:ERROR:interface_endpoint_client.cc(695)] Message 1 rejected by interface blink.mojom.WidgetHost
+
+3월 21, 2023 13:12:46.281 NEW SESSION
+3월 21, 2023 13:12:46.281 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+3월 21, 2023 15:15:37.944 [5892:10936:0321/151537.943:ERROR:interface_endpoint_client.cc(695)] Message 1 rejected by interface blink.mojom.WidgetHost
+3월 21, 2023 15:25:24.446 [5892:10936:0321/152524.446:ERROR:interface_endpoint_client.cc(695)] Message 1 rejected by interface blink.mojom.WidgetHost
+3월 21, 2023 16:06:58.833 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+3월 21, 2023 16:07:52.752 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.

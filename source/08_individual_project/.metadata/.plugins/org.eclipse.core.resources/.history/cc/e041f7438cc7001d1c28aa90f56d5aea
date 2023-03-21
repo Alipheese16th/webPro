@@ -1,0 +1,5 @@
+package com.ch.movie.service;
+
+public interface Service {
+
+}
