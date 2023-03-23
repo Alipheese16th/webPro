@@ -1,0 +1,45 @@
+package com.ch.movie.service;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.ch.movie.dao.CommentDao;
+
+public class commentListService implements Service {
+
+	@Override
+	public void execute(HttpServletRequest request, HttpServletResponse response) {
+		
+		String pageNum = request.getParameter("cpageNum");
+		if(pageNum == null || pageNum.equals("")) {
+			pageNum = "1";
+		}
+		String _boardNo = request.getParameter("boardNo");
+		int boardNo = Integer.parseInt(_boardNo);
+		
+		int currentPage = Integer.parseInt(pageNum);
+		final int PAGESIZE = 10, BLOCKSIZE = 10;
+		int startRow = (currentPage-1)*PAGESIZE + 1;
+		int endRow = startRow + PAGESIZE - 1;
+		CommentDao comment = new CommentDao();
+		request.setAttribute("commentList", comment.getCommentList(boardNo, startRow, endRow));
+		// 댓글 페이징 항목
+		int totCnt = comment.totalComment(boardNo);
+		int pageCnt = (int)Math.ceil((double)totCnt/PAGESIZE);
+		int startPage = ((currentPage-1)/BLOCKSIZE)*BLOCKSIZE + 1;
+		int endPage = startPage + BLOCKSIZE - 1;
+		if(endPage > pageCnt) {
+			endPage = pageCnt;
+		}
+		
+		request.setAttribute("commentPageNum", pageNum);
+		request.setAttribute("commentPAGESIZE", PAGESIZE);
+		request.setAttribute("commentCurrentPage", currentPage);
+		request.setAttribute("commentPageCnt", pageCnt);
+		request.setAttribute("commentBLOCKSIZE", BLOCKSIZE);
+		request.setAttribute("commentStartPage", startPage);
+		request.setAttribute("commentEndPage", endPage);
+		
+	}
+
+}
