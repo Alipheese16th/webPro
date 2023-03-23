@@ -1,0 +1,22 @@
+package com.ch.movie.service;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.ch.movie.dao.UserDao;
+
+public class UserModifyService implements Service {
+
+	@Override
+	public void execute(HttpServletRequest request, HttpServletResponse response) {
+		
+		
+		
+		
+		
+		UserDao user = new UserDao();
+		
+
+	}
+
+}

@@ -21,7 +21,10 @@
 <fullyQualifiedTypeName name="javax.servlet.http.HttpServletRequest"/>
 <fullyQualifiedTypeName name="javax.servlet.http.HttpServletResponse"/>
 <fullyQualifiedTypeName name="javax.servlet.RequestDispatcher"/>
-<fullyQualifiedTypeName name="com.ch.movie.dao.UserDao"/>
 <fullyQualifiedTypeName name="java.sql.Date"/>
 <fullyQualifiedTypeName name="com.ch.movie.dto.UserDto"/>
+<fullyQualifiedTypeName name="com.ch.movie.dao.UserDao"/>
+<fullyQualifiedTypeName name="com.ch.movie.dao.BoardDao"/>
+<fullyQualifiedTypeName name="com.ch.movie.dto.CommentDto"/>
+<fullyQualifiedTypeName name="com.ch.movie.dao.CommentDao"/>
 </qualifiedTypeNameHistroy>

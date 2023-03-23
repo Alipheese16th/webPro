@@ -114,6 +114,7 @@
 				<a href="${conPath}/boardList.do?pageNum=${endPage+1}">[ 다음 ]</a>
 			</c:if>
 		</div>
+		
 	</div>
 	<jsp:include page="../main/footer.jsp"/>
 </body>
