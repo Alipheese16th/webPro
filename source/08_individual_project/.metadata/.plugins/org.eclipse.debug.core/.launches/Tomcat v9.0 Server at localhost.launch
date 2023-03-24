@@ -7,7 +7,7 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_351"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="start"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dcatalina.base=&quot;D:\webPro\IDE\apache-tomcat-9.0.71&quot; -Dcatalina.home=&quot;D:\webPro\IDE\apache-tomcat-9.0.71&quot; -Dwtp.deploy=&quot;D:\webPro\IDE\apache-tomcat-9.0.71\wtpwebapps&quot; -Djava.endorsed.dirs=&quot;D:\webPro\IDE\apache-tomcat-9.0.71\endorsed&quot;"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-Djava.net.preferIPv4Stack=true start"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djava.net.preferIPv4Stack=true -Dcatalina.base=&quot;D:\webPro\IDE\apache-tomcat-9.0.71&quot; -Dcatalina.home=&quot;D:\webPro\IDE\apache-tomcat-9.0.71&quot; -Dwtp.deploy=&quot;D:\webPro\IDE\apache-tomcat-9.0.71\wtpwebapps&quot; -Djava.endorsed.dirs=&quot;D:\webPro\IDE\apache-tomcat-9.0.71\endorsed&quot;"/>
 <stringAttribute key="server-id" value="Tomcat v9.0 Server at localhost"/>
 </launchConfiguration>

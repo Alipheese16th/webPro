@@ -1,0 +1,27 @@
+package com.ch.movie.service;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class BoardReplyService implements Service {
+
+	@Override
+	public void execute(HttpServletRequest request, HttpServletResponse response) {
+		
+		String boardGroupStr = request.getParameter("boardGroup");
+		String boardStepStr = request.getParameter("boardStep");
+		String boardIndentStr = request.getParameter("boardIndent");
+		int boardGroup = Integer.parseInt(boardGroupStr);
+		int boardStep = Integer.parseInt(boardStepStr);
+		int boardIndent = Integer.parseInt(boardIndentStr);
+		
+		
+		
+		
+		
+		
+		
+
+	}
+
+}

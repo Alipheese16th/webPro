@@ -48,7 +48,11 @@ request.setAttribute("next", request.getParameter("next"));
 
 ---
 
+이미지 alt속성표기
 
+---
+
+영화 평점 프로그레스 바로 표현
 
 
 

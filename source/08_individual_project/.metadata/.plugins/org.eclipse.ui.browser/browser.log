@@ -69,3 +69,23 @@
 
 3월 23, 2023 19:45:17.502 NEW SESSION
 3월 23, 2023 19:45:17.502 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+
+3월 24, 2023 09:36:19.288 NEW SESSION
+3월 24, 2023 09:36:19.288 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+3월 24, 2023 10:00:20.463 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+3월 24, 2023 10:38:51.389 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+3월 24, 2023 10:42:15.144 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+
+3월 24, 2023 13:19:41.768 NEW SESSION
+3월 24, 2023 13:19:41.768 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+3월 24, 2023 13:37:41.967 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+3월 24, 2023 13:47:45.931 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+3월 24, 2023 17:00:59.946 [9072:1420:0324/170059.946:ERROR:interface_endpoint_client.cc(695)] Message 1 rejected by interface blink.mojom.WidgetHost
+3월 24, 2023 17:28:27.384 [9072:1420:0324/172827.384:ERROR:interface_endpoint_client.cc(695)] Message 0 rejected by interface blink.mojom.WidgetHost
+3월 24, 2023 17:28:37.975 [libprotobuf ERROR ..\..\third_party\protobuf\src\google\protobuf\message_lite.cc:133] Can't parse message of type "safe_browsing.ClientDownloadRequest" because it is missing required fields: (cannot determine missing fields for lite message)
+3월 24, 2023 17:29:03.340 [9072:1420:0324/172903.340:ERROR:interface_endpoint_client.cc(695)] Message 0 rejected by interface blink.mojom.WidgetHost
+3월 24, 2023 17:29:05.179 [9072:1420:0324/172905.179:ERROR:interface_endpoint_client.cc(695)] Message 0 rejected by interface blink.mojom.WidgetHost
+3월 24, 2023 17:29:19.897 [libprotobuf ERROR ..\..\third_party\protobuf\src\google\protobuf\message_lite.cc:133] Can't parse message of type "safe_browsing.ClientDownloadRequest" because it is missing required fields: (cannot determine missing fields for lite message)
+3월 24, 2023 17:29:52.401 [libprotobuf ERROR ..\..\third_party\protobuf\src\google\protobuf\message_lite.cc:133] Can't parse message of type "safe_browsing.ClientDownloadRequest" because it is missing required fields: (cannot determine missing fields for lite message)
+3월 24, 2023 17:32:15.874 [9072:1420:0324/173215.874:ERROR:interface_endpoint_client.cc(695)] Message 1 rejected by interface blink.mojom.WidgetHost
+3월 24, 2023 17:44:34.324 [9072:1420:0324/174434.324:ERROR:interface_endpoint_client.cc(695)] Message 1 rejected by interface blink.mojom.WidgetHost

@@ -45,6 +45,7 @@ UPDATE USERS
 ---------------------------------------------------------------
 -------------------- MovieDao에 들어갈 query --------------------
 ---------------------------------------------------------------
+select * from movie;
 -- 영화등록
 INSERT INTO MOVIE(MOVIEID, MOVIENAME, MOVIESUMMARY, MOVIERUNNING, MOVIEIMAGE,
             MOVIEDATE, MOVIEGRADE, MOVIEAUDIENCE, STATE)
@@ -63,29 +64,75 @@ UPDATE MOVIE
   WHERE MOVIEID = 'm006';
   
 -- 영화리스트(탑앤구문없이 전부출력)
--- 상영중(개봉일 최근순)
-SELECT * FROM MOVIE WHERE STATE = 2 ORDER BY MOVIEDATE DESC;
--- 상영예고(가장빨리개봉되는순)
-SELECT * FROM MOVIE WHERE STATE = 1 ORDER BY MOVIEDATE;
+-- 상영중(개봉일 최근순)   -- 평점평균컬럼 추가
+SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgSCORE
+  FROM MOVIE M WHERE STATE = 2 ORDER BY MOVIEDATE DESC;
+-- 상영예고(가장빨리개봉되는순)   -- 평점평균컬럼 추가
+SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgSCORE
+  FROM MOVIE M WHERE STATE = 1 ORDER BY MOVIEDATE;
+
 -- 상영예고중인 작품중에서 상영일이 지났으면 상영중으로 업데이트
 UPDATE MOVIE
   SET STATE = 2
   WHERE STATE = 1
   AND MOVIEDATE <= SYSDATE;
   
--- 영화 검색
--- 영화를 이름으로 검색
-SELECT * FROM MOVIE WHERE MOVIENAME LIKE '%' || '벤져' || '%';
+-- 영화 검색(평점 평균 추가)
+-- 영화를 이름으로 검색 
+SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
+  FROM MOVIE M WHERE MOVIENAME LIKE '%' || '벤져' || '%';
 -- 영화를 태그로 검색
-SELECT * FROM MOVIE WHERE MOVIEID IN (SELECT MOVIEID FROM TAG WHERE TAG = '판타지');
+SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
+  FROM MOVIE M WHERE MOVIEID IN (SELECT MOVIEID FROM TAG WHERE TAG = '판타지');
 -- 영화 상세보기(movieId로 dto가져오기)
-SELECT * FROM MOVIE WHERE MOVIEID = 'm001';
+SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
+  FROM MOVIE M WHERE MOVIEID = 'm001';
+
+
 -- 영화태그출력(movieId로 태그리스트가져오기)
 SELECT TAG FROM TAG WHERE MOVIEID = 'm002';
 
 -- 특정 인물의 영화 출연작 리스트(personId로 영화리스트가져오기)
 SELECT M.* FROM MOVIE_PERSON MP, MOVIE M
   WHERE MP.MOVIEID = M.MOVIEID AND MP.PERSONID = 'p001';
+
+---------------------------------------------------------------
+-------------------- RatingDao에 들어갈 query -------------------
+---------------------------------------------------------------
+
+-- 평점 중복확인
+SELECT * FROM RATING WHERE MOVIEID = 'm001' AND USERID = 'aaa';
+
+-- 해당 영화의 평점 평균치
+SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = 'm002';
+
+-- 영화 리스트 (평점평균치 포함)
+SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
+  FROM MOVIE M;
+
+
+-----------------------------------------------------
+
+-- 평점 리스트(탑앤구문 작성순서)(영화아이디에 해당하는 평점들만 출력)
+SELECT * FROM
+  (SELECT ROW_NUMBER() OVER(ORDER BY RATINGDATE DESC) RN, R.* FROM RATING R WHERE MOVIEID = 'm001')
+  WHERE RN BETWEEN 1 AND 10;
+-- 평점 갯수(페이징)(영화아이디에 해당하는 평점만 출력)
+SELECT COUNT(*) FROM RATING WHERE MOVIEID = 'm001';
+-- 평점 작성
+INSERT INTO RATING (USERID, MOVIEID, RATINGCONTENT, RATINGSCORE)
+  VALUES('aaa','m003','으이게뭐냐',0);
+-- 평점 수정
+UPDATE RATING
+  SET RATINGCONTENT = '해리포터재밌다니까요',
+      RATINGSCORE = 10
+  WHERE USERID = 'aaa' AND MOVIEID = 'm001';
+-- 평점 삭제
+DELETE FROM RATING WHERE USERID = 'aaa' AND MOVIEID = 'm001';
+ROLLBACK;
+
+
+
 
 
 ---------------------------------------------------------------
@@ -160,6 +207,8 @@ SELECT * FROM
   WHERE RN BETWEEN 1 AND 10;
 -- 댓글 갯수(페이징)(1번글의 댓글수)
 SELECT COUNT(*) FROM COMMENTS WHERE BOARDNO = 1;
+-- 댓글번호로 댓글정보 가져오기 (수정 위해서)
+SELECT * FROM COMMENTS WHERE COMMENTNO = 1;
 -- 댓글 작성
 INSERT INTO COMMENTS(COMMENTNO, BOARDNO, USERID, COMMENTCONTENT)
   VALUES(COMMENTS_SEQ.NEXTVAL, 120, 'aaa', '댓글이에용');
@@ -169,26 +218,4 @@ UPDATE COMMENTS SET COMMENTCONTENT = '1번수정' WHERE COMMENTNO = 1;
 -- 댓글 삭제
 DELETE FROM COMMENTS WHERE COMMENTNO = 1;
 ROLLBACK;
-
----------------------------------------------------------------
--------------------- RatingDao에 들어갈 query -------------------
----------------------------------------------------------------
--- 평점 리스트(탑앤구문 작성순서)(영화아이디에 해당하는 평점들만 출력)
-SELECT * FROM
-  (SELECT ROW_NUMBER() OVER(ORDER BY RATINGDATE DESC) RN, R.* FROM RATING R WHERE MOVIEID = 'm001')
-  WHERE RN BETWEEN 1 AND 10;
--- 평점 갯수(페이징)(영화아이디에 해당하는 평점만 출력)
-SELECT COUNT(*) FROM RATING WHERE MOVIEID = 'm001';
--- 평점 작성
-INSERT INTO RATING (USERID, MOVIEID, RATINGCONTENT, RATINGSCORE)
-  VALUES('aaa','m003','으이게뭐냐',0);
--- 평점 수정
-UPDATE RATING
-  SET RATINGCONTENT = '해리포터재밌다니까요',
-      RATINGSCORE = 10
-  WHERE USERID = 'aaa' AND MOVIEID = 'm001';
--- 평점 삭제
-DELETE FROM RATING WHERE USERID = 'aaa' AND MOVIEID = 'm001';
-ROLLBACK;
-
 
