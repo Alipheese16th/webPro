@@ -47,13 +47,14 @@ UPDATE USERS
 ---------------------------------------------------------------
 select * from movie;
 -- 영화등록
-INSERT INTO MOVIE(MOVIEID, MOVIENAME, MOVIESUMMARY, MOVIERUNNING, MOVIEIMAGE,
+INSERT INTO MOVIE(MOVIEID, ORIGINALTITLE, MOVIETITLE, MOVIESUMMARY, MOVIERUNNING, MOVIEIMAGE,
             MOVIEDATE, MOVIEGRADE, MOVIEAUDIENCE, STATE)
-  VALUES('m'||LPAD(MOVIE_SEQ.NEXTVAL,3,'0'),'아이언맨','아이언맨은 히어로 이야기이다. 머시기 저시기',
+  VALUES('m'||LPAD(MOVIE_SEQ.NEXTVAL,3,'0'),'Iron Man','아이언맨','아이언맨은 히어로 이야기이다. 머시기 저시기',
   126,'ironman.png','08/04/30','12세 관람가',4300365,3);
 -- 영화 수정
 UPDATE MOVIE
-  SET MOVIENAME = '아이언맨2',
+  SET ORIGINALTITLE = 'Iron Man 2',
+      MOVIETITLE = '아이언맨2',
       MOVIESUMMARY = '아이언맨2로 수정',
       MOVIERUNNING = 100,
       MOVIEIMAGE = 'ironSujong.jpg',
@@ -62,39 +63,41 @@ UPDATE MOVIE
       MOVIEAUDIENCE = 4400365,
       STATE = 0
   WHERE MOVIEID = 'm006';
-  
--- 영화리스트(탑앤구문없이 전부출력)
--- 상영중(개봉일 최근순)   -- 평점평균컬럼 추가
+
+-- 영화 리스트 상영중(개봉일 최근순)   -- 평균평점 조인
 SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgSCORE
   FROM MOVIE M WHERE STATE = 2 ORDER BY MOVIEDATE DESC;
--- 상영예고(가장빨리개봉되는순)   -- 평점평균컬럼 추가
+-- 영화리스트 상영예고(가장빨리개봉되는순)   -- 평균평점 조인
 SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgSCORE
   FROM MOVIE M WHERE STATE = 1 ORDER BY MOVIEDATE;
 
+-- 영화 상세보기( STATE의 STIUATION추가, 평균 평점 추가)
+SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
+  FROM MOVIE M WHERE MOVIEID = 'm001';
+-- 해당 영화의 태그리스트 (moviedto 속성으로 추가할것 ArrayList<string>)
+SELECT TAG FROM TAG WHERE MOVIEID = 'm002';
+-- 해당 영화의 인물리스트 역할, 배역 (moviedto 속성으로 추가할것 ArrayList<PersonDto>)
+SELECT P.PERSONID,PERSONNAME,PERSONIMAGE,PERSONNATION,PERSONBIRTH,CASTING,ROLE
+FROM MOVIE_PERSON MP,PERSON P WHERE MP.PERSONID = P.PERSONID AND MOVIEID = 'm001';
+-- 해당 영화의 예고편리스트 (moviedto 속성으로 추가 ArrayList<TrailerDto>)
+SELECT * FROM TRAILER WHERE MOVIEID = 'm002';
+
+
+select * from movie;
 -- 상영예고중인 작품중에서 상영일이 지났으면 상영중으로 업데이트
 UPDATE MOVIE
   SET STATE = 2
   WHERE STATE = 1
   AND MOVIEDATE <= SYSDATE;
   
--- 영화 검색(평점 평균 추가)
+-- 영화 검색(평균 평점 조인 추가)
 -- 영화를 이름으로 검색 
 SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
-  FROM MOVIE M WHERE MOVIENAME LIKE '%' || '벤져' || '%';
+  FROM MOVIE M WHERE MOVIETITLE LIKE '%' || '벤져' || '%';
 -- 영화를 태그로 검색
 SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
   FROM MOVIE M WHERE MOVIEID IN (SELECT MOVIEID FROM TAG WHERE TAG = '판타지');
--- 영화 상세보기(movieId로 dto가져오기)
-SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
-  FROM MOVIE M WHERE MOVIEID = 'm001';
 
-
--- 영화태그출력(movieId로 태그리스트가져오기)
-SELECT TAG FROM TAG WHERE MOVIEID = 'm002';
-
--- 특정 인물의 영화 출연작 리스트(personId로 영화리스트가져오기)
-SELECT M.* FROM MOVIE_PERSON MP, MOVIE M
-  WHERE MP.MOVIEID = M.MOVIEID AND MP.PERSONID = 'p001';
 
 ---------------------------------------------------------------
 -------------------- RatingDao에 들어갈 query -------------------
@@ -132,35 +135,30 @@ DELETE FROM RATING WHERE USERID = 'aaa' AND MOVIEID = 'm001';
 ROLLBACK;
 
 
-
-
-
 ---------------------------------------------------------------
 -------------------- PersonDao에 들어갈 query --------------------
 ---------------------------------------------------------------
 -- 이름으로 인물 검색
 SELECT * FROM PERSON WHERE PERSONNAME LIKE '%' || '엠마' || '%';
 
--- 특정 영화의 인물들 출력(movieId로 인물리스트)
-SELECT P.* FROM MOVIE_PERSON MP, PERSON P
-  WHERE MP.PERSONID = P.PERSONID AND MP.MOVIEID = 'm001';
-
 -- 인물 상세보기 (id로 dto가져오기)
 SELECT * FROM PERSON WHERE PERSONID = 'p001';
 
+-- 특정 인물의 영화 출연작 리스트 (평균 평점 조인)
+SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgSCORE
+  FROM MOVIE M, MOVIE_PERSON MP
+  WHERE MP.MOVIEID = M.MOVIEID AND MP.PERSONID = 'p002';
+
 -- 인물 등록
-INSERT INTO PERSON(PERSONID, PERSONJOB, PERSONNAME, PERSONIMAGE, PERSONGENDER, PERSONNATION, PERSONBIRTH, PERSONDETAIL)
-  VALUES('p'||LPAD(PERSON_SEQ.NEXTVAL,3,'0'),'감독','신카이 마코토', 'sinkai.jpg','m','Japan','73/02/09', '스즈메의 문단속 감독');
+INSERT INTO PERSON(PERSONID, PERSONNAME, PERSONIMAGE, PERSONNATION, PERSONBIRTH)
+  VALUES('p'||LPAD(PERSON_SEQ.NEXTVAL,3,'0'),'신카이 마코토', 'sinkai.jpg','Japan','73/02/09');
 
 -- 인물 정보 수정
 UPDATE PERSON
-  SET PERSONJOB = '감독',
-      PERSONNAME = '데이빗 예이츠',
+  SET PERSONNAME = '데이빗 예이츠',
       PERSONIMAGE = 'Daivid.png',
-      PERSONGENDER = 'm',
       PERSONNATION = 'United Kingdon',
-      PERSONBIRTH = '63/11/30',
-      PERSONDETAIL = '해리포터 감독이다'
+      PERSONBIRTH = '63/11/30'
   WHERE PERSONID = 'p001';
 
 

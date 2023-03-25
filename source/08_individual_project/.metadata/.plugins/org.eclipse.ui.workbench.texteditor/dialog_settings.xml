@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value="ratingScore"/>
+		<item key="selection" value=""/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="orgi"/>
+			<item value="moviename"/>
+			<item value="setnstring"/>
+			<item value="movieName"/>
+			<item value="name"/>
+			<item value="sidebar"/>
+			<item value="sidbar"/>
 			<item value="ratingscore"/>
 			<item value="id=&quot;commentPageNum"/>
 			<item value="boardNo"/>
 			<item value="show"/>
-			<item value="sidebar"/>
 			<item value="collapse"/>
 			<item value="private "/>
 			<item value="commentNo"/>
 			<item value="commentModify"/>
-			<item value="commentContent"/>
-			<item value="pageNum"/>
-			<item value="tel"/>
-			<item value="tell"/>
-			<item value="gradient-form"/>
-			<item value="gradient-custom-"/>
 		</list>
 		<list key="replacehistory">
+			<item value="movieTitle"/>
 			<item value="avgScore"/>
 			<item value=""/>
 			<item value="tel"/>
@@ -32,8 +33,8 @@
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item key="DIALOG_X_ORIGIN" value="1104"/>
-		<item key="DIALOG_Y_ORIGIN" value="238"/>
+		<item key="DIALOG_X_ORIGIN" value="357"/>
+		<item key="DIALOG_Y_ORIGIN" value="301"/>
 		<item key="DIALOG_WIDTH" value="288"/>
 		<item key="DIALOG_HEIGHT" value="385"/>
 		<item key="DIALOG_FONT_NAME" value="1|맑은 고딕|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|맑은 고딕"/>

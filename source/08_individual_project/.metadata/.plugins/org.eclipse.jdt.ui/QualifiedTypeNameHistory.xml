@@ -2,13 +2,10 @@
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="com.ch.movie.dto.AdminDto"/>
 <fullyQualifiedTypeName name="java.sql.Timestamp"/>
-<fullyQualifiedTypeName name="com.ch.movie.dto.MovieDto"/>
-<fullyQualifiedTypeName name="com.ch.movie.dto.PersonDto"/>
 <fullyQualifiedTypeName name="javax.sql.DataSource"/>
 <fullyQualifiedTypeName name="javax.naming.Context"/>
 <fullyQualifiedTypeName name="javax.naming.InitialContext"/>
 <fullyQualifiedTypeName name="javax.naming.NamingException"/>
-<fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="java.sql.Connection"/>
 <fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
 <fullyQualifiedTypeName name="java.sql.ResultSet"/>
@@ -27,5 +24,9 @@
 <fullyQualifiedTypeName name="com.ch.movie.dao.CommentDao"/>
 <fullyQualifiedTypeName name="com.ch.movie.dto.BoardDto"/>
 <fullyQualifiedTypeName name="com.ch.movie.dao.BoardDao"/>
+<fullyQualifiedTypeName name="com.ch.movie.dto.MovieDto"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="com.ch.movie.dto.PersonDto"/>
 <fullyQualifiedTypeName name="com.ch.movie.dao.MovieDao"/>
+<fullyQualifiedTypeName name="com.ch.movie.dto.TrailerDto"/>
 </qualifiedTypeNameHistroy>

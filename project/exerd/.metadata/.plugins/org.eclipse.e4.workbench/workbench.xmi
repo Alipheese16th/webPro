@@ -3,7 +3,7 @@
   <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;workbench>&#xD;&#xA;&lt;mruList>&#xD;&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;com.tomato.exerd.editor.DiagramEditor&quot; name=&quot;project.exerd&quot; tooltip=&quot;newProject/project.exerd&quot;>&#xD;&#xA;&lt;persistable path=&quot;/newProject/project.exerd&quot;/>&#xD;&#xA;&lt;/file>&#xD;&#xA;&lt;/mruList>&#xD;&#xA;&lt;/workbench>"/>
   <tags>activeSchemeId:org.eclipse.ui.defaultAcceleratorConfiguration</tags>
   <tags>ModelMigrationProcessor.001</tags>
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_HmB2AMS7Ee2NV-i80RNqPA" selectedElement="_HmB2AcS7Ee2NV-i80RNqPA" x="-1" y="0" width="908" height="531">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_HmB2AMS7Ee2NV-i80RNqPA" selectedElement="_HmB2AcS7Ee2NV-i80RNqPA" x="130" y="21" width="905" height="1035">
     <persistedState key="coolBarVisible" value="true"/>
     <persistedState key="perspectiveBarVisible" value="true"/>
     <persistedState key="isRestored" value="true"/>
@@ -13,7 +13,7 @@
     <tags>topLevel</tags>
     <children xsi:type="basic:PartSashContainer" xmi:id="_HmB2AcS7Ee2NV-i80RNqPA" selectedElement="_HmB2AsS7Ee2NV-i80RNqPA" horizontal="true">
       <children xsi:type="advanced:PerspectiveStack" xmi:id="_HmB2AsS7Ee2NV-i80RNqPA" elementId="PerspectiveStack" containerData="5000" selectedElement="_HmB2A8S7Ee2NV-i80RNqPA">
-        <children xsi:type="advanced:Perspective" xmi:id="_HmB2A8S7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.perspective.design" selectedElement="_JCSYoMS7Ee2NV-i80RNqPA" label="eXERD" iconURI="platform:/plugin/com.tomato.exerd.core/icon/common/erd_editor.gif" tooltip="eXERD">
+        <children xsi:type="advanced:Perspective" xmi:id="_HmB2A8S7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.perspective.design" selectedElement="_X41VcMq2Ee20IfTQu-ysmA" label="eXERD" iconURI="platform:/plugin/com.tomato.exerd.core/icon/common/erd_editor.gif" tooltip="eXERD">
           <persistedState key="persp.hiddenItems" value="persp.hideToolbarSC:print,persp.hideToolbarSC:org.eclipse.ui.edit.undo,persp.hideToolbarSC:org.eclipse.ui.edit.redo,persp.hideToolbarSC:org.eclipse.ui.edit.text.toggleShowSelectedElementOnly,persp.hideToolbarSC:org.eclipse.debug.ui.commands.RunToLine,persp.hideToolbarSC:org.eclipse.jdt.ui.actions.OpenProjectWizard,"/>
           <tags>persp.actionSet:org.eclipse.mylyn.doc.actionSet</tags>
           <tags>persp.actionSet:org.eclipse.mylyn.tasks.ui.navigation</tags>
@@ -40,53 +40,61 @@
           <tags>persp.newWizSC:com.tomato.exerd.ui.wizards.newEXerdWizardFromDatabase</tags>
           <tags>persp.newWizSC:com.tomato.exerd.term.ui.wizard.NewTermDictionaryWizard</tags>
           <tags>persp.newWizSC:com.tomato.exerd.xscript.ui.wizard.NewXScriptWizard</tags>
-          <children xsi:type="basic:PartSashContainer" xmi:id="_JCSYoMS7Ee2NV-i80RNqPA" selectedElement="_JCSYpsS7Ee2NV-i80RNqPA" horizontal="true">
-            <children xsi:type="basic:PartSashContainer" xmi:id="_JCSYocS7Ee2NV-i80RNqPA" toBeRendered="false" containerData="1800">
-              <children xsi:type="basic:PartStack" xmi:id="_JCSYosS7Ee2NV-i80RNqPA" elementId="leftFolder" toBeRendered="false" containerData="3000">
-                <children xsi:type="advanced:Placeholder" xmi:id="_JCSYo8S7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.views.ResourceNavigator" toBeRendered="false" ref="_HmB2H8S7Ee2NV-i80RNqPA">
+          <children xsi:type="basic:PartSashContainer" xmi:id="_X41VcMq2Ee20IfTQu-ysmA" selectedElement="_X41Vdsq2Ee20IfTQu-ysmA" horizontal="true">
+            <children xsi:type="basic:PartSashContainer" xmi:id="_X41Vccq2Ee20IfTQu-ysmA" visible="false" containerData="1800">
+              <children xsi:type="basic:PartStack" xmi:id="_X41Vcsq2Ee20IfTQu-ysmA" elementId="leftFolder" toBeRendered="false" containerData="3000">
+                <children xsi:type="advanced:Placeholder" xmi:id="_X41Vc8q2Ee20IfTQu-ysmA" elementId="org.eclipse.ui.views.ResourceNavigator" toBeRendered="false" ref="_HmB2H8S7Ee2NV-i80RNqPA">
                   <tags>View</tags>
-                  <tags>active</tags>
                 </children>
               </children>
-              <children xsi:type="basic:PartStack" xmi:id="_JCSYpMS7Ee2NV-i80RNqPA" elementId="org.eclipse.gef.ui.palette_viewMStack" toBeRendered="false" containerData="7000">
-                <children xsi:type="advanced:Placeholder" xmi:id="_JCSYpcS7Ee2NV-i80RNqPA" elementId="org.eclipse.gef.ui.palette_view" toBeRendered="false" ref="_HmB2IsS7Ee2NV-i80RNqPA">
+              <children xsi:type="basic:PartStack" xmi:id="_X41VdMq2Ee20IfTQu-ysmA" elementId="org.eclipse.gef.ui.palette_viewMStack" visible="false" containerData="7000" selectedElement="_X41Vdcq2Ee20IfTQu-ysmA">
+                <tags>Minimized</tags>
+                <children xsi:type="advanced:Placeholder" xmi:id="_X41Vdcq2Ee20IfTQu-ysmA" elementId="org.eclipse.gef.ui.palette_view" ref="_HmB2IsS7Ee2NV-i80RNqPA">
                   <tags>View</tags>
                 </children>
               </children>
             </children>
-            <children xsi:type="basic:PartSashContainer" xmi:id="_JCSYpsS7Ee2NV-i80RNqPA" containerData="8200" selectedElement="_JCSYp8S7Ee2NV-i80RNqPA" horizontal="true">
-              <children xsi:type="basic:PartSashContainer" xmi:id="_JCSYp8S7Ee2NV-i80RNqPA" containerData="7799" selectedElement="_JCSYqMS7Ee2NV-i80RNqPA">
-                <children xsi:type="advanced:Placeholder" xmi:id="_JCSYqMS7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.editorss" containerData="9000" ref="_HmB2HMS7Ee2NV-i80RNqPA"/>
-                <children xsi:type="basic:PartStack" xmi:id="_JCSYqcS7Ee2NV-i80RNqPA" elementId="bottomFolder" containerData="1000" selectedElement="_JCSYqsS7Ee2NV-i80RNqPA">
-                  <children xsi:type="advanced:Placeholder" xmi:id="_JCSYqsS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.ui.views.domain" ref="_HmB2IcS7Ee2NV-i80RNqPA">
+            <children xsi:type="basic:PartSashContainer" xmi:id="_X41Vdsq2Ee20IfTQu-ysmA" containerData="8200" selectedElement="_X41Vd8q2Ee20IfTQu-ysmA" horizontal="true">
+              <children xsi:type="basic:PartSashContainer" xmi:id="_X41Vd8q2Ee20IfTQu-ysmA" containerData="7799" selectedElement="_X41VeMq2Ee20IfTQu-ysmA">
+                <children xsi:type="advanced:Placeholder" xmi:id="_X41VeMq2Ee20IfTQu-ysmA" elementId="org.eclipse.ui.editorss" containerData="7913" ref="_HmB2HMS7Ee2NV-i80RNqPA"/>
+                <children xsi:type="basic:PartStack" xmi:id="_X41Vecq2Ee20IfTQu-ysmA" elementId="bottomFolder" visible="false" containerData="2087" selectedElement="_X41Vesq2Ee20IfTQu-ysmA">
+                  <tags>Minimized</tags>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_X41Vesq2Ee20IfTQu-ysmA" elementId="com.tomato.exerd.ui.views.domain" ref="_HmB2IcS7Ee2NV-i80RNqPA">
                     <tags>View</tags>
                   </children>
-                  <children xsi:type="advanced:Placeholder" xmi:id="_JCSYq8S7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.validate.ui.ValidateView" ref="_I_qicMS7Ee2NV-i80RNqPA" closeable="true">
+                  <children xsi:type="advanced:Placeholder" xmi:id="_X41Ve8q2Ee20IfTQu-ysmA" elementId="com.tomato.exerd.validate.ui.ValidateView" ref="_I_qicMS7Ee2NV-i80RNqPA" closeable="true">
                     <tags>View</tags>
                     <tags>categoryTag:eXERD</tags>
                   </children>
-                  <children xsi:type="advanced:Placeholder" xmi:id="_JCSYrMS7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.console.ConsoleView" ref="_HmB2IMS7Ee2NV-i80RNqPA">
+                  <children xsi:type="advanced:Placeholder" xmi:id="_X41VfMq2Ee20IfTQu-ysmA" elementId="org.eclipse.ui.console.ConsoleView" ref="_HmB2IMS7Ee2NV-i80RNqPA">
                     <tags>View</tags>
                   </children>
-                  <children xsi:type="advanced:Placeholder" xmi:id="_JCSYrcS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.xscript.ScriptView" toBeRendered="false" ref="_I_sXoMS7Ee2NV-i80RNqPA" closeable="true">
+                  <children xsi:type="advanced:Placeholder" xmi:id="_X41Vfcq2Ee20IfTQu-ysmA" elementId="com.tomato.exerd.xscript.ScriptView" toBeRendered="false" ref="_I_sXoMS7Ee2NV-i80RNqPA" closeable="true">
                     <tags>View</tags>
                     <tags>categoryTag:eXERD</tags>
                   </children>
                 </children>
               </children>
-              <children xsi:type="basic:PartSashContainer" xmi:id="_JCSYrsS7Ee2NV-i80RNqPA" toBeRendered="false" containerData="2201">
-                <children xsi:type="basic:PartStack" xmi:id="_JCSYr8S7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.ui.views.thumbnailMStack" toBeRendered="false" containerData="2500">
-                  <children xsi:type="advanced:Placeholder" xmi:id="_JCSYsMS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.ui.views.thumbnail" toBeRendered="false" ref="_IRueYMS7Ee2NV-i80RNqPA" closeable="true">
+              <children xsi:type="basic:PartSashContainer" xmi:id="_X41Vfsq2Ee20IfTQu-ysmA" visible="false" containerData="2201" selectedElement="_X41Vgcq2Ee20IfTQu-ysmA">
+                <children xsi:type="basic:PartStack" xmi:id="_X41Vf8q2Ee20IfTQu-ysmA" elementId="com.tomato.exerd.ui.views.thumbnailMStack" visible="false" containerData="2500" selectedElement="_X41VgMq2Ee20IfTQu-ysmA">
+                  <tags>Minimized</tags>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_X41VgMq2Ee20IfTQu-ysmA" elementId="com.tomato.exerd.ui.views.thumbnail" ref="_IRueYMS7Ee2NV-i80RNqPA" closeable="true">
                     <tags>View</tags>
                     <tags>categoryTag:eXERD</tags>
                   </children>
                 </children>
-                <children xsi:type="basic:PartStack" xmi:id="_JCSYscS7Ee2NV-i80RNqPA" elementId="rightFolder" toBeRendered="false" containerData="7500">
-                  <children xsi:type="advanced:Placeholder" xmi:id="_JCSYssS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.modelview3.ModelView3" toBeRendered="false" ref="_IRueYcS7Ee2NV-i80RNqPA" closeable="true">
+                <children xsi:type="basic:PartStack" xmi:id="_X41Vgcq2Ee20IfTQu-ysmA" elementId="rightFolder" visible="false" containerData="7500" selectedElement="_X41Vgsq2Ee20IfTQu-ysmA">
+                  <tags>&#xc77c;&#xbc18;</tags>
+                  <tags>Minimized</tags>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_X41Vgsq2Ee20IfTQu-ysmA" elementId="com.tomato.exerd.modelview3.ModelView3" ref="_IRueYcS7Ee2NV-i80RNqPA" closeable="true">
                     <tags>View</tags>
                     <tags>categoryTag:eXERD</tags>
                   </children>
-                  <children xsi:type="advanced:Placeholder" xmi:id="_JCSYs8S7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.views.ContentOutline" toBeRendered="false" ref="_IRvFcMS7Ee2NV-i80RNqPA" closeable="true">
+                  <children xsi:type="advanced:Placeholder" xmi:id="_X41Vg8q2Ee20IfTQu-ysmA" elementId="org.eclipse.ui.views.ContentOutline" toBeRendered="false" ref="_IRvFcMS7Ee2NV-i80RNqPA" closeable="true">
+                    <tags>View</tags>
+                    <tags>categoryTag:&#xc77c;&#xbc18;</tags>
+                  </children>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_grsZ8Mr9Ee2sHtcJaqQWBQ" elementId="org.eclipse.search.ui.views.SearchView" ref="_grry4Mr9Ee2sHtcJaqQWBQ" closeable="true">
                     <tags>View</tags>
                     <tags>categoryTag:&#xc77c;&#xbc18;</tags>
                   </children>
@@ -103,7 +111,7 @@
       </children>
     </children>
     <sharedElements xsi:type="advanced:Area" xmi:id="_HmB2HMS7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.editorss" selectedElement="_HmB2HcS7Ee2NV-i80RNqPA">
-      <children xsi:type="basic:PartStack" xmi:id="_HmB2HcS7Ee2NV-i80RNqPA" elementId="PartStack@56c0a61e" selectedElement="_HmB2HsS7Ee2NV-i80RNqPA">
+      <children xsi:type="basic:PartStack" xmi:id="_HmB2HcS7Ee2NV-i80RNqPA" elementId="PartStack@315105f" selectedElement="_HmB2HsS7Ee2NV-i80RNqPA">
         <tags>active</tags>
         <children xsi:type="basic:Part" xmi:id="_HmB2HsS7Ee2NV-i80RNqPA" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="project.exerd" iconURI="platform:/plugin/com.tomato.exerd.core/icon/common/erd_editor.gif">
           <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;editor id=&quot;com.tomato.exerd.editor.DiagramEditor&quot; name=&quot;project.exerd&quot; partName=&quot;project.exerd&quot; title=&quot;project.exerd&quot; tooltip=&quot;newProject/project.exerd&quot;>&#xD;&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/newProject/project.exerd&quot;/>&#xD;&#xA;&lt;/editor>"/>
@@ -116,7 +124,7 @@
       </children>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_HmB2H8S7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.views.ResourceNavigator" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="&#xb124;&#xbe44;&#xac8c;&#xc774;&#xd130;" iconURI="platform:/plugin/org.eclipse.ui.ide/icons/full/eview16/filenav_nav.png" tooltip="">
-      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view LINK_NAVIGATOR_TO_EDITOR=&quot;0&quot; sorter=&quot;1&quot;>&#xD;&#xA;&lt;filters>&amp;#x0A;&lt;filter element=&quot;.*&quot; isEnabled=&quot;false&quot;/>&#xD;&#xA;&lt;/filters>&#xD;&#xA;&lt;/view>"/>
+      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view LINK_NAVIGATOR_TO_EDITOR=&quot;0&quot; sorter=&quot;1&quot;>&#xD;&#xA;&lt;filters>&#xD;&#xA;&lt;filter element=&quot;*.class&quot; isEnabled=&quot;false&quot;/>&#xD;&#xA;&lt;filter element=&quot;.*&quot; isEnabled=&quot;false&quot;/>&#xD;&#xA;&lt;/filters>&#xD;&#xA;&lt;/view>"/>
       <tags>View</tags>
       <menus xmi:id="_ITc8sMS7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.views.ResourceNavigator">
         <tags>ViewMenu</tags>
@@ -127,6 +135,11 @@
     <sharedElements xsi:type="basic:Part" xmi:id="_HmB2IMS7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.console.ConsoleView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="&#xcf58;&#xc194;" iconURI="platform:/plugin/org.eclipse.ui.console/icons/full/cview16/console_view.png" tooltip="">
       <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view/>"/>
       <tags>View</tags>
+      <menus xmi:id="_dZlI8Mr9Ee2sHtcJaqQWBQ" elementId="org.eclipse.ui.console.ConsoleView">
+        <tags>ViewMenu</tags>
+        <tags>menuContribution:menu</tags>
+      </menus>
+      <toolbar xmi:id="_dZlI8cr9Ee2sHtcJaqQWBQ" elementId="org.eclipse.ui.console.ConsoleView" visible="false"/>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_HmB2IcS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.ui.views.domain" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="&#xb3c4;&#xba54;&#xc778;" iconURI="platform:/plugin/com.tomato.exerd.core/icon/model/domain.gif" tooltip="">
       <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view/>"/>
@@ -144,7 +157,7 @@
         <tags>ViewMenu</tags>
         <tags>menuContribution:menu</tags>
       </menus>
-      <toolbar xmi:id="_IVsYYcS7Ee2NV-i80RNqPA" elementId="org.eclipse.gef.ui.palette_view" visible="false"/>
+      <toolbar xmi:id="_IVsYYcS7Ee2NV-i80RNqPA" elementId="org.eclipse.gef.ui.palette_view"/>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_HwJbUMS7Ee2NV-i80RNqPA" elementId="org.eclipse.help.ui.HelpView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView">
       <tags>View</tags>
@@ -158,24 +171,26 @@
     <sharedElements xsi:type="basic:Part" xmi:id="_IRueYMS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.ui.views.thumbnail" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="&#xc378;&#xb124;&#xc77c;" iconURI="platform:/plugin/com.tomato.exerd.core/icon/common/thumbnail.gif" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="com.tomato.exerd.thumbnail.ThumbnailView"/>
       <persistedState key="originalCompatibilityViewBundle" value="com.tomato.exerd.core"/>
+      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view/>"/>
       <tags>View</tags>
       <tags>categoryTag:eXERD</tags>
       <menus xmi:id="_JDnOUMS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.ui.views.thumbnail">
         <tags>ViewMenu</tags>
         <tags>menuContribution:menu</tags>
       </menus>
-      <toolbar xmi:id="_JDn1YMS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.ui.views.thumbnail" visible="false"/>
+      <toolbar xmi:id="_JDn1YMS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.ui.views.thumbnail"/>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_IRueYcS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.modelview3.ModelView3" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="&#xbaa8;&#xb378;" iconURI="platform:/plugin/com.tomato.exerd.modelview/icon/model.gif" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="com.tomato.exerd.modelview.ModelView"/>
       <persistedState key="originalCompatibilityViewBundle" value="com.tomato.exerd.modelview"/>
+      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view/>"/>
       <tags>View</tags>
       <tags>categoryTag:eXERD</tags>
       <menus xmi:id="_JEcUwMS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.modelview3.ModelView3">
         <tags>ViewMenu</tags>
         <tags>menuContribution:menu</tags>
       </menus>
-      <toolbar xmi:id="_JEcUwcS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.modelview3.ModelView3" visible="false"/>
+      <toolbar xmi:id="_JEcUwcS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.modelview3.ModelView3"/>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_IRvFcMS7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.views.ContentOutline" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="&#xc544;&#xc6c3;&#xb77c;&#xc778;" iconURI="platform:/plugin/org.eclipse.ui.views/icons/full/eview16/outline_co.png" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="org.eclipse.ui.views.contentoutline.ContentOutline"/>
@@ -191,14 +206,32 @@
     <sharedElements xsi:type="basic:Part" xmi:id="_I_qicMS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.validate.ui.ValidateView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="&#xac80;&#xd1a0;" iconURI="platform:/plugin/com.tomato.exerd.core/icon/common/valid.gif" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="com.tomato.exerd.validate.ui.ValidateView"/>
       <persistedState key="originalCompatibilityViewBundle" value="com.tomato.exerd.core"/>
+      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view/>"/>
       <tags>View</tags>
       <tags>categoryTag:eXERD</tags>
+      <menus xmi:id="_dQv9EMr9Ee2sHtcJaqQWBQ" elementId="com.tomato.exerd.validate.ui.ValidateView">
+        <tags>ViewMenu</tags>
+        <tags>menuContribution:menu</tags>
+      </menus>
+      <toolbar xmi:id="_dQv9Ecr9Ee2sHtcJaqQWBQ" elementId="com.tomato.exerd.validate.ui.ValidateView" visible="false"/>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_I_sXoMS7Ee2NV-i80RNqPA" elementId="com.tomato.exerd.xscript.ScriptView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="XScript" iconURI="platform:/plugin/com.tomato.exerd.xscript/icons/script.gif" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="com.tomato.exerd.xscript.ScriptView"/>
       <persistedState key="originalCompatibilityViewBundle" value="com.tomato.exerd.xscript"/>
       <tags>View</tags>
       <tags>categoryTag:eXERD</tags>
+    </sharedElements>
+    <sharedElements xsi:type="basic:Part" xmi:id="_grry4Mr9Ee2sHtcJaqQWBQ" elementId="org.eclipse.search.ui.views.SearchView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="&#xac80;&#xc0c9;" iconURI="platform:/plugin/org.eclipse.search/icons/full/eview16/searchres.png" tooltip="" closeable="true">
+      <persistedState key="originalCompatibilityViewBundle" value="org.eclipse.search"/>
+      <persistedState key="originalCompatibilityViewClass" value="org.eclipse.search2.internal.ui.SearchView"/>
+      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view isPinned=&quot;false&quot;>&#xD;&#xA;&lt;view IMemento.internal.id=&quot;com.tomato.exerd.core.searchpage&quot; org.eclipse.search.lastActivation=&quot;1&quot;/>&#xD;&#xA;&lt;view IMemento.internal.id=&quot;&quot; org.eclipse.search.lastActivation=&quot;0&quot;/>&#xD;&#xA;&lt;/view>"/>
+      <tags>View</tags>
+      <tags>categoryTag:&#xc77c;&#xbc18;</tags>
+      <menus xmi:id="_gsttoMr9Ee2sHtcJaqQWBQ" elementId="org.eclipse.search.ui.views.SearchView">
+        <tags>ViewMenu</tags>
+        <tags>menuContribution:menu</tags>
+      </menus>
+      <toolbar xmi:id="_gsttocr9Ee2sHtcJaqQWBQ" elementId="org.eclipse.search.ui.views.SearchView" visible="false"/>
     </sharedElements>
     <trimBars xmi:id="_HmB2I8S7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.trim.status" side="Bottom">
       <children xsi:type="menu:ToolControl" xmi:id="_HmB2JMS7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.StatusLine" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim">
@@ -218,7 +251,7 @@
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_IJAnQMS7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.workbench.file">
         <tags>Draggable</tags>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_lJUkgMcbEe2HxbplrA5OZQ" elementId="print" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.png" tooltip="&#xc778;&#xc1c4;" command="_Hjs66sS7Ee2NV-i80RNqPA"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_2_0TYMrpEe2sHtcJaqQWBQ" elementId="print" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.png" tooltip="&#xc778;&#xc1c4;" command="_Hjs66sS7Ee2NV-i80RNqPA"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_IJAnQcS7Ee2NV-i80RNqPA" elementId="group.edit" toBeRendered="false">
         <tags>toolbarSeparator</tags>
@@ -243,7 +276,7 @@
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_IJBOVsS7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.workbench.navigate">
         <tags>Draggable</tags>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_lJXAwscbEe2HxbplrA5OZQ" elementId="org.eclipse.ui.window.pinEditor" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/pin_editor.png" tooltip="&#xd3b8;&#xc9d1;&#xae30; &#xc704;&#xce58; &#xace0;&#xc815;" type="Check" command="_HjsT2cS7Ee2NV-i80RNqPA"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_2_2voMrpEe2sHtcJaqQWBQ" elementId="org.eclipse.ui.window.pinEditor" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/pin_editor.png" tooltip="&#xd3b8;&#xc9d1;&#xae30; &#xc704;&#xce58; &#xace0;&#xc815;" type="Check" command="_HjsT2cS7Ee2NV-i80RNqPA"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_IJB1YMS7Ee2NV-i80RNqPA" elementId="group.editor" toBeRendered="false">
         <tags>toolbarSeparator</tags>
@@ -266,8 +299,30 @@
         <tags>SHOW_RESTORE_MENU</tags>
       </children>
     </trimBars>
-    <trimBars xmi:id="_IPRAQMS7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.trim.vertical1" side="Left"/>
-    <trimBars xmi:id="_IPRnUMS7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.trim.vertical2" side="Right"/>
+    <trimBars xmi:id="_IPRAQMS7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.trim.vertical1" side="Left">
+      <children xsi:type="menu:ToolControl" xmi:id="_Z20sIMq2Ee20IfTQu-ysmA" elementId="leftFolder(com.tomato.exerd.perspective.design)" toBeRendered="false" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
+        <tags>TrimStack</tags>
+        <tags>Draggable</tags>
+      </children>
+      <children xsi:type="menu:ToolControl" xmi:id="_aA9fkMq2Ee20IfTQu-ysmA" elementId="org.eclipse.gef.ui.palette_viewMStack(com.tomato.exerd.perspective.design)" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
+        <tags>TrimStack</tags>
+        <tags>Draggable</tags>
+      </children>
+      <children xsi:type="menu:ToolControl" xmi:id="_a6AncMq2Ee20IfTQu-ysmA" elementId="bottomFolder(com.tomato.exerd.perspective.design)" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
+        <tags>TrimStack</tags>
+        <tags>Draggable</tags>
+      </children>
+    </trimBars>
+    <trimBars xmi:id="_IPRnUMS7Ee2NV-i80RNqPA" elementId="org.eclipse.ui.trim.vertical2" side="Right">
+      <children xsi:type="menu:ToolControl" xmi:id="_ZWWcUMq2Ee20IfTQu-ysmA" elementId="com.tomato.exerd.ui.views.thumbnailMStack(com.tomato.exerd.perspective.design)" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
+        <tags>TrimStack</tags>
+        <tags>Draggable</tags>
+      </children>
+      <children xsi:type="menu:ToolControl" xmi:id="_ZlZk8Mq2Ee20IfTQu-ysmA" elementId="rightFolder(com.tomato.exerd.perspective.design)" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
+        <tags>TrimStack</tags>
+        <tags>Draggable</tags>
+      </children>
+    </trimBars>
   </children>
   <handlers xmi:id="_ldAk0OIIEeWDJvu3hU0AuQ" elementId="org.eclipse.recommenders.news.rcp.handler.pollNewsFeeds" contributorURI="platform:/plugin/org.eclipse.recommenders.news.rcp" contributionURI="bundleclass://org.eclipse.recommenders.news.rcp/org.eclipse.recommenders.internal.news.rcp.poll.PollNewsFeedsHandler" command="_b1nMwOIIEeWDJvu3hU0AuQ"/>
   <handlers xmi:id="_3wSe0ORAEeWsxfI1gGpqQw" elementId="org.eclipse.recommenders.news.rcp.handler.readNewsItems" contributorURI="platform:/plugin/org.eclipse.recommenders.news.rcp" contributionURI="bundleclass://org.eclipse.recommenders.news.rcp/org.eclipse.recommenders.internal.news.rcp.read.ReadNewsItemsHandler" command="_cDk8oOQ_EeWsxfI1gGpqQw"/>
