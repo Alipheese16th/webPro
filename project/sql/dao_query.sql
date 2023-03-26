@@ -64,14 +64,14 @@ UPDATE MOVIE
       STATE = 0
   WHERE MOVIEID = 'm006';
 
--- 영화 리스트 상영중(개봉일 최근순)   -- 평균평점 조인
+-- 영화 리스트 상영중(개봉일 최근순)   -- 평균평점 서브쿼리
 SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgSCORE
   FROM MOVIE M WHERE STATE = 2 ORDER BY MOVIEDATE DESC;
--- 영화리스트 상영예고(가장빨리개봉되는순)   -- 평균평점 조인
+-- 영화리스트 상영예고(가장빨리개봉되는순)   -- 평균평점 서브쿼리
 SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgSCORE
   FROM MOVIE M WHERE STATE = 1 ORDER BY MOVIEDATE;
 
--- 영화 상세보기( STATE의 STIUATION추가, 평균 평점 추가)
+-- 영화 상세보기(평균 평점 서브쿼리)
 SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
   FROM MOVIE M WHERE MOVIEID = 'm001';
 -- 해당 영화의 태그리스트 (moviedto 속성으로 추가할것 ArrayList<string>)
@@ -82,18 +82,22 @@ FROM MOVIE_PERSON MP,PERSON P WHERE MP.PERSONID = P.PERSONID AND MOVIEID = 'm001
 -- 해당 영화의 예고편리스트 (moviedto 속성으로 추가 ArrayList<TrailerDto>)
 SELECT * FROM TRAILER WHERE MOVIEID = 'm002';
 
+-- 메인 페이지 관람객순 영화 (현재 상영작중) (캐러셀에 넣을거)
+SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
+  FROM MOVIE M WHERE STATE = 2 ORDER BY MOVIEAUDIENCE DESC;
+-- 메인 페이지 예고편(트레일러) 리스트
+SELECT * FROM TRAILER ORDER BY MOVIEID DESC;
 
-select * from movie;
 -- 상영예고중인 작품중에서 상영일이 지났으면 상영중으로 업데이트
 UPDATE MOVIE
   SET STATE = 2
   WHERE STATE = 1
   AND MOVIEDATE <= SYSDATE;
   
--- 영화 검색(평균 평점 조인 추가)
+-- 영화 검색(평균 평점 서브쿼리 추가)
 -- 영화를 이름으로 검색 
 SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
-  FROM MOVIE M WHERE MOVIETITLE LIKE '%' || '벤져' || '%';
+  FROM MOVIE M WHERE MOVIETITLE LIKE '%' || '' || '%';
 -- 영화를 태그로 검색
 SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
   FROM MOVIE M WHERE MOVIEID IN (SELECT MOVIEID FROM TAG WHERE TAG = '판타지');
@@ -106,20 +110,13 @@ SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIE
 -- 평점 중복확인
 SELECT * FROM RATING WHERE MOVIEID = 'm001' AND USERID = 'aaa';
 
--- 해당 영화의 평점 평균치
-SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = 'm002';
-
--- 영화 리스트 (평점평균치 포함)
-SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
-  FROM MOVIE M;
-
-
------------------------------------------------------
-
--- 평점 리스트(탑앤구문 작성순서)(영화아이디에 해당하는 평점들만 출력)
+-- 평점 리스트(유저이름 조인 추가)(탑앤구문 최신순)
 SELECT * FROM
-  (SELECT ROW_NUMBER() OVER(ORDER BY RATINGDATE DESC) RN, R.* FROM RATING R WHERE MOVIEID = 'm001')
+  (SELECT ROW_NUMBER() OVER(ORDER BY RATINGDATE DESC) RN ,USERNAME, R.* 
+    FROM RATING R, USERS U WHERE R.USERID = U.USERID AND MOVIEID = 'm005')
   WHERE RN BETWEEN 1 AND 10;
+
+
 -- 평점 갯수(페이징)(영화아이디에 해당하는 평점만 출력)
 SELECT COUNT(*) FROM RATING WHERE MOVIEID = 'm001';
 -- 평점 작성
@@ -128,7 +125,8 @@ INSERT INTO RATING (USERID, MOVIEID, RATINGCONTENT, RATINGSCORE)
 -- 평점 수정
 UPDATE RATING
   SET RATINGCONTENT = '해리포터재밌다니까요',
-      RATINGSCORE = 10
+      RATINGSCORE = 10,
+      RATINGDATE = SYSDATE
   WHERE USERID = 'aaa' AND MOVIEID = 'm001';
 -- 평점 삭제
 DELETE FROM RATING WHERE USERID = 'aaa' AND MOVIEID = 'm001';
@@ -166,10 +164,12 @@ UPDATE PERSON
 ---------------------------------------------------------------
 -------------------- BoardDao에 들어갈 query --------------------
 ---------------------------------------------------------------
--- 글 목록 (탑앤구문)
+-- 글 목록 (탑앤구문) (댓글 갯수추가 서브쿼리 COMMENTCNT)
 SELECT * FROM
-  (SELECT ROW_NUMBER() OVER(ORDER BY BOARDGROUP DESC, BOARDSTEP) RN, B.* FROM BOARD B)
-  WHERE RN BETWEEN 3 AND 4;
+  (SELECT ROW_NUMBER() OVER(ORDER BY BOARDGROUP DESC, BOARDSTEP) RN ,B.*,
+    (SELECT COUNT(*) FROM COMMENTS WHERE BOARDNO = B.BOARDNO) COMMENTCNT  FROM BOARD B)
+  WHERE RN BETWEEN 4 AND 6;
+
 -- 글 갯수 (페이징)
 SELECT COUNT(*) FROM BOARD;
 -- 글쓰기(원글)
@@ -177,8 +177,10 @@ INSERT INTO BOARD(BOARDNO, USERID, BOARDTITLE, BOARDCONTENT, BOARDGROUP, BOARDST
   VALUES(BOARD_SEQ.NEXTVAL, 'aaa', '글제목', '글본문', BOARD_SEQ.CURRVAL, 0, 0, '192.168.0.1');
 -- 조회수 UP
 UPDATE BOARD SET BOARDHIT = BOARDHIT + 1 WHERE BOARDNO = 1;
--- 글번호로 DTO가져오기 (글상세보기)
-SELECT * FROM BOARD WHERE BOARDNO = 1;
+-- 글번호로 DTO가져오기 (글상세보기) (댓글갯수 서브쿼리 추가 COMMENTCNT)
+SELECT B.*,(SELECT COUNT(*) FROM COMMENTS WHERE BOARDNO = B.BOARDNO) COMMENTCNT 
+  FROM BOARD B WHERE BOARDNO = 1;
+
 -- 글 수정하기
 UPDATE BOARD
   SET BOARDTITLE = '수정스',
@@ -201,7 +203,7 @@ INSERT INTO BOARD(BOARDNO, USERID, BOARDTITLE, BOARDCONTENT, BOARDGROUP, BOARDST
 ---------------------------------------------------------------
 -- 댓글 리스트 (탑앤구문 작성일 순서)(1번 자유게시판글의 댓글)
 SELECT * FROM
-  (SELECT ROW_NUMBER() OVER(ORDER BY COMMENTDATE DESC) RN, C.* FROM COMMENTS C WHERE BOARDNO = 102)
+  (SELECT ROW_NUMBER() OVER(ORDER BY COMMENTDATE DESC) RN, C.* FROM COMMENTS C WHERE BOARDNO = 1)
   WHERE RN BETWEEN 1 AND 10;
 -- 댓글 갯수(페이징)(1번글의 댓글수)
 SELECT COUNT(*) FROM COMMENTS WHERE BOARDNO = 1;

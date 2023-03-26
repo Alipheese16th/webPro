@@ -27,6 +27,8 @@
 <fullyQualifiedTypeName name="com.ch.movie.dto.MovieDto"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="com.ch.movie.dto.PersonDto"/>
-<fullyQualifiedTypeName name="com.ch.movie.dao.MovieDao"/>
 <fullyQualifiedTypeName name="com.ch.movie.dto.TrailerDto"/>
+<fullyQualifiedTypeName name="com.ch.movie.dao.MovieDao"/>
+<fullyQualifiedTypeName name="com.ch.movie.dto.RatingDto"/>
+<fullyQualifiedTypeName name="com.ch.movie.dao.RatingDao"/>
 </qualifiedTypeNameHistroy>
