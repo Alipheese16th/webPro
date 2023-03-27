@@ -205,7 +205,7 @@ INSERT INTO BOARD(BOARDNO, USERID, BOARDTITLE, BOARDCONTENT, BOARDGROUP, BOARDST
 
 
 ------------------------
--- 글 전체 검색(탑앤구문,댓글갯수,작성자 이름 조인)
+-- 1-1 글 전체 검색(탑앤구문,댓글갯수,작성자 이름 조인)
 SELECT * FROM
   (SELECT ROW_NUMBER() OVER(ORDER BY BOARDGROUP DESC, BOARDSTEP) RN,USERNAME ,B.*,
       (SELECT COUNT(*) FROM COMMENTS WHERE BOARDNO = B.BOARDNO) COMMENTCNT  FROM BOARD B, USERS U
@@ -214,35 +214,43 @@ SELECT * FROM
           OR BOARDCONTENT LIKE '%' || 'test' || '%' 
           OR USERNAME LIKE '%' || '점순' || '%'))
   WHERE RN BETWEEN 1 AND 100;
--- 전체검색 페이징
+-- 1-2 전체검색 페이징
 SELECT COUNT(*) FROM BOARD B, USERS U
       WHERE B.USERID = U.USERID AND 
           (BOARDTITLE LIKE '%' || 'test' || '%' 
           OR BOARDCONTENT LIKE '%' || 'test' || '%' 
           OR USERNAME LIKE '%' || '점순' || '%');
 
--- 글 제목으로 검색(탑앤구문,댓글갯수,작성자 이름 조인)
+-- 2-1 글 제목으로 검색(탑앤구문,댓글갯수,작성자 이름 조인)
 SELECT * FROM
   (SELECT ROW_NUMBER() OVER(ORDER BY BOARDGROUP DESC, BOARDSTEP) RN,USERNAME ,B.*,
       (SELECT COUNT(*) FROM COMMENTS WHERE BOARDNO = B.BOARDNO) COMMENTCNT  FROM BOARD B, USERS U
       WHERE B.USERID = U.USERID AND BOARDTITLE LIKE '%' || '쓰자' || '%')
   WHERE RN BETWEEN 1 AND 4;
--- 제목검색 페이징
+-- 2-2 제목검색 페이징
 SELECT COUNT(*) FROM BOARD B, USERS U
       WHERE B.USERID = U.USERID AND BOARDTITLE LIKE '%' || '쓰자' || '%';
 
--- 글 내용으로 검색(탑앤구문,댓글갯수,작성자 이름 조인)
+-- 3-1 글 내용으로 검색(탑앤구문,댓글갯수,작성자 이름 조인)
 SELECT * FROM
   (SELECT ROW_NUMBER() OVER(ORDER BY BOARDGROUP DESC, BOARDSTEP) RN,USERNAME ,B.*,
       (SELECT COUNT(*) FROM COMMENTS WHERE BOARDNO = B.BOARDNO) COMMENTCNT  FROM BOARD B, USERS U
       WHERE B.USERID = U.USERID AND BOARDCONTENT LIKE '%' || '본문' || '%')
-  WHERE RN BETWEEN 1 AND 4;
--- 작성자 닉네임으로 검색(탑앤구문,댓글갯수,작성자 이름 조인)
+  WHERE RN BETWEEN 1 AND 10;
+-- 3-2 글 내용 검색 페이징
+SELECT COUNT(*) FROM BOARD B, USERS U
+      WHERE B.USERID = U.USERID AND BOARDCONTENT LIKE '%' || '본문' || '%';
+
+-- 4-1 작성자 닉네임으로 검색(탑앤구문,댓글갯수,작성자 이름 조인)
 SELECT * FROM
   (SELECT ROW_NUMBER() OVER(ORDER BY BOARDGROUP DESC, BOARDSTEP) RN,USERNAME ,B.*,
       (SELECT COUNT(*) FROM COMMENTS WHERE BOARDNO = B.BOARDNO) COMMENTCNT  FROM BOARD B, USERS U
       WHERE B.USERID = U.USERID AND USERNAME LIKE '%' || '점순' || '%')
-  WHERE RN BETWEEN 1 AND 4;
+  WHERE RN BETWEEN 1 AND 10;
+-- 4-2 작성자닉네임 페이징
+SELECT COUNT(*) FROM BOARD B, USERS U
+      WHERE B.USERID = U.USERID AND USERNAME LIKE '%' || '점순' || '%';
+
 ---------------------------
   
 -- 댓글 검색 (원글정보 조인,작성자 이름 조인, 댓글 갯수 조인, 탑앤구문)
