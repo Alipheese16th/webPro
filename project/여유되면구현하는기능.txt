@@ -1,4 +1,14 @@
-영화 랭킹 리스트
+영화랭킹 리스트
+평점 리스트
+
+
+
+부트스트랩플러그인
+https://www.youtube.com/watch?v=-xtGCegctFE&ab_channel=%EA%B0%9C%EB%B0%9C%EC%9E%90%EC%9D%98%ED%92%88%EA%B2%A9
+
+스마트알러트2
+데이트피커 부트스트랩버전
+셀렉트 부트스트랩
 
 ---
 
@@ -28,7 +38,6 @@ next 기능
 로그인상태->관리자로그인->로그아웃후에 관리자로그인페이지로
 
 
-
 예시)
 로그인이 안된상태에서 다른페이지접속시 
 
@@ -51,11 +60,6 @@ request.setAttribute("next", request.getParameter("next"));
 ---
 
 이미지 alt속성표기
-
----
-
-영화 평점 프로그레스 바로 표현
-
 
 
 

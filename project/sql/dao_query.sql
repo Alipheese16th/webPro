@@ -46,23 +46,6 @@ UPDATE USERS
 -------------------- MovieDao에 들어갈 query --------------------
 ---------------------------------------------------------------
 select * from movie;
--- 영화등록
-INSERT INTO MOVIE(MOVIEID, ORIGINALTITLE, MOVIETITLE, MOVIESUMMARY, MOVIERUNNING, MOVIEIMAGE,
-            MOVIEDATE, MOVIEGRADE, MOVIEAUDIENCE, STATE)
-  VALUES('m'||LPAD(MOVIE_SEQ.NEXTVAL,3,'0'),'Iron Man','아이언맨','아이언맨은 히어로 이야기이다. 머시기 저시기',
-  126,'ironman.png','08/04/30','12세 관람가',4300365,3);
--- 영화 수정
-UPDATE MOVIE
-  SET ORIGINALTITLE = 'Iron Man 2',
-      MOVIETITLE = '아이언맨2',
-      MOVIESUMMARY = '아이언맨2로 수정',
-      MOVIERUNNING = 100,
-      MOVIEIMAGE = 'ironSujong.jpg',
-      MOVIEDATE = '08/05/30',
-      MOVIEGRADE = '15세 등급',
-      MOVIEAUDIENCE = 4400365,
-      STATE = 0
-  WHERE MOVIEID = 'm006';
 
 -- 영화 리스트 상영중(개봉일 최근순)   -- 평균평점 서브쿼리
 SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgSCORE
@@ -88,19 +71,40 @@ SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIE
 -- 메인 페이지 예고편(트레일러) 리스트
 SELECT * FROM TRAILER ORDER BY MOVIEID DESC;
 
+-- 영화 검색(평균 평점 서브쿼리 추가)
+-- 영화를 이름으로 검색 
+SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
+  FROM MOVIE M WHERE MOVIETITLE LIKE '%' || '웅남' || '%' ORDER BY MOVIEDATE DESC;
+-- 영화를 태그로 검색
+SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
+  FROM MOVIE M WHERE MOVIEID IN (SELECT MOVIEID FROM TAG WHERE TAG = '코미디');
+-- 해당 영화이름의 트레일러들 검색
+SELECT T.*,MOVIETITLE FROM TRAILER T, MOVIE M 
+  WHERE T.MOVIEID = M.MOVIEID AND MOVIETITLE LIKE '%' || '웅남' || '%';
+
+
 -- 상영예고중인 작품중에서 상영일이 지났으면 상영중으로 업데이트
 UPDATE MOVIE
   SET STATE = 2
   WHERE STATE = 1
   AND MOVIEDATE <= SYSDATE;
-  
--- 영화 검색(평균 평점 서브쿼리 추가)
--- 영화를 이름으로 검색 
-SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
-  FROM MOVIE M WHERE MOVIETITLE LIKE '%' || '' || '%';
--- 영화를 태그로 검색
-SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
-  FROM MOVIE M WHERE MOVIEID IN (SELECT MOVIEID FROM TAG WHERE TAG = '판타지');
+-- 영화등록
+INSERT INTO MOVIE(MOVIEID, ORIGINALTITLE, MOVIETITLE, MOVIESUMMARY, MOVIERUNNING, MOVIEIMAGE,
+            MOVIEDATE, MOVIEGRADE, MOVIEAUDIENCE, STATE)
+  VALUES('m'||LPAD(MOVIE_SEQ.NEXTVAL,3,'0'),'Iron Man','아이언맨','아이언맨은 히어로 이야기이다. 머시기 저시기',
+  126,'ironman.png','08/04/30','12세 관람가',4300365,3);
+-- 영화 수정
+UPDATE MOVIE
+  SET ORIGINALTITLE = 'Iron Man 2',
+      MOVIETITLE = '아이언맨2',
+      MOVIESUMMARY = '아이언맨2로 수정',
+      MOVIERUNNING = 100,
+      MOVIEIMAGE = 'ironSujong.jpg',
+      MOVIEDATE = '08/05/30',
+      MOVIEGRADE = '15세 등급',
+      MOVIEAUDIENCE = 4400365,
+      STATE = 0
+  WHERE MOVIEID = 'm006';
 
 
 ---------------------------------------------------------------
