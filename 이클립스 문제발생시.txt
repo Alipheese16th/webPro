@@ -14,7 +14,9 @@
 	       window -> webBrowser-> Chrome 
    7) 하단servers 탭에서 new를 클릭하여 tomcat설정
       apache에 있는 tomcat을 선택하고 tomcat9.0을 연결하고 8090포트 등 정보 세가지 수정
-
+	 Server Locations 의 Use Tomcat installation 체크
+	 Server Options 의 Publish module contexts to separate XML files체크
+	
    8)프로젝트들 import   
 
    9) 한프로젝트라도 실행시킨 후 IPv4로 변경
@@ -41,10 +43,11 @@ eclipse > Run > Run Configuration > Apache Tomcat > Tomcat v8.5 Server >
 ###
 자바에서 파일첨부게시판 하려면
 cos.jar 를 또 다운받아야함
+프로젝트 내 web-inf폴더에 넣으면 그 프로젝트에서 사용가능
 
 자바에서 JSTL을 사용하려면
-jstl.jar 와 standard.jar 파일을 apache-tomcat 서버 lib폴더에 넣는다
-
+jstl.jar 와 standard.jar 파일을 apache-tomcat 톰캣서버 lib폴더에 넣는다
+(난 이미 다운로드폴더에서 톰캣압축파일에 넣고 압축하긴함)
 
 
 ### 추가 개인설정

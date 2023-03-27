@@ -1,8 +1,6 @@
 영화랭킹 리스트
 평점 리스트
 
-
-
 부트스트랩플러그인
 https://www.youtube.com/watch?v=-xtGCegctFE&ab_channel=%EA%B0%9C%EB%B0%9C%EC%9E%90%EC%9D%98%ED%92%88%EA%B2%A9
 
