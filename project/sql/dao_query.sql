@@ -21,12 +21,6 @@ UPDATE USERS
       USEREMAIL = 'sujong@su.com',
       USERTEL = '999-9999-9999'
   WHERE USERID = 'ZXZ';
--- 회원 리스트 보기(top-n)  -- 신입회원순
-SELECT * FROM
-  (SELECT ROW_NUMBER() OVER(ORDER BY USERDATE DESC) RN, U.* FROM USERS U)
-  WHERE RN BETWEEN 2 AND 3;
--- 전체 등록된 회원수 (회원리스트 페이지에서 페이징때 필요한)
-SELECT COUNT(*) FROM USERS;
 -- 회원 탈퇴
 DELETE FROM USERS WHERE USERID = 'aaa';
 ROLLBACK;
@@ -38,6 +32,18 @@ ROLLBACK;
 SELECT * FROM ADMIN WHERE ADMINID = 'zzz' AND ADMINPW = '1';
 -- 로그인 후 세션에 넣을 용도 admin aid로 AdminDto 가져오기
 SELECT * FROM ADMIN WHERE ADMINID = 'zzz';
+
+-- 회원 리스트 보기(top-n)  -- 신입회원순
+SELECT * FROM
+  (SELECT ROW_NUMBER() OVER(ORDER BY USERDATE DESC) RN, U.* FROM USERS U)
+  WHERE RN BETWEEN 1 AND 10;
+-- 전체 등록된 회원수 (회원리스트 페이지에서 페이징때 필요한)
+SELECT COUNT(*) FROM USERS;
+-- 회원 검색 (아이디로)
+-- 회원 검색 (이름으로)
+
+
+
 -- 회원 제제 (userId, 제재기간)
 UPDATE USERS
   SET USERLIMIT = '23/04/04'
@@ -57,30 +63,61 @@ SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIE
 -- 영화 상세보기(평균 평점 서브쿼리)
 SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
   FROM MOVIE M WHERE MOVIEID = 'm001';
--- 해당 영화의 태그리스트 (moviedto 속성으로 추가할것 ArrayList<string>)
+  -- 해당 영화의 태그리스트 (moviedto 속성으로 추가할것 ArrayList<string>)
 SELECT TAG FROM TAG WHERE MOVIEID = 'm002';
--- 해당 영화의 인물리스트 역할, 배역 (moviedto 속성으로 추가할것 ArrayList<PersonDto>)
+  -- 해당 영화의 인물리스트 역할, 배역 (moviedto 속성으로 추가할것 ArrayList<PersonDto>)
 SELECT P.PERSONID,PERSONNAME,PERSONIMAGE,PERSONNATION,PERSONBIRTH,CASTING,ROLE
 FROM MOVIE_PERSON MP,PERSON P WHERE MP.PERSONID = P.PERSONID AND MOVIEID = 'm001';
--- 해당 영화의 예고편리스트 (moviedto 속성으로 추가 ArrayList<TrailerDto>)
+  -- 해당 영화의 예고편리스트 (moviedto 속성으로 추가 ArrayList<TrailerDto>)
 SELECT * FROM TRAILER WHERE MOVIEID = 'm002';
 
--- 메인 페이지 관람객순 영화 (현재 상영작중) (캐러셀에 넣을거)
+-- 메인페이지 꾸미기
+  -- 메인 페이지 관람객순 영화 (현재 상영작중) (캐러셀에 넣을거) -- 이거 이제 안쓰고 아래의 영화랭킹페이지 제작시 관람객순 탑앤구문으로 사용
 SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
   FROM MOVIE M WHERE STATE = 2 ORDER BY MOVIEAUDIENCE DESC;
--- 메인 페이지 예고편(트레일러) 리스트
+  -- 메인 페이지 예고편(트레일러) 리스트
 SELECT * FROM TRAILER ORDER BY MOVIEID DESC;
 
 -- 영화 검색(평균 평점 서브쿼리 추가)
--- 영화를 이름으로 검색 
+  -- 영화를 이름으로 검색 
 SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
   FROM MOVIE M WHERE MOVIETITLE LIKE '%' || '웅남' || '%' ORDER BY MOVIEDATE DESC;
--- 영화를 태그로 검색
+  -- 영화를 태그로 검색
 SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
   FROM MOVIE M WHERE MOVIEID IN (SELECT MOVIEID FROM TAG WHERE TAG = '코미디');
--- 해당 영화이름의 트레일러들 검색
+  -- 해당 영화이름의 트레일러들 검색
 SELECT T.*,MOVIETITLE FROM TRAILER T, MOVIE M 
   WHERE T.MOVIEID = M.MOVIEID AND MOVIETITLE LIKE '%' || '웅남' || '%';
+
+-- 예고편 리스트 , 영화정보 (태그리스트,인물리스트는 dao에서)
+  --SELECT TRAILERNAME,TRAILERURL,M.* FROM TRAILER T, MOVIE M WHERE T.MOVIEID = M.MOVIEID;
+  -- 페이징 갯수
+  --SELECT COUNT(*) FROM TRAILER;
+
+-- 영화 랭킹 페이지 
+  -- 관람객순 (현재영화) 탑앤구문
+SELECT * FROM (
+    SELECT ROWNUM RN, A.* FROM
+      (SELECT M.*,(SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID) as avgScore
+        FROM MOVIE M WHERE STATE = 2 ORDER BY MOVIEAUDIENCE DESC) A)
+  WHERE RN BETWEEN 1 AND 50;
+  -- 현재영화 페이징
+SELECT COUNT(*) FROM MOVIE WHERE STATE = 2;
+  -- 평점순 (현재영화) 탑앤구문
+SELECT * FROM (
+    SELECT ROWNUM RN, A.* FROM
+      (SELECT M.*, NVL((SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID),0) as avgScore
+        FROM MOVIE M WHERE STATE = 2 ORDER BY avgScore DESC) A)
+  WHERE RN BETWEEN 1 AND 50;
+  -- 평점순 (모든영화) 탑앤구문
+SELECT * FROM (
+    SELECT ROWNUM RN, A.* FROM
+      (SELECT M.*,NVL((SELECT ROUND(AVG(RATINGSCORE),1) FROM RATING WHERE MOVIEID = M.MOVIEID),0) as avgScore
+        FROM MOVIE M ORDER BY avgScore DESC) A)
+  WHERE RN BETWEEN 1 AND 50;
+  -- 모든영화 페이징
+SELECT COUNT(*) FROM MOVIE;
+
 
 
 -- 상영예고중인 작품중에서 상영일이 지났으면 상영중으로 업데이트
@@ -114,15 +151,29 @@ UPDATE MOVIE
 -- 평점 중복확인
 SELECT * FROM RATING WHERE MOVIEID = 'm001' AND USERID = 'aaa';
 
--- 평점 리스트(유저이름 조인 추가)(탑앤구문 최신순)
+
+-- 특정 영화의 평점 리스트(유저이름 조인 추가)(탑앤구문 최신순)
 SELECT * FROM
   (SELECT ROW_NUMBER() OVER(ORDER BY RATINGDATE DESC) RN ,USERNAME, R.* 
     FROM RATING R, USERS U WHERE R.USERID = U.USERID AND MOVIEID = 'm005')
   WHERE RN BETWEEN 1 AND 10;
-
-
--- 평점 갯수(페이징)(영화아이디에 해당하는 평점만 출력)
+-- 특정영화의 평점 갯수(페이징)(영화아이디에 해당하는 평점만 출력)
 SELECT COUNT(*) FROM RATING WHERE MOVIEID = 'm001';
+
+-- 전체 영화의 평점 리스트(유저이름 조인 추가,영화이름 조인추가)(탑앤구문 최신순)
+SELECT * FROM
+  (SELECT ROWNUM RN, A.* FROM
+    (SELECT USERNAME, MOVIETITLE ,R.* 
+      FROM RATING R, USERS U, MOVIE M
+      WHERE R.USERID = U.USERID AND R.MOVIEID = M.MOVIEID
+      ORDER BY RATINGDATE DESC) A)
+  WHERE RN BETWEEN 2 AND 4;
+-- 전제 평점리스트 페이징
+SELECT COUNT(*) FROM RATING;
+
+
+
+
 -- 평점 작성
 INSERT INTO RATING (USERID, MOVIEID, RATINGCONTENT, RATINGSCORE)
   VALUES('aaa','m003','으이게뭐냐',0);
