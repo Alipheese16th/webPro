@@ -24,6 +24,14 @@ UPDATE USERS
 -- 회원 탈퇴
 DELETE FROM USERS WHERE USERID = 'aaa';
 ROLLBACK;
+---------
+-- 특정유저의 최근 자유게시판 글 목록 (댓글갯수 서브쿼리 추가)
+SELECT B.*,(SELECT COUNT(*) FROM COMMENTS WHERE BOARDNO = B.BOARDNO) COMMENTCNT  FROM BOARD B
+      WHERE USERID = 'aaa' ORDER BY BOARDDATE DESC;
+-- 특정유저의 최근 댓글목록
+SELECT * FROM COMMENTS WHERE USERID = 'aaa' ORDER BY COMMENTDATE DESC;
+-- 특정유저의 최근 평점목록
+SELECT MOVIETITLE, R.* FROM RATING R, MOVIE M WHERE R.MOVIEID = M.MOVIEID AND USERID = 'aaa' ORDER BY RATINGDATE DESC;
 
 ---------------------------------------------------------------
 -------------------- AdminDao에 들어갈 query --------------------
@@ -39,10 +47,14 @@ SELECT * FROM
   WHERE RN BETWEEN 1 AND 10;
 -- 전체 등록된 회원수 (회원리스트 페이지에서 페이징때 필요한)
 SELECT COUNT(*) FROM USERS;
+
+-- 검색할때 탑앤구문도 넣어야함 페이지네비게이션이 있기때문
 -- 회원 검색 (아이디로)
--- 회원 검색 (이름으로)
-
-
+SELECT * FROM
+  (SELECT ROWNUM RN ,U.* FROM USERS U WHERE USERID LIKE '%' || '' || '%')
+  WHERE RN BETWEEN 1 AND 10;
+-- 페이징 갯수
+SELECT COUNT(*) FROM USERS WHERE USERID LIKE '%' || 'aa' || '%';
 
 -- 회원 제제 (userId, 제재기간)
 UPDATE USERS
@@ -90,9 +102,9 @@ SELECT T.*,MOVIETITLE FROM TRAILER T, MOVIE M
   WHERE T.MOVIEID = M.MOVIEID AND MOVIETITLE LIKE '%' || '웅남' || '%';
 
 -- 예고편 리스트 , 영화정보 (태그리스트,인물리스트는 dao에서)
-  --SELECT TRAILERNAME,TRAILERURL,M.* FROM TRAILER T, MOVIE M WHERE T.MOVIEID = M.MOVIEID;
+  SELECT TRAILERNAME,TRAILERURL,M.* FROM TRAILER T, MOVIE M WHERE T.MOVIEID = M.MOVIEID;
   -- 페이징 갯수
-  --SELECT COUNT(*) FROM TRAILER;
+  SELECT COUNT(*) FROM TRAILER;
 
 -- 영화 랭킹 페이지 
   -- 관람객순 (현재영화) 탑앤구문
@@ -170,8 +182,6 @@ SELECT * FROM
   WHERE RN BETWEEN 2 AND 4;
 -- 전제 평점리스트 페이징
 SELECT COUNT(*) FROM RATING;
-
-
 
 
 -- 평점 작성
