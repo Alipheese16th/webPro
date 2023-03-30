@@ -56,10 +56,50 @@ SELECT * FROM
 -- 페이징 갯수
 SELECT COUNT(*) FROM USERS WHERE USERID LIKE '%' || 'aa' || '%';
 
+-- 영화등록
+INSERT INTO MOVIE(MOVIEID, ORIGINALTITLE, MOVIETITLE, MOVIESUMMARY, MOVIERUNNING, MOVIEIMAGE,
+            MOVIEDATE, MOVIEGRADE, MOVIEAUDIENCE, STATE)
+  VALUES('m'||LPAD(MOVIE_SEQ.NEXTVAL,3,'0'),'Iron Man','아이언맨','아이언맨은 히어로 이야기이다. 머시기 저시기',
+  126,'ironman.png','08/04/30','12세 관람가',4300365,3);
+-- 모든영화리스트
+SELECT * FROM MOVIE;
+-- 태그등록
+INSERT INTO TAG(MOVIEID,TAG) VALUES('m001','판타지');
+-- 트레일러등록
+INSERT INTO TRAILER(MOVIEID,TRAILERNAME,TRAILERURL)
+  VALUES('m001','ASDF','ASDF');
+select * from trailer;
+-- 상영예고중인 작품중에서 상영일이 지났으면 상영중으로 업데이트
+UPDATE MOVIE
+  SET STATE = 2
+  WHERE STATE = 1
+  AND MOVIEDATE <= SYSDATE;
+
+
+
+-- 영화 수정
+UPDATE MOVIE
+  SET ORIGINALTITLE = 'Iron Man 2',
+      MOVIETITLE = '아이언맨2',
+      MOVIESUMMARY = '아이언맨2로 수정',
+      MOVIERUNNING = 100,
+      MOVIEIMAGE = 'ironSujong.jpg',
+      MOVIEDATE = '08/05/30',
+      MOVIEGRADE = '15세 등급',
+      MOVIEAUDIENCE = 4400365,
+      STATE = 0
+  WHERE MOVIEID = 'm006';
+
+
+
+
+
+
 -- 회원 제제 (userId, 제재기간)
 UPDATE USERS
   SET USERLIMIT = '23/04/04'
   WHERE USERID = 'aaa';
+
 ---------------------------------------------------------------
 -------------------- MovieDao에 들어갈 query --------------------
 ---------------------------------------------------------------
@@ -129,31 +169,6 @@ SELECT * FROM (
   WHERE RN BETWEEN 1 AND 50;
   -- 모든영화 페이징
 SELECT COUNT(*) FROM MOVIE;
-
-
-
--- 상영예고중인 작품중에서 상영일이 지났으면 상영중으로 업데이트
-UPDATE MOVIE
-  SET STATE = 2
-  WHERE STATE = 1
-  AND MOVIEDATE <= SYSDATE;
--- 영화등록
-INSERT INTO MOVIE(MOVIEID, ORIGINALTITLE, MOVIETITLE, MOVIESUMMARY, MOVIERUNNING, MOVIEIMAGE,
-            MOVIEDATE, MOVIEGRADE, MOVIEAUDIENCE, STATE)
-  VALUES('m'||LPAD(MOVIE_SEQ.NEXTVAL,3,'0'),'Iron Man','아이언맨','아이언맨은 히어로 이야기이다. 머시기 저시기',
-  126,'ironman.png','08/04/30','12세 관람가',4300365,3);
--- 영화 수정
-UPDATE MOVIE
-  SET ORIGINALTITLE = 'Iron Man 2',
-      MOVIETITLE = '아이언맨2',
-      MOVIESUMMARY = '아이언맨2로 수정',
-      MOVIERUNNING = 100,
-      MOVIEIMAGE = 'ironSujong.jpg',
-      MOVIEDATE = '08/05/30',
-      MOVIEGRADE = '15세 등급',
-      MOVIEAUDIENCE = 4400365,
-      STATE = 0
-  WHERE MOVIEID = 'm006';
 
 
 ---------------------------------------------------------------

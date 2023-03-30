@@ -8,9 +8,9 @@
 부트스트랩플러그인
 https://www.youtube.com/watch?v=-xtGCegctFE&ab_channel=%EA%B0%9C%EB%B0%9C%EC%9E%90%EC%9D%98%ED%92%88%EA%B2%A9
 
-스마트알러트2
-데이트피커 부트스트랩버전
-셀렉트 부트스트랩
+스마트알러트2 
+데이트피커 부트스트랩버전 안함걍
+셀렉트 부트스트랩 완료
 
 ---
 
@@ -22,7 +22,6 @@ css나 js나 코드 긴것들 다 조각내서 파일분리하는작업
 
 회원가입 완료/실패시 로그인페이지에서 알림창
 로그인 실패시 메인페이지에서 알림창
-
 
 ---
 
@@ -54,6 +53,7 @@ request.setAttribute("next", request.getParameter("next"));
 </c:if>
 라고하면 처음페이지로 돌아갈수있다
 
+완료
 ---
 
 이미지 alt속성표기
