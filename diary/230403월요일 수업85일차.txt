@@ -1,0 +1,198 @@
+mybatis(dao대신 xml에 sql만 작성하면됨)
+
+jpa (sql문대신 함수만 사용)
+
+ppt
+신치윤_UI구현발표.ppt
+발표일은 04.10
+
+강동주
+https://github.com/95dongju/camper
+강성빈
+https://github.com/haryoung1/dentalproject
+김성연
+https://github.com/kdkk2000/Project
+김소연
+https://github.com/sykim00
+김한울
+httpsgithub.comhanwoolkSoundBooker.git
+김혜린
+https://github.com/hyeerring/animalAdoption
+김훈
+https://github.com/houn7145/musteat
+안중권
+https://github.com/jooooung/exSecretary
+유민상
+https://github.com/yooms2/reviewmall.git
+윤여송
+https://github.com/YeoStrong/leaguewebzine
+임동은
+https://github.com/Dsilv118/SkyTicket
+진윤진
+https://github.com/reversejin0209
+
+
+내가생각하는티어리스트 
+(백엔드만이 아니라 디자인 점수도 중요. ppt디자인, 웹디자인 둘다)
+1. 강동주
+2. 김혜린
+3. 김훈
+4. 김소연
+5. 강성빈
+6. 윤여송
+7. 안중권
+8. 김한울
+9. 임동은
+10. 김성연
+11. 유민상
+12. 진윤진
+
+------------------
+- 오픈소스 라이브러리사용한거 전부 정리해서 개발환경에 정리
+
+Krajee/kartik-v/bootstrap-star-rating
+FontAwesome 라이브러리
+summernoteEdit
+bootstrap-select
+
+- 회원가입예제 정규표현식 강조
+--------------------
+
+# spring
+
+## sts 다운로드 (이클립스에 스프링 추가된 버전)
+http://spring.io/tools 사이트에서 sts-3.9.13 다운로드
+
+spring-tool-suite-3.9.13.RELEASE-e4.16.0-win32-x86_64.zip
+
+IDE폴더에 압축풀기
+
+Spring Tool Suite 3.9.13 버전이 
+자바 8버전과 이클립스 2020-06 버전이랑 호환되는 버전이다
+
+## lombok.jar 다운로드
+(생성자 getter setter 알아서 추가해주는거)
+
+https://projectlombok.org/download 에서 다운로드(그냥 위에보이는거)
+
+lombok.jar 실행후에 sts.exe 경로를 선택해서 sts에 롬복을 설치
+
+STS.ini 를 열어서
+-Dfile.encoding=utf-8 를 추가하면 utf-8 설정을 일일히 안해줘도된다
+
+---
+
+sts에도 자체적인 서버가 있지만 톰캣이 더 많이쓰니까 지워도된다 
+
+톰캣을 하나 또 압축풀어서 스프링 용 톰캣 폴더를 확보한다 (jstl.jar , standar.jar 포함)
+
+그리고 평소에 하던대로 톰캣 서버 연동한다. (8080포트 변경, Server Location 두번째 체크, Server Option 두번째 체크)
+
+jsp에서 사용하는 라이브러리 (1. jre, 2.tomcat-lib 3.web-inf)
+
+스프링에서는 라이브러리에 내컴퓨터 이름 경로가 들어가는 곳에서 인터넷으로 다운받아서 사용한다
+즉 인터넷이 연결되어있지 않으면 사용불가
+C:\Users\컴퓨터이름\.m2\repository 경로에 그때그때 프로젝트에서 필요한 라이브러리를 두는거
+
+
+프로젝트내 pom.xml 에서
+https://mvnrepository.com/artifact/org.projectlombok/lombok/1.18.26
+의 정보를 참조하여
+
+<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.18.26</version>
+    <scope>provided</scope>
+</dependency>
+를 명시하면 lombok을 사용할 수 있게 된다
+
+이제 lombok을 써보자
+
+객체를 만들고
+@Data를 적고 컨트롤스페이스하면 게터와 세터가 자동import된다. (outline에서 확인가능)
+@NoArgsConstructor
+매개변수없는생성자
+@AllArgsConstructor
+모든멤버변수를 매개변수로 받는 생성자
+
+
+##DI 는 디펜던시 인젝션
+
+어떤 객체가 어떤객체를 의존하는것이 dependency
+
+예를들어 서비스클래스는 dao의 메소드를 사용해야하니까 dao를 의존한다
+
+스프링에서는 dao객체를 바로생성해서 사용하는게 아니고 외부에서 객체를 생성해서 주입하는 식으로 해볼것이다
+
+xml에 선언해서 사용하는거
+
+IOC컨테이너에서 이 프로젝트에 필요한 객체들을 미리 만들어놓고 그때그때 사용
+
+리소스 디렉토리에서 bean 컨피그 파일(xml)을 만들어서
+<bean></bean>을 만들어서 (객체생성) 사용
+
+리소스폴더는 classpath라고부름
+
+원래 웹프로젝트는 자동적으로 xml을 파싱할수있지만 지금은 그냥 프로젝트이기에 파싱해줘야함
+
+AbstractApplicationContext ctx = new GenericXmlApplicationContext("classpath:applicationCTX.xml");
+
+---
+
+1장예제에서는 아주 간단하게 객체 의존성 주입을 해봤는데 원래는 이렇게 간단하지 않다
+A객체가 B객체를 의존하면 B객체는 C객체를 의존하고 C는 D를 의존하는등 복잡해질수있다
+
+
+다시한번정리
+
+프로젝트 생성 - pom.xml에 lombok 를 dependency 명시 
+- 자바 패키지에서 클래스생성(lombok사용 @Data) - 리소스폴더에서 xml 생성 bean으로 객체 생성 - 메인함수에서 빈 사용
+
+xml에 빈으로 객체생성하면 IOC 컨테이너에 객체가 생성되어있고 마지 조립부품처럼 가져다 쓰는것
+
+xml에서 객체를 생성하고 setter로 속성도 지정할수있는데 기초데이터타입은 
+<property>
+	<value>10</value>
+</property>
+이런식으로 할수있지만 참조데이터타입은
+<ref bean="객체변수"></ref>
+밸류대신 ref를 사용해야함
+
+---
+즉 이제껏 우리는 객체를 만들어서 바로바로 사용했지만 이제는 
+리소스 폴더에서 xml로 객체를 만들어놓고
+자바에서는 xml에 접근해서 그냥 사용하는것이 DI
+---
+
+xml에서 bean객체 생성할때 프로퍼티로 기초데이터 타입은 value로 주고 참조데이터 타입은 ref로 주는데
+List타입은 <list><value></value>... </list>로 부여한다
+
+---
+
+이번에는 매개변수없는 생성자함수가 없을 경우 어떻게 프로퍼티를 세팅할것인지
+@@AllArgsConstructor 이것만 명시하면 매개변수없는 생성자함수는 없다
+그리고 참고로 이거 생성자함수 매개변수 순서도 멤버변수 정의한 순서니까 주의하자
+
+<constructor-arg>
+	<value>홍길동</value>
+</constructor-arg>
+이런식으로 constructor-arg를 이용해서 생성자함수에 매개변수를 넣는것이다
+
+<property> (세터) 를 이용한 멤버변수 값 입력은 순서를 안지켜도 상관없는데
+이건 순서가 중요하다 순서를 지켜야함
+
+기초데이터타입은 value 
+참조데이터타입은 ref
+
+
+
+
+
+
+
+
+
+
+

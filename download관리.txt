@@ -15,7 +15,8 @@
 15. ubuntu-16.04.1-desktop-amd64
 16. apache-tomcat-9.0.71-windows-x64
 17. openSourceLib      -- cos-22.05 (파일첨부 가능한 라이브러리 jar)
-
+				 -- jakarta-taglibs-standard-1.1.2(jstl)
+18_spring-tool-suite-3.9.1x
 
 
 
@@ -25,17 +26,16 @@
 플러그인 tern
 플러그인 exerd
 
-자바에서 데이터베이스 연동하려면 
+자바에서 데이터베이스 연동하려면 ojdbc6.jar 같은 데이터베이스 jar파일을 
 C:\Program Files\Java\jre1.8.0_351\lib\ext\ojdbc6.jar
-설정해야함
+자바에 넣고 이클립스에서 설정으로 추가해주면된다
 
 자바에서 웹프로그래밍하려면
-이클립스 jee버전 다운
-톰캣 아파치 다운
-톰캣서버 연동해야함
+이클립스 jee버전 다운, 톰캣 아파치 다운
+이클립스에서 톰캣서버 연동해야함
 
 자바에서 파일첨부게시판 하려면
-cos.jar 를 또 다운받아야함
+cos.jar 를 또 다운받아야함. 프로젝트 내 web-inf 폴더에 넣고 사용
 
 자바에서 JSTL을 사용하려면
 jstl.jar 와 standard.jar 파일을 apache-tomcat 서버 lib폴더에 넣는다
