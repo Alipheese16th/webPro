@@ -2,22 +2,38 @@
 
 DI(Dependency Injection; 의존주입 = 부품조립)와 IOC 컨테이너(Inversion of Control ; 컴포넌트의 재사용을 용이하게 해주고 단위 테스트를 쉽게 할 수 있도록 지원하는 스프링, Spring)
 
-
-
 ![di](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FlrZlY%2Fbtr77f3m17k%2F71hZKGhF8WOOZ1xMm3SuhK%2Fimg.png)
 
-기초단계에서 가장 중요한 개념
+## 스프링 컨테이너의 이해
+
+// xml파일경로
+String resourceLocation = "classpath:bmi/applicationCTX3.xml";
+// 스프링 컨테이너 생성
+AbstractApplicationContext ctx = new GenericXmlApplicationContext(resourceLocation);
+// 스프링 컨테이너에서 컴포넌트 가져오기
+MyInfo myInfo = ctx.getBean(“myInfo”, MyInfo.class);
+myInfo.getInfo();
+ctx.close();
+
+// AbstractApplicationContext 추상클래스 위로는 ApplicationContext 인터페이스 밑으로 상속받는 얘들중의 하나가 GenericXmlApplicationContext. 매개변수로 위치를 주면 IOC 컨테이너(스프링 컨테이너)가 생성. 즉 부품이 된 거임. 그 부품에서 “myInfo”라는 빈(이 안에도 bmiCalculator 주입됨)을 뽑아서 myInfo라는 변수에 넣음. 객체를 생성하고 조립하는 것을 Spring 컨테이너가 하고 있음
 
 
-객체 생성과 조립
+## 의존 관계
+- DI는 Dependency Injection의 약자로 우리말로 하면 ‘의존하는 객체를 주입하는 것‘ 입니다.
+- 의존주입은 setter를 통한 주입과 생성자를 통한 주입이 있습니다.
+- xml파일을 이용한 의존주입(아래의 예제는 studentInfo객체는 student객체에 의존하고 있다)
 
-종속성 주입
+<bean id="studentInfo" class="com.lec.ex.StudentInfo">
+	<!-- <constructor-arg ref="student1"/> -->
+	<constructor-arg>
+		<ref bean="student1"/>
+	</constructor-arg>
+</bean>
 
-
-인터페이스를 활용한 부품교환 
-
-자바소스는 최소한으로 건들지 않고 xml에서 바꾼다 
-
+- java파일을 이용한 의존주입
+Student student2 = ctx.getBean(“student2”,Student.class);
+studentInfo.setStudent(student2);
+studentInfo.getStudentInfo();
 
 
 
