@@ -30,7 +30,7 @@ Maven 라이브러리인것이다.
     <artifactId>cglib</artifactId>
   <version>2.2.2</version>
 </dependency>
-를 추가한다
+를 추가한다 (자바에서 xml대신 파싱할수있는 클래스 @Configuration)
 
 ApplicationConfig 파일을 xml이 아닌 java로 쓰기 위해 필요
 자바로 정의하는것(스프링부트 방법)
@@ -92,7 +92,7 @@ xml에서 일일히 프로퍼티 추가해주거나 생성자 추가해주거나
 단 xml에서 context:annotation-config를 설정해야 어노테이션을 해석한다
 
 xml 에 Namespaces에서 c라는게 생겨있다 웹프로젝트에서 쓸수있음 이걸로 빈객체 생성할때 생성자매개변수 줄수있음
-p는 프로퍼티 세터
+p는 멤버변수세팅
 
 서비스클래스에서 dao를 new 할일이 없다 이제
 @Autowired하고 그냥 사용하면됨
