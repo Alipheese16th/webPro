@@ -1,0 +1,30 @@
+@charset "UTF-8";
+
+body{
+	background-color:lightyellow;
+}
+span{
+	color:red;
+}
+
+.right{
+	text-align:right;
+}
+
+form{
+	text-align:center;
+	margin:0 auto;
+}
+
+.wrapper{
+	display:flex;
+	justify-content:center;
+	margin:0 auto;
+}
+
+caption{
+	font-weight:bold;
+}
+input:not([type=submit]){
+	width:100px;
+}
