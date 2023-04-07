@@ -1,0 +1,14 @@
+1. spring.io 사이트에서 sts-3.9.13을 다운받아 압축을 푼다
+2. lombok 다운받아 실행 : sts.exe에 추가
+3. lombok 설정 및 utf-8 인코딩 설정
+   : STS.ini
+
+-javaagent:D:\webPro\IDE\sts-bundle\sts-3.9.13.RELEASE\lombok.jar
+-Dfile.encoding=utf-8
+
+4. sts.exe 실행시 에러 시
+ini파일에 추가할 내용
+-Dosgi.requiredJavaVersion=1.8
+-vm 
+C:\Program Files\Java\jdk1.8.0_321\bin\javaw.exe
+sts.exe바로가기에 sts.exe -clean
