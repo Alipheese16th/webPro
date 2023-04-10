@@ -1,0 +1,141 @@
+# 12장 jdbc 탬플릿
+
+그동안 우리가 직접 db에 연결해온 작업을 jdbc탬플릿을 이용해서 해볼것이다
+
+sql문만 작성하면 알아서 처리다해주는 자동화탬플릿
+
+메이븐 리파지토리 사이트에서 spring-jdbc 관련 dependency를 pom.xml에 적용한다
+(여기저기 충돌날수있으니 스프링프레임워크 버전을 잘 맞춰서 호환시키자)
+
+root-context.xml에서 template 빈객체를 만들고 dataSource 빈객체를 생성해서 세터로 집어넣는다. dataSource빈객체는 properties 외부파일로 환경설정 입력값을 넣는다
+
+프로젝트가 실행되면 컨트롤러 객체는 무조건 생성될것이므로 컨트롤러 클래스에서 template를 @Autowired로 적용하고 따로 퍼블릭 클래스에 static으로 넣어놓는다
+앞으로 거기서 항상 공유변수로 사용가능. (dao에서 쓸수있게됨)
+
+공유변수로서 탬플릿을 쓸수있게 되었으니 dao에서 언제든지 호출해서 사용 : 끝
+
+
+서버폴더의 context.xml 에서 커넥션풀 정의는 이제 필요없다
+왜냐하면 jdbc탬플릿에서 알아서 해줄것이기때문
+
+
+인서트,업데이트,딜리트
+template.update(sql, ?채우는객체)
+	--UPDATE, DELETE, INSERT
+
+1줄 셀렉트
+template.queryForObject(sql, 가져올object타입셋팅)
+
+여러줄 셀렉트
+template.query(sql, ?채우는객체, 가져올object타입셋팅)
+
+
+---
+이건 여담이지만 원래 jsp에서 jstl을 사용하려면 톰켓라이브러리에 jstl.jar , standar.jar를 넣었어야했는데 
+스프링 웹프로젝트를 생성하면 기본적으로 pom.xml에 기능이 구성되어있으니 그냥 사용하면 된다.
+---
+
+
+------------------------------------------------------------------
+
+# 13장 파일첨부
+
+스프링에서 기본적으로 파일첨부 관련 기능을 제공하기때문에
+cos.jar를 다운받을 필요가 없다
+
+pom.xml에 아래의 파일첨부기능을 추가
+
+<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+<dependency>
+    <groupId>commons-fileupload</groupId>
+    <artifactId>commons-fileupload</artifactId>
+    <version>1.5</version>
+</dependency>
+
+
+그리고 root-context.xml 이나 servlet-context.xml 둘중 하나에 빈객체를 생성해야함
+
+<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	<beans:property name="maxUploadSize" value="1048576"/> <!-- 용량제한 -->
+</beans:bean>
+만약 한글명이 포함된 파일명이라면 여기서 프로퍼티속성을 좀더 추가하면된다
+
+
+multipartResolver 는 멀티파트 형식으로 데이터가 전송된 경우, 해당 데이터를 스프링 mvc에서 사용할수 있도록 변환해준다
+
+그리고 어느정도 jsp에서 하던작업이랑 비슷함. 소스참조
+
+-----------------------------------------------------------------
+
+# 14장 Mybatis 프레임워크로 DB연동
+
+service클래스에서 model에 데이터를 싣고 컨트롤러로 돌아갈수가 없다.
+페이징을 하고싶다면 관련 유틸을 사용해야함.
+
+마이바티스를 쓰는이유
+요새는 jdbc도 잘안쓴다. sql문이 자바 안에 있기때문에 sql문을 수정하려면 자바소스를 만져야 하기때문.
+sql쿼리문을 xml파일로 DB에 엑세스 한다.
+
+dao를 싹 걷어내는 작업을 할예정
+
+(요새는 마이바티스 대신 하이버네이트를 쓰기도 함)
+
+## 진행순서
+- pom.xml:필요라이브러리 의존추가 (lombok, spring-jdbc, mybatis, mybatis-spring)
+- web.xml :한글처리. *.do
+- db.properties : DB환경설정정보
+- root-context.xml에 dataSource 빈생성
+- DTO 생성
+- xml 생성 :mapper(empList,deptList) + config
+- root-context.xml에 SqlSessionfactoryBean, 
+sessionTemplate(SqlSessionTemplate) 빈생성
+- 실행 첫화면 : css 추가해서 테스트
+- DAO
+- Service
+- Controller
+- emp.jsp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---복습
+@@ModelAttribute("변수명")
+public ...(메소드 정의)
+
+이러면 어느요청경로로 오든간에 model에 공통적으로 싣고 가는 데이터가 된다
+
+컨트롤러의 함수 @RequestMapping 에서 정의하는 함수 매개변수가 이름이 빈객체와 같으면 싹 달라붙어서 데이터가 들어오는데 이름이 다른경우 @@ModelAttribute 로 다른이름으로 정의할수있는걸 한번 공부해보자
+
+
+
+
+contextpath - webapp - webinf
+classpath - resources - metainf
+
+
