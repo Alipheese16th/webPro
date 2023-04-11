@@ -82,7 +82,7 @@ dao를 싹 걷어내는 작업을 할예정
 
 ## 진행순서
 - pom.xml:필요라이브러리 의존추가 (lombok, spring-jdbc, mybatis, mybatis-spring)
-- web.xml :한글처리. *.do
+- web.xml :한글처리, *.do 경로 설정
 - db.properties : DB환경설정정보
 - root-context.xml에 dataSource 빈생성
 - DTO 생성
@@ -113,17 +113,6 @@ sessionTemplate(SqlSessionTemplate) 빈생성
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 ---복습
 @@ModelAttribute("변수명")
 public ...(메소드 정의)
@@ -133,6 +122,7 @@ public ...(메소드 정의)
 컨트롤러의 함수 @RequestMapping 에서 정의하는 함수 매개변수가 이름이 빈객체와 같으면 싹 달라붙어서 데이터가 들어오는데 이름이 다른경우 @@ModelAttribute 로 다른이름으로 정의할수있는걸 한번 공부해보자
 
 
+<![CDATA[ ]]>
 
 
 contextpath - webapp - webinf
