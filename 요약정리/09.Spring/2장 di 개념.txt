@@ -1,6 +1,48 @@
 # DI 개념 및 활용
 
+
+어떤 객체가 어떤객체를 의존하는것이 dependency 라고 할수 있다. 예를들어 서비스클래스는 dao의 메소드를 사용해야 하니까 dao를 의존한다.
+
+스프링에서는 dao객체를 바로 생성해서 사용하는게 아니고 외부에서 객체를 생성해서 주입하는 식으로 해볼 것이다.
+
+xml에서 모든 설정을 관리하고 선언해서 빈 객체를 생성한다.
+IOC컨테이너에서 이 프로젝트에 필요한 객체들을 미리 만들어 놓고 그때그때 사용 되는 원리.
+
+자바 프로젝트 내 리소스 디렉토리에서 bean comfig 파일(xml)을 만들어서
+<bean></bean>을 만들어서 (객체생성) 사용
+
+xml에서 객체를 생성하고 setter로 멤버변수를 입력할수 있는데 기초데이터타입은 
+<property>
+	<value>10</value>
+</property>
+이런식으로 할수있지만 참조데이터타입은
+<ref bean="객체변수"/>
+value 대신 ref를 이용해서 참조해야 한다.
+배열관련 타입은 <list><value></value>... </list>로 작성한다.
+
+혹은 생성자 함수를 이용해서 세팅하는 방법도 있다.
+<constructor-arg>
+	<value>홍길동</value>
+</constructor-arg>
+이런식으로 constructor-arg를 이용해서 생성자함수에 매개변수를 넣는것이다.
+단 주의점으로는 생성자 함수를 정의할때 매개변수 순서를 정의한 순서대로 꼭 지켜야 한다.
+
+리소스폴더는 classpath 라고 부른다. 이 경로로 외부파일에 쉽게 접근해서 사용할 수 있다.
+
+원래 웹프로젝트는 자동적으로 xml을 파싱하는 기능이 있지만 지금은 연습용 프로젝트이기 때문에 직접 메인메서드에서 컨테이너객체를 생성해서 파싱해봅니다.
+
+AbstractApplicationContext ctx = new GenericXmlApplicationContext("classpath:applicationCTX.xml");
+
+
+
+---------------------------------------------
+
+
+
+
 DI(Dependency Injection; 의존주입 = 부품조립)와 IOC 컨테이너(Inversion of Control ; 컴포넌트의 재사용을 용이하게 해주고 단위 테스트를 쉽게 할 수 있도록 지원하는 스프링, Spring)
+
+결국 스프링이란 필요한 객체를 생성하고 조립하는 라이브러리 집합체라고 할 수 있다
 
 ![di](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FlrZlY%2Fbtr77f3m17k%2F71hZKGhF8WOOZ1xMm3SuhK%2Fimg.png)
 
@@ -35,6 +77,16 @@ Student student2 = ctx.getBean(“student2”,Student.class);
 studentInfo.setStudent(student2);
 studentInfo.getStudentInfo();
 
+Xml에 bean으로 주입해 쓰다가 맘에 안 들면 java 코드에서 다른 bean을 주입해서 쓸 수도 있다
+
+
+## DI 사용에 따른 장점
+
+아직은 스프링의 DI사용에 따른 장점을 많이 느끼지 못할 수 있습니다. 또는 DI를 사용하니 더욱 복잡하고 시간이 더 많이 소요된다고 생각 할 수 있습니다. (oop언어를 배울 때, class 나온 후 interface가 나온다. Interface는 구현도 없고 선언만 하는데 굳이 interface를 만들까 생각하지만 interface를 만들므로 타입을 통일시킬 수 있고, 강제로 오버라이드하게 해서 작업을 통일시킬 수 있다는 여러가지 장점이 있다. 이 장점은 규모가 큰 프로젝트를 할수록 느낄 수 있게 된다)
+
+사실 작은 규모의 프로젝트에서는 스프링의 DI사용을 하는 것 보다 일반적인 방법을 사용하여 개발하는 것이 더욱 빠르고, 개발에 따른 스트레스를 줄일 수 있습니다. 하지만 규모가 어느 정도 커지고, 추후 유지보수 업무가 발생시에는 DI를 이용한 개발의 장점을 느낄 수 있습니다.
+
+스프링 DI사용에 따른 장점을 예제를 통해 살펴 봅니다. 자바파일의 수정 없이 스프링 설정 파일만을 수정하여 부품들을 생성/조립하고 있는 예제입니다
 
 
 
