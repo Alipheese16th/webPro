@@ -1,0 +1,70 @@
+# DI(Dependency Injection) 자동 의존 설정
+
+## 객체간 의존 자동 연결 : @Autowired 어노테이션을 이용
+
+프로젝트의 규모가 조금만 커져도 한 개의 어플리케이션에서 생성하는 스프링 빈 객체는 수백개 이상으로 증가하게 되는데 이 경우 스프링 빈 간의 의존관계를 xml 설정이나 자바 기반 설정을 관리하는데 시간을 뺏길 수 있다. 
+
+또는 특정 타입의 빈 객체가 한 개밖에 존재하지 않는 경우가 많아서 의존 객체가 너무 뻔할 때가 있다. 
+
+만약 일일이 의존관계를 설정할 필요없이 자동으로 프로퍼티나 생성자 파라미터 값으로 동일 타입의 빈 객체를 전달해 주는 기능이 있다면 설정 코드가 많이 줄어들 것이다.
+
+```
+// Student.java
+@Data
+public class Student {
+	private String name;
+	private int age;
+	public Student(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+}
+
+// StudentInfo.java
+@Data
+public class StudentInfo {
+	@Autowired
+	private Student student;
+}
+
+// application.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<context:annotation-config/> <!-- 자바안의 어노테이션을 해석 -->
+	<bean id="student" class="com.lec.ch04.ex1.Student">
+		<constructor-arg value="홍길동"/>
+		<constructor-arg value="11"/>
+	</bean>
+	<bean id="studentInfo" class="com.lec.ch04.ex1.StudentInfo"/>
+</beans>
+
+```
+위와같이 StudentInfo는 Student 클래스를 의존하고 있고 xml에서 빈객체를 생성했지만 따로 xml에서 연결하는 정의가 없다. 그대로 실행하면 에러가 날 상황
+
+그러나 StudentInfo 필드에 @Autowired를 명시하면 해당 데이터타입의 빈객체를 알아서 찾아 연결해주게 된다. 너무 편리한 기능이라 앞으로 계속 쓰일 예정.
+
+단 xml파일의 Namespace탭에서 context 속성을 적용하고 <context:annotation-config/> 태그를 작성해줘야 한다. 이 태그의 의미가 자바 파일의 어노테이션을 전부 해석한다는 의미이므로, 이 태그가 없으면 @Autowired를 감지하지 못한다. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

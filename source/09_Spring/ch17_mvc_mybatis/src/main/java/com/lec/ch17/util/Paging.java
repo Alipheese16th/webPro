@@ -14,6 +14,8 @@ public class Paging {
 	private int pageCnt;
 	private int startPage;
 	private int endPage;
+	private int orderNum;
+	private int inverseNum;
 	
 	public Paging(int totCnt, String pageNum, int pageSize, int blockSize) {
 		if(pageNum!=null && !pageNum.equals("")) {
@@ -31,6 +33,10 @@ public class Paging {
 		if(endPage > pageCnt) {
 			endPage = pageCnt;
 		}
+		orderNum = startRow; // 출력될 순차번호(1,2,3,..)
+		inverseNum = totCnt - startRow + 1; // 출력될 역순 번호(100,99,98,..)
+		
+		
 	}
 	
 	public Paging(int totCnt, String pageNum) {

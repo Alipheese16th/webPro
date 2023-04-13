@@ -61,7 +61,7 @@
 	
 	<insert id="boardReply">
 		INSERT INTO MVC_BOARD (BID, BNAME, BTITLE, BCONTENT, BGROUP, BSTEP, BINDENT, BIP)
-  			VALUES (MVC_BOARD_SEQ.NEXTVAL, #{bname}, #{btitle}, #{bcontent}, #{bgroup}, #{bstep}, #{bindent}, #{bip})
+  			VALUES (MVC_BOARD_SEQ.NEXTVAL, #{bname}, #{btitle}, #{bcontent}, #{bgroup}, #{bstep}+1, #{bindent}+1, #{bip})
 	</insert>
 	
 </mapper>

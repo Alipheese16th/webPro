@@ -1,12 +1,14 @@
 # DI 개념 및 활용
 
+![di](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FlrZlY%2Fbtr77f3m17k%2F71hZKGhF8WOOZ1xMm3SuhK%2Fimg.png)
 
-어떤 객체가 어떤객체를 의존하는것이 dependency 라고 할수 있다. 예를들어 서비스클래스는 dao의 메소드를 사용해야 하니까 dao를 의존한다.
+의존성(Dependency)이란, 하나의 객체가 다른 객체없이 제대로 된 역할을 할 수 없다는 것을 의미. 
+하나의 객체가 다른 객체의 상태에 따라 영향을 받는다. A 객체가 B 객체 없이 동작이 불가능한 상황을 'A가 B에 의존적이다'라고 표현한다.
 
-스프링에서는 dao객체를 바로 생성해서 사용하는게 아니고 외부에서 객체를 생성해서 주입하는 식으로 해볼 것이다.
+주입(Injection)이란, 외부에서 밀어넣는 것을 의미한다. 그동안은 객체를 직접 생성해서 주입했지만 외부에서 생성 후 주입하는 것이 스프링에서의 의존성 주입이다.
 
-xml에서 모든 설정을 관리하고 선언해서 빈 객체를 생성한다.
-IOC컨테이너에서 이 프로젝트에 필요한 객체들을 미리 만들어 놓고 그때그때 사용 되는 원리.
+스프링에서는 xml파일로 모든 설정을 관리하고 빈 객체를 생성한다.
+프로그램 구동시 IOC컨테이너에서 이 프로젝트에 필요한 객체들을 만들어 놓고 필요할때 사용 되는 원리이다. 
 
 자바 프로젝트 내 리소스 디렉토리에서 bean comfig 파일(xml)을 만들어서
 <bean></bean>을 만들어서 (객체생성) 사용
@@ -27,11 +29,18 @@ value 대신 ref를 이용해서 참조해야 한다.
 이런식으로 constructor-arg를 이용해서 생성자함수에 매개변수를 넣는것이다.
 단 주의점으로는 생성자 함수를 정의할때 매개변수 순서를 정의한 순서대로 꼭 지켜야 한다.
 
+xml파일의 Namespace 탭에 가보면 p 속성이나 c 속성을 적용할수 있는데 이 기능은 'constructor-arg'요소 없이, 인라인 속성으로 생성자 매개변수를 설정할 수 있게 해준다. 
+
 리소스폴더는 classpath 라고 부른다. 이 경로로 외부파일에 쉽게 접근해서 사용할 수 있다.
 
 원래 웹프로젝트는 자동적으로 xml을 파싱하는 기능이 있지만 지금은 연습용 프로젝트이기 때문에 직접 메인메서드에서 컨테이너객체를 생성해서 파싱해봅니다.
 
 AbstractApplicationContext ctx = new GenericXmlApplicationContext("classpath:applicationCTX.xml");
+
+생성한 컨테이너 객체로 getBean()메서드를 통해 생성된 빈객체를 불러올수 있습니다.
+
+
+
 
 
 
@@ -44,7 +53,7 @@ DI(Dependency Injection; 의존주입 = 부품조립)와 IOC 컨테이너(Invers
 
 결국 스프링이란 필요한 객체를 생성하고 조립하는 라이브러리 집합체라고 할 수 있다
 
-![di](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FlrZlY%2Fbtr77f3m17k%2F71hZKGhF8WOOZ1xMm3SuhK%2Fimg.png)
+
 
 ## 스프링 컨테이너의 이해
 
