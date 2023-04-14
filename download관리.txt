@@ -48,20 +48,17 @@ jqueryui 사이트에 이런저런 유용한 라이브러리 많음
 부트스트랩도 그냥 cdn으로 사용가능
 
 
+
 이클립스를 굳이 쓰지않아도 이클립스기반의 스프링툴을 설치해서 따로 사용해도됨.
 이클립스에 스프링프레임워크 설치하면 무거워질수있으니 그냥 별개로 사용
 
 sts-3.9.13 (스프링 툴 (자체적인 서버까지 있으나 톰캣쓰는게좋음))
 lombok 1.18.26 (스프링쓰려면 이건 거의 필수로 추가해야함. 겁나편한 어노테이션)
 
-
-
-
-
-
-
 spring에서 제공하는기능들
-jstl
-커넥션풀 (spring-jdbc)
-파일첨부 (commons-fileupload)
+jstl(pom.xml - jstl)
+jdbc탬플릿(pom.xml - spring-jdbc) (커넥션풀 노필요) 
+파일첨부(pom.xml - commons-fileupload)
+
+
 

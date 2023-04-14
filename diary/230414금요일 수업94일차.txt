@@ -1,0 +1,122 @@
+# 18장 메일발송
+
+
+회원가입을 완료했을경우 '회원가입 감사합니다'라는 메일이 자동발송되는 기능을 구현하는 게 이번 장의 목표이다.
+
+
+메일발송 관련 의존추가 (pom.xml)
+
+<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
+<dependency>
+    <groupId>javax.mail</groupId>
+    <artifactId>mail</artifactId>
+    <version>1.4.7</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context-support</artifactId>
+    <version>3.0.5.RELEASE</version>
+</dependency>
+
+
+원래 정해진것은 없고 회사마다 케바케이긴한데 우리는 일단 빈객체를 정의할때
+웹서버와 관련된것은 servlet-context.xml에
+db와 관련된것은 root-context에 할것이다
+
+xml파일에서 메일발송관련 빈객체를 생성한다
+org.springframework.mail.javamail.JavaMailSenderImpl
+그후 프로퍼티를 properties 환경설정 파일에서 받아오고
+추가로 더 설정해야하는데 이건 외우기힘듬 노트보고 설정.
+
+컨트롤러에서(원래는 서비스단에서 해야하는데 이 프로젝트는 간단하게 만드느라 생략) JavaMailSender 객체를 생성해서 @Autowired로 연결
+
+SimpleMailMessage 객체를 생성해서 메일 환경설정
+setTo("메일주소") 받을 메일 주소 설정
+setSubject("문자열") 받을 메일 제목
+setText("문자열") 받을 메일 본문 내용
+
+그후 JavaMailSender 객체의 send() 메서드를 이용해서 SimpleMailMessage 객체를 보내면 메일이 보내진다
+
+---
+위의 예제는 단순 text 메일을 보낸것이고 
+두번째는 html이 먹히는 메일을 보낼것이다.
+
+SimpleMailMessage 객체가 아니라
+MimeMessagePreparator 객체를 생성해서 사용할것인데 인터페이스 객체이기에
+생성할때 익명 클래스(Anonymous)로 객체를 구현해야함. 함수오버라이드해서 기능구현
+
+@Override
+public void prepare(MimeMessage mimeMessage) throws Exception {
+	// 받을 메일
+	mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
+	// 보낼 메일
+	mimeMessage.setFrom(new InternetAddress("alipheese93@gmail.com"));
+	// 메일 제목
+	mimeMessage.setSubject("[HTML 가입인사]"+name+"님 가입 감사합니다");
+	// 메일 본문
+	mimeMessage.setText(content, "utf-8", "html");
+}
+
+setText() 메서드에서 html 파일형식이라는걸 알려줘야 한다.
+
+
+
+----------------------------------------------------
+# 19장 총괄예제
+
+
+## 요구사항
+
+회원가입(메일발송)
+로그인
+로그아웃
+회원정보수정
+책 등록(이미지 첨부)
+책 상세보기
+책 정보수정
+책 리스트(페이징)
+우편번호찾기(daum api)
+
+
+1. Query
+2. Pom.xml에 dependency추가
+3. Web.xml에 한글 필터링 및 *.do
+4. Servlet-context.xml 
+	A. <resources mapping>지정 :css, bookImgFileUpload, js, img
+	B. <mybatis-spring:scan base-package=" "/>
+	C. mailSender빈 생성, multipartResolver 빈 생성
+5. Dto
+6. Mapper xml 과 Mapper dao
+7. Mybatis-config.xml
+	A. Root-contxt.xm(DataSource빈 – sqlSessionFactoryBean – SqlSessionTemplate빈 생성)
+8. Service 인터페이스와 클래스, Paging
+9. 컨트롤러와 View
+
+
+
+책등록페이지
+첨부파일 매개변수를 dto와 이름이 같게 하면 안되고 일부로 다른이름으로 매개변수로 보내고 다른 멤버변수는 알아서 dto에 매개변수로 들어가게 한다.
+서비스에서 첨부파일 처리를 하고 dto에 setter로 넣으면됨
+
+method=asdf 형식으로 컨트롤러에서 리퀘스트매핑 분리하면 문제점이
+forward가 안된다
+전부 리다이렉트로 보내야하는데 그럼 데이터를 못넘기기때문에 url에 전부 매개변수를 붙여서 보내줘야함
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--- google검색
+jpa 
+smtp.gmail.com
+spring - log  logging
+spring - appservlet - mvc 동작과정 순서
