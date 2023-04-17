@@ -16,18 +16,18 @@ import com.lec.ch19.util.Paging;
 public class BookController {
 	
 	@Autowired
-	private BookService bservice;
+	private BookService bookService;
 	
 	@RequestMapping(params="method=detail", method=RequestMethod.GET)
 	public String detail(int bnum, Model model) {
-		model.addAttribute("book",bservice.getDetailBook(bnum));
+		model.addAttribute("book",bookService.getDetailBook(bnum));
 		return "book/detail";
 	}
 	
 	@RequestMapping(params="method=list", method=RequestMethod.GET)
 	public String list(String pageNum, Model model) {
-		model.addAttribute("bookList",bservice.bookList(pageNum));
-		model.addAttribute("paging",new Paging(bservice.totCntBook(), pageNum, 3, 3));
+		model.addAttribute("bookList",bookService.bookList(pageNum));
+		model.addAttribute("paging",new Paging(bookService.totCntBook(), pageNum, 3, 3));
 		return "book/list";
 	}
 	
@@ -38,12 +38,23 @@ public class BookController {
 	
 	@RequestMapping(params="method=register", method=RequestMethod.POST)
 	public String register(Book book, Model model, MultipartHttpServletRequest mRequest) {
-		model.addAttribute("registerResult", bservice.registerBook(mRequest, book));
+		model.addAttribute("registerResult", bookService.registerBook(mRequest, book));
 		return "book/register";
 	}
 	
-
 	
+	//아직 다 못함
+	@RequestMapping(params="method=modify", method = RequestMethod.GET)
+	public String modify(int bnum, Model model) {
+		model.addAttribute("book", bookService.getDetailBook(bnum));
+		return "book/modify";
+	}
+	@RequestMapping(params="method=modify", method = RequestMethod.POST)
+	public String modify(MultipartHttpServletRequest mRequest,  Book book, String pageNum) {
+		int modifyResult = bookService.modifyBook(mRequest, book);
+		return "redirect:book.do?method=list&pageNum="+pageNum+"&modifyResult="+modifyResult;
+	}
+
 	
 	
 	

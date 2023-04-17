@@ -15,7 +15,7 @@
 	</resultMap>
 	
 	<select id="idConfirm" parameterType="String" resultType="int">
-		SELECT COUNT(*) FROM MEMBER WHERE MID = #{mid}
+		SELECT COUNT(*) FROM MEMBER WHERE MID = #{mid, jdbcType=VARCHAR}
 	</select>
 	
 	<insert id="joinMember" parameterType="Member">

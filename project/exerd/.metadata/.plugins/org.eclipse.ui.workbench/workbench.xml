@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="13" version="2.0">
+<workbench progressCount="14" version="2.0">
 <workbenchAdvisor/>
-<window height="982" width="949" x="-41" y="33">
+<window height="1047" maximized="true" width="974" x="-9" y="0">
 <fastViewData fastViewLocation="1024"/>
 <perspectiveBar>
 <itemSize x="160"/>
@@ -26,17 +26,24 @@
 <folder appearance="1" expanded="2">
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
 <part id="0"/>
+<part id="1"/>
+<part id="2"/>
 </presentation>
 </folder>
 </info>
 </editorArea>
-<editor activePart="true" focus="true" id="com.tomato.exerd.editor.DiagramEditor" name="project.exerd" partName="project.exerd" path="D:/webPro/project/exerd/newProject/project.exerd" title="project.exerd" tooltip="newProject/project.exerd" workbook="DefaultEditorWorkbook">
+<editor id="com.tomato.exerd.editor.DiagramEditor" name="project.exerd" partName="project.exerd(읽기 전용)" path="D:/webPro/project/exerd/newProject/project.exerd" title="project.exerd(읽기 전용)" tooltip="newProject/project.exerd" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/newProject/project.exerd"/>
+</editor>
+<editor activePart="true" focus="true" id="com.tomato.exerd.editor.DiagramEditor" name="bowwow.exerd" partName="bowwow.exerd" path="D:/webPro/project/exerd/newProject/bowwow.exerd" title="bowwow.exerd" tooltip="newProject/bowwow.exerd" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/newProject/bowwow.exerd"/>
+</editor>
+<editor id="com.tomato.exerd.editor.DiagramEditor" name="5_shopping.exerd" partName="5_shopping.exerd" title="5_shopping.exerd" tooltip="D:\webPro\source\02_DBMS\newProject\5_shopping.exerd" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" uri="file:/D:/webPro/source/02_DBMS/newProject/5_shopping.exerd"/>
 </editor>
 </editors>
 <views>
-<view id="com.tomato.exerd.validate.ui.ValidateView" partName="검토"/>
-<view id="org.eclipse.ui.console.ConsoleView" partName="콘솔">
+<view id="com.tomato.exerd.validate.ui.ValidateView" partName="검토">
 <viewState/>
 </view>
 <view id="com.tomato.exerd.ui.views.domain" partName="도메인">
@@ -74,7 +81,6 @@
 <fastViews>
 <view id="com.tomato.exerd.ui.views.domain" ratio="0.3"/>
 <view id="com.tomato.exerd.validate.ui.ValidateView" ratio="0.3"/>
-<view id="org.eclipse.ui.console.ConsoleView" ratio="0.3"/>
 </fastViews>
 </fastViewBar>
 </fastViewBars>
@@ -86,29 +92,29 @@
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
-<info folder="true" part="stickyFolderRight" ratio="0.7497382" ratioLeft="716" ratioRight="239" relationship="2" relative="leftFolder">
+<info folder="true" part="stickyFolderRight" ratio="0.7491892" ratioLeft="693" ratioRight="232" relationship="2" relative="leftFolder">
 <folder appearance="2" expanded="2">
 <page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
 <page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
 <page content="org.eclipse.ui.cheatsheets.views.CheatSheetView" label="LabelNotFound"/>
 </folder>
 </info>
-<info part="org.eclipse.ui.editorss" ratio="0.1790576" ratioLeft="171" ratioRight="784" relationship="2" relative="leftFolder"/>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@143a322" ratio="0.77933675" ratioLeft="611" ratioRight="173" relationship="2" relative="org.eclipse.ui.editorss">
+<info part="org.eclipse.ui.editorss" ratio="0.17945945" ratioLeft="166" ratioRight="759" relationship="2" relative="leftFolder"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@33fcae" ratio="0.7799736" ratioLeft="592" ratioRight="167" relationship="2" relative="org.eclipse.ui.editorss">
 <folder appearance="2" expanded="2">
 <page content="com.tomato.exerd.ui.views.thumbnail" label="LabelNotFound"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
-<info folder="true" part="rightFolder" ratio="0.25" ratioLeft="215" ratioRight="645" relationship="4" relative="org.eclipse.ui.internal.ViewStack@143a322">
+<info folder="true" part="rightFolder" ratio="0.25" ratioLeft="215" ratioRight="645" relationship="4" relative="org.eclipse.ui.internal.ViewStack@33fcae">
 <folder appearance="2" expanded="2">
 <page content="com.tomato.exerd.modelview3.ModelView3" label="LabelNotFound"/>
 <page content="org.eclipse.ui.views.ContentOutline" label="LabelNotFound"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
-<info folder="true" part="bottomFolder" ratio="0.7" ratioLeft="602" ratioRight="258" relationship="4" relative="org.eclipse.ui.editorss">
-<folder appearance="2" expanded="2">
+<info folder="true" part="bottomFolder" ratio="0.9688507" ratioLeft="902" ratioRight="29" relationship="4" relative="org.eclipse.ui.editorss">
+<folder appearance="2" expanded="0">
 <page content="com.tomato.exerd.ui.views.domain" label="LabelNotFound"/>
 <page content="com.tomato.exerd.validate.ui.ValidateView" label="LabelNotFound"/>
 <page content="org.eclipse.ui.console.ConsoleView" label="LabelNotFound"/>
@@ -116,7 +122,7 @@
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@a6a68e" ratio="0.3" ratioLeft="258" ratioRight="602" relationship="4" relative="leftFolder">
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@cf8f94" ratio="0.3" ratioLeft="258" ratioRight="602" relationship="4" relative="leftFolder">
 <folder appearance="2" expanded="2">
 <page content="org.eclipse.gef.ui.palette_view" label="LabelNotFound"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
@@ -129,17 +135,68 @@
 <workingSets/>
 <navigationHistory>
 <editors>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" path="/newProject/project.exerd"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" path="/newProject/bowwow.exerd"/>
+<editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" uri="file:/D:/webPro/source/02_DBMS/newProject/5_shopping.exerd"/>
 </editors>
-<item historyLabel="project.exerd" index="0"/>
-<item historyLabel="project.exerd" index="0"/>
-<item active="true" historyLabel="project.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item historyLabel="bowwow.exerd" index="0"/>
+<item historyLabel="5_shopping.exerd" index="1"/>
+<item active="true" historyLabel="bowwow.exerd" index="0"/>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
 </page>
 <workbenchWindowAdvisor/>
 <actionBarAdvisor/>
 <trimLayout>
+<trimArea IMemento.internal.id="131072">
+<trimItem IMemento.internal.id="org.eclipse.ui.editorss"/>
+</trimArea>
 <trimArea IMemento.internal.id="128">
 <trimItem IMemento.internal.id="org.eclipse.ui.internal.WorkbenchWindow.topBar"/>
 </trimArea>
@@ -152,6 +209,12 @@
 </trimLayout>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" name="5_shopping.exerd" tooltip="D:\webPro\source\02_DBMS\newProject\5_shopping.exerd">
+<persistable uri="file:/D:/webPro/source/02_DBMS/newProject/5_shopping.exerd"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" name="bowwow.exerd" tooltip="newProject/bowwow.exerd">
+<persistable path="/newProject/bowwow.exerd"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" name="project.exerd" tooltip="newProject/project.exerd">
 <persistable path="/newProject/project.exerd"/>
 </file>

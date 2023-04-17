@@ -6,7 +6,7 @@ SELECT * FROM BOOK ORDER BY BRDATE;
 
 -- id = bookList (startRow~endRow까지 bookList) 출셕순서 : btitle 기준
 SELECT * FROM 
-  (SELECT ROWNUM RN, A.* FROM (SELECT * FROM BOOK ORDER BY BTITLE) A)
+    (SELECT ROWNUM RN, A.* FROM (SELECT * FROM BOOK ORDER BY BTITLE) A)
   WHERE RN BETWEEN 1 AND 10;
 
 -- id = totCntBook (등록된 책 갯수)

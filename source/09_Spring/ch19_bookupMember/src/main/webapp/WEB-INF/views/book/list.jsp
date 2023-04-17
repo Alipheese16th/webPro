@@ -26,6 +26,7 @@
 
 	<jsp:include page="../main/header.jsp"/>
 	<div id="content">
+	
 		<table>
 			<caption>도서 List</caption>
 			<tr>
