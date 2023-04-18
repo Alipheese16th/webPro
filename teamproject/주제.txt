@@ -19,15 +19,14 @@
 
 
 
-
-
-
 내가 개별프로젝트할때도
 처음에 계획했던대로 안되서 중간에 내용을 추가하거나 삭제하는 과정이 있었다
 처음 계획대로 되리란 보장이 없다
 
 DB설계가 중간에 바뀔수도있고
 쿼리가 추가되거나 삭제될수도있다
+
+
 
 
 ## 어떤 기능을 넣을지 정리해보자
@@ -41,8 +40,6 @@ DB설계가 중간에 바뀔수도있고
 - 상품 목록(정렬기준 2가지)
 - 상품 상세보기 / 리뷰 / 좋아요, 신고,차단
 
-
-- 
 - 관리자로그인 / 매출통계(하루 총매출, 상품별 매출)
 - 1대1채팅/ 상품명조회 / 상품등록
 - 관리자 상품 등록,수정,삭제 / 공지사항 관리
@@ -50,6 +47,7 @@ DB설계가 중간에 바뀔수도있고
 
 
 
+## 역할분담
 상품,주문 컨트롤러 (상품검색,상품리스트,상품상세보기(리뷰),장바구니, 주문) - 신치윤
 관리자 컨트롤러 (관리자로그인/매출통계/상품관리/공지사항) - 김소연
 유저컨트롤러 (회원가입/로그인/정보수정/마이페이지(내리뷰,내문의,주문내역)/회원탈퇴) - 유민상
@@ -57,6 +55,40 @@ DB설계가 중간에 바뀔수도있고
 리뷰게시판 컨트롤러(댓글) - 김소연
 QNA 컨트롤러(답글) - 유민상
 공지사항 컨트롤러 - 신치윤
+
+
+
+## 역할분담 상세
+1. 신치윤
+- 상품목록 (product/list)
+- 상품상세보기 (product/content)
+- 상품검색  (product/search)
+- 주문하기페이지 (product/order)
+- 주문결과페이지 (product/orderResult)
+- 공지사항게시판 (notice/list)
+
+
+2. 김소연
+
+- 메인페이지 디자인
+
+- 회원가입 (user/join)
+- 로그인 (user/login)
+- 로그아웃 (user/logout)
+- 마이페이지 (주문내역 / 취소,반품내역 / QnA 내역 / 내가 쓴 리뷰 / 회원정보 수정, 탈퇴 / )
+- 장바구니(user/cart)
+
+- 리뷰게시판(review/list)  (댓글 기능)
+
+3. 유민상
+
+- 관리자 페이지(admin/login)  (admin/logout)
+- 매출 그래프 페이지(admin/graph) (일별 매출, 상품별 매출, 공지사항)
+- 상품 조회(admin/productSearch) (수정, 삭제)
+- 상품 등록(admin/productRegister) (상품등록, 옵션등록)
+- 공지사항 게시판 관리(admin/noticeSet) (추가, 수정, 삭제)
+
+- QNA 게시판(qna/list) (답글기능)
 
 
 
@@ -89,9 +121,12 @@ web.xml - encodingFilter (한글필터)
 web.xml - *.do (컨트롤러 디스페쳐)
 servlet-context.xml - resources mapping (css폴더 설정)
 servlet-context.xml - context:property-placeholder (properties파일 읽기)
-servlet-context.xml - mybatis-spring:scan
-servlet-context.xml - mailSender빈, mulitpartResolver빈
-root-context.xml - dataSource, sqlSessionFactory(mybatis-config.xml), sqlSessionTemplate
+servlet-context.xml - mybatis-spring:scan (dao 인터페이스에 @mapper)
+servlet-context.xml - mailSender빈생성 (이메일계정 properties파일)
+servlet-context.xml - mulitpartResolver빈생성 
+root-context.xml - dataSource (scott계정 properties파일)
+root-context.xml - sqlSessionFactory(mybatis-config.xml, dataSource)
+root-context.xml - sqlSessionTemplate
 
 
 
