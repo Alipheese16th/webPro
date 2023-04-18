@@ -52,6 +52,7 @@ Port for 'Oracle HTTP Listener': 8080
 
 
 
+
 DCL 데이터컨트롤랭귀지
 
 오라클 설치후 cmd에서 
