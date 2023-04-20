@@ -62,3 +62,11 @@ jdbc탬플릿(pom.xml - spring-jdbc) (커넥션풀 노필요)
 
 
 
+
+
+
+# 톰캣
+lib 폴더 (jstl.jar, standar.jar) 스프링은 있어도되고없어도됨
+conf 폴더 context.xml - 커넥션풀 설정   스프링은 있어도되고없어도됨
+
+
