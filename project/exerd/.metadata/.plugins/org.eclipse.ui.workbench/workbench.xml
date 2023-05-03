@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workbench progressCount="14" version="2.0">
 <workbenchAdvisor/>
-<window height="1046" width="1228" x="515" y="0">
+<window height="1046" maximized="true" width="1228" x="515" y="0">
 <fastViewData fastViewLocation="1024"/>
 <perspectiveBar>
 <itemSize x="160"/>
@@ -30,8 +30,8 @@
 </folder>
 </info>
 </editorArea>
-<editor activePart="true" focus="true" id="com.tomato.exerd.editor.DiagramEditor" name="230428bowow.exerd" partName="230428bowow.exerd" title="230428bowow.exerd" tooltip="D:\webPro\source\10_2ndTeamProject\bowow\zzz_2nd_teamproject\신치윤\exerd\newProject\230428bowow.exerd" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230428bowow.exerd"/>
+<editor activePart="true" focus="true" id="com.tomato.exerd.editor.DiagramEditor" name="230503bowow.exerd" partName="230503bowow.exerd" title="230503bowow.exerd" tooltip="D:\webPro\source\10_2ndTeamProject\bowow\zzz_2nd_teamproject\신치윤\exerd\newProject\230503bowow.exerd" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230503bowow.exerd"/>
 </editor>
 </editors>
 <views>
@@ -131,6 +131,9 @@
 <editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230426bowwow.exerd"/>
 <editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230428bowwow.exerd"/>
 <editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230428bowow.exerd"/>
+<editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230430bowow.exerd"/>
+<editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230502bowow.exerd"/>
+<editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230503bowow.exerd"/>
 </editors>
 <item historyLabel="bowwow.exerd" index="0"/>
 <item historyLabel="bowwow.exerd" index="1"/>
@@ -148,7 +151,10 @@
 <item historyLabel="230426bowwow.exerd" index="5"/>
 <item historyLabel="230426bowwow.exerd" index="5"/>
 <item historyLabel="230428bowwow.exerd" index="6"/>
-<item active="true" historyLabel="230428bowow.exerd" index="7"/>
+<item historyLabel="230428bowow.exerd" index="7"/>
+<item historyLabel="230430bowow.exerd" index="8"/>
+<item historyLabel="230502bowow.exerd" index="9"/>
+<item active="true" historyLabel="230503bowow.exerd" index="10"/>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
 </page>
@@ -169,6 +175,15 @@
 </trimLayout>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" name="230503bowow.exerd" tooltip="D:\webPro\source\10_2ndTeamProject\bowow\zzz_2nd_teamproject\신치윤\exerd\newProject\230503bowow.exerd">
+<persistable uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230503bowow.exerd"/>
+</file>
+<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" name="230502bowow.exerd" tooltip="D:\webPro\source\10_2ndTeamProject\bowow\zzz_2nd_teamproject\신치윤\exerd\newProject\230502bowow.exerd">
+<persistable uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230502bowow.exerd"/>
+</file>
+<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" name="230430bowow.exerd" tooltip="D:\webPro\source\10_2ndTeamProject\bowow\zzz_2nd_teamproject\신치윤\exerd\newProject\230430bowow.exerd">
+<persistable uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230430bowow.exerd"/>
+</file>
 <file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" name="230428bowow.exerd" tooltip="D:\webPro\source\10_2ndTeamProject\bowow\zzz_2nd_teamproject\신치윤\exerd\newProject\230428bowow.exerd">
 <persistable uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230428bowow.exerd"/>
 </file>
