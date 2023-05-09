@@ -30,8 +30,8 @@
 </folder>
 </info>
 </editorArea>
-<editor activePart="true" focus="true" id="com.tomato.exerd.editor.DiagramEditor" name="230508bowow.exerd" partName="230508bowow.exerd" title="230508bowow.exerd" tooltip="D:\webPro\source\10_2ndTeamProject\bowow\zzz_2nd_teamproject\신치윤\exerd\newProject\230508bowow.exerd" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230508bowow.exerd"/>
+<editor activePart="true" focus="true" id="com.tomato.exerd.editor.DiagramEditor" name="230508bowow.exerd" partName="230508bowow.exerd" title="230508bowow.exerd" tooltip="D:\webPro\teamproject\zzz_2nd_teamproject\신치윤\exerd\newProject\230508bowow.exerd" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" uri="file:/D:/webPro/teamproject/zzz_2nd_teamproject/신치윤/exerd/newProject/230508bowow.exerd"/>
 </editor>
 </editors>
 <views>
@@ -101,7 +101,7 @@
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
-<info folder="true" part="bottomFolder" ratio="0.69945943" ratioLeft="647" ratioRight="278" relationship="4" relative="org.eclipse.ui.editorss">
+<info folder="true" part="bottomFolder" ratio="0.6852846" ratioLeft="638" ratioRight="293" relationship="4" relative="org.eclipse.ui.editorss">
 <folder appearance="2" expanded="2">
 <page content="com.tomato.exerd.ui.views.domain" label="LabelNotFound"/>
 <page content="com.tomato.exerd.validate.ui.ValidateView" label="LabelNotFound"/>
@@ -135,6 +135,8 @@
 <editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230502bowow.exerd"/>
 <editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230503bowow.exerd"/>
 <editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230508bowow.exerd"/>
+<editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" uri="file:/D:/webPro/teamproject/zzz_2nd_teamproject/신치윤/exerd/newProject/230508bowow.exerd"/>
+<editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/src/main/resources/META-INF/db/bowow.exerd"/>
 </editors>
 <item historyLabel="bowwow.exerd" index="0"/>
 <item historyLabel="bowwow.exerd" index="1"/>
@@ -156,7 +158,10 @@
 <item historyLabel="230430bowow.exerd" index="8"/>
 <item historyLabel="230502bowow.exerd" index="9"/>
 <item historyLabel="230503bowow.exerd" index="10"/>
-<item active="true" historyLabel="230508bowow.exerd" index="11"/>
+<item historyLabel="230508bowow.exerd" index="11"/>
+<item historyLabel="230508bowow.exerd" index="12"/>
+<item historyLabel="bowow.exerd" index="13"/>
+<item active="true" historyLabel="230508bowow.exerd" index="12"/>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
 </page>
@@ -177,6 +182,12 @@
 </trimLayout>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" name="bowow.exerd" tooltip="D:\webPro\source\10_2ndTeamProject\bowow\src\main\resources\META-INF\db\bowow.exerd">
+<persistable uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/src/main/resources/META-INF/db/bowow.exerd"/>
+</file>
+<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" name="230508bowow.exerd" tooltip="D:\webPro\teamproject\zzz_2nd_teamproject\신치윤\exerd\newProject\230508bowow.exerd">
+<persistable uri="file:/D:/webPro/teamproject/zzz_2nd_teamproject/신치윤/exerd/newProject/230508bowow.exerd"/>
+</file>
 <file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" name="230508bowow.exerd" tooltip="D:\webPro\source\10_2ndTeamProject\bowow\zzz_2nd_teamproject\신치윤\exerd\newProject\230508bowow.exerd">
 <persistable uri="file:/D:/webPro/source/10_2ndTeamProject/bowow/zzz_2nd_teamproject/신치윤/exerd/newProject/230508bowow.exerd"/>
 </file>
@@ -215,12 +226,6 @@
 </file>
 <file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" name="bowwow.exerd" tooltip="D:\webPro\project\exerd\newProject\bowwow.exerd">
 <persistable uri="file:/D:/webPro/project/exerd/newProject/bowwow.exerd"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" name="bowwow.exerd" tooltip="newProject/bowwow.exerd">
-<persistable path="/newProject/bowwow.exerd"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.tomato.exerd.editor.DiagramEditor" name="project.exerd" tooltip="newProject/project.exerd">
-<persistable path="/newProject/project.exerd"/>
 </file>
 </mruList>
 </workbench>
