@@ -35,16 +35,20 @@ app.get('/pet', function(req, res){
 
 // '/'요청경로(get)가 들어왔을 때, 브라우저 화면에 출력할 html
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    //res.sendFile(__dirname + '/index.html');
+    res.render('index.ejs');
 });
 
 app.use(express.static('public')); // css, js 등의 static 파일은 public 폴더
 
+// write 뷰페이지
 // '/write' 요청경로(get)가 들어왔을 때 write.html로 가라
 app.get('/write', (req, res) => {
-    res.sendFile(__dirname + '/write.html');
+    //res.sendFile(__dirname + '/write.html');
+    res.render('write.ejs');
 });
 
+// write 처리
 // '/write' 요청경로(post)가 들어왔을 때, 파라미터 정보(title, date)를 DB에 저장
 app.use(express.urlencoded({extended : true})); // post방식으로 들어온 req의 파라미터 사용
 app.post('/write', (req, res) => {
@@ -77,6 +81,7 @@ app.post('/write', (req, res) => {
 
 });
 
+// list 보여주기
 // '/list' 요청(get)으로 들어오면 post find한 결과를 배열로 받아 브라우저 화면에 출력
 app.set('view engine', 'ejs'); // view엔진으로 ejs를 등록
 app.get('/list', (req, res)=>{
@@ -86,6 +91,7 @@ app.get('/list', (req, res)=>{
     });
 });
 
+// list.ejs 에서 하나 삭제하기
 app.delete('/delete',function(req, res){
     // req.body._id번 게시물을 post에서 삭제하고 alert 메세지 전송
     var _id = req.body._id; // db에서 int형으로 받아야하는데 이건 string이다
@@ -95,7 +101,44 @@ app.delete('/delete',function(req, res){
         }
         res.status(200).send({msg:_id+'번 post 삭제 완료'});
     });
-
 });
 
+// list.ejs 에서 상세보기  ( 파라미터는 /: 이런식으로 받는다  여러개면 /detail/:id/:name 이런식)
+app.get('/detail/:id', function(req, res){
+    db.collection('post').findOne({_id:Number(req.params.id)}, (err, result)=>{
+        if(err){return console.log(err);}
+        console.log(result);
+        res.render('detail.ejs',{post : result});
+    });
+});
+
+// detail.ejs 에서 수정form으로 이동  _id의 정보를 가지고있는 하나의 행을 findOne
+app.get('/update/:id',function(req, res){
+    db.collection('post').findOne({_id:Number(req.params.id)},(err,result)=>{
+        if(err){return console.log(err);}
+        res.render('update.ejs', {post:result});
+    });
+});
+
+// 수정form에서 update 처리
+app.post('/update',(req, res)=>{
+    let _id = req.body._id;
+    db.collection('post').updateOne({_id : Number(_id)}, // 수정할 조건
+                                    {$set : {title : req.body.title, date : req.body.date}}, // 수정할 내용
+                                    (err,result)=>{ // 수정후 콜백함수
+                                        if(err){return console.log(err);}
+                                        console.log(_id+'번 post 수정완료');
+                                        res.redirect('/detail/'+_id);
+                                    });
+});
+
+app.put('/update',(req, res)=>{
+    let _id = req.body._id;
+    db.collection('post').updateOne({_id : Number(_id)}, // 수정할 조건
+                                    {$set : {title : req.body.title, date : req.body.date}}, // 수정할 내용
+                                    (err,result)=>{ // 수정후 콜백함수
+                                        if(err){return console.log(err);}
+                                        res.status(200).send({msg : _id+'번 post 수정완료'});
+                                    });
+});
 

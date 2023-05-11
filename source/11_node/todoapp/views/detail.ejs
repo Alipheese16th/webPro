@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>To Do App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <%- include('nav.html') %>
+    <div class="container my-5">
+        <h1 class="text-center">상세보기</h1>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <p> 
+                    _id : <%=post._id %>
+                </p>
+                <h4>
+                    할일 : <%=post.title %>
+                </h4>
+                <p>
+                    할일 마감날짜 : <%=post.date %>
+                </p>
+                <button type="button" class="btn btn-outline-warning" onclick="location.href='/list'">목록</button>
+                <button type="button" class="btn btn-outline-warning update" data-id="<%=post._id%>">
+                    수정
+                </button>
+            </li>
+        </ul>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $('button.update').click(e=>{
+            let _id = e.target.dataset.id;
+            //alert(_id);
+            location.href = '/update/'+_id;
+        });
+    </script>
+</body>
+</html>
