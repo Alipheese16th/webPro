@@ -1,0 +1,53 @@
+어제는 maven라이브러리로 스프링부트를 잠깐 써봣다
+
+오늘까지 스프링부트를 배우는데 
+
+sts4 툴과 인텔리제이툴을 다써볼것이고
+
+gradle 라이브러리로 프로젝트 하나 만들어보기
+
+start.spring.io 사이트에서 프로젝트 생성
+
+스프링부트는 컨택스트루트가 없다
+
+패키지명 3번째는 원하는이름으로
+
+Dependencies는 어제 말했던 4개
+
+Spring Web,
+Thymeleaf,
+Lombok,
+Spring Boot Dev Tools
+
+추가
+
+압축을 풀어보면 pom.xml 이 없다
+
+build.gradle이 설정을 해주는파일
+
+그리고 오늘 IntelliJ를 처음 사용해본다. 오픈 프로젝트 해서
+build.gradle을 오픈해야 프로젝트가 오픈된다
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

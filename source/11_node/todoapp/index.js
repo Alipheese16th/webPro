@@ -3,7 +3,7 @@ const app = express(); // express라이브러리를 이용, 객체 생성
 
 // 몽고디비 활용해서 연결
 const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://shwoo1103:wkgT9CCZGzQvMXa7@cluster0.rzqv8p7.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://shwoo1103:<PASSWORD>@cluster0.rzqv8p7.mongodb.net/?retryWrites=true&w=majority";
 var db;
 MongoClient.connect(uri, function(err, client){
 
