@@ -19,7 +19,7 @@
 [- JavaScript 소스 코드 모음](https://github.com/Alipheese16th/webPro/tree/main/source/04_JavaScript
 )
 
-[- JavaScript 소스 코드 모음](https://github.com/Alipheese16th/webPro/tree/main/source/05_react)
+[- React 소스 코드 모음](https://github.com/Alipheese16th/webPro/tree/main/source/05_react)
 
 [- JSP 소스 코드 모음](https://github.com/Alipheese16th/webPro/tree/main/source/06_jsp)
 
