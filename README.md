@@ -1,12 +1,11 @@
-# 디지털컨버전스 풀스택 웹 개발자 과정
 
 방문해 주셔서 감사합니다.
 
-본 공유공간은 이젠 아카데미 훈련생 신치윤의 공부일지 입니다.
+본 리파지토리는 개발자 꿈나무 신치윤의 공부일지 공간입니다.
 
 ![교육이수내역](https://user-images.githubusercontent.com/79974632/237023801-1c66e275-4935-47c8-80ac-49e16d3bb661.png)
 
-본 훈련생의 [요약정리](https://github.com/Alipheese16th/webPro/tree/main/%EC%9A%94%EC%95%BD%EC%A0%95%EB%A6%AC) 
+그동안 제가 정리한 [요약정리](https://github.com/Alipheese16th/webPro/tree/main/%EC%9A%94%EC%95%BD%EC%A0%95%EB%A6%AC) 
 문서는 이곳에서 확인하실 수 있습니다.
   
 단, 이론만 정리했으므로 소스코드를 보려면 아래에서 확인하실 수 있습니다.
