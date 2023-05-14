@@ -1,8 +1,14 @@
+# 디지털컨버전스 풀스택 웹 개발자 과정
+
 방문해 주셔서 감사합니다.
 
 본 공유공간은 이젠 아카데미에서 운영하는
 
 "디지털컨버전스 풀스택 웹개발자 과정" 훈련생 신치윤을 위한 공유의 장 입니다.
+
+![교육이수내역](https://user-images.githubusercontent.com/79974632/237023801-1c66e275-4935-47c8-80ac-49e16d3bb661.png)
+
+![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=Alipheese16th&show_icons=true&theme=radical)
 
 본 훈련생의 [요약정리](https://github.com/Alipheese16th/webPro/tree/main/%EC%9A%94%EC%95%BD%EC%A0%95%EB%A6%AC) 
 문서는 이곳에서 확인하실 수 있습니다.
