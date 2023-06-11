@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>뷰 기초 익히기</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <kossie-button></kossie-button>
+    </div>
+
+    <div id="app2">
+        <kossie-button></kossie-button>
+    </div>
+
+    <script>
+        Vue.component('hello-world',{
+            template:`<div>hello world</div>`
+        });
+
+        Vue.component('kossie-button',{
+            template:`
+            <div>
+                {{ name }}<br>
+                <hello-world></hello-world><br>
+                <button @click="changeText">Click</button>
+            </div>
+            `,
+            data(){
+                return {
+                    name : 'kossie'
+                }
+            },
+            methods:{
+                changeText(){
+                    this.name = 'kossie updated';
+                }
+            }
+        });
+
+        new Vue({
+            el : '#app',
+
+        })
+        new Vue({
+            el : '#app2',
+
+        })
+    </script>
+</body>
+</html>

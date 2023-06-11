@@ -1,0 +1,129 @@
+데이터입출력구현(서술형,포트폴리오,문제해결시나리오,논술형,평가자체크리스트)
+-file io (스트림객체 생성-> read/write->close)
+-DBMS io
+erd(테이블 설계)->
+DDL(테이블 생성(제약조건,데이터타입))->
+더미데이터생성->
+기능구현(쿼리)->
+dto->
+dao->
+테스트후 구현
+
+데이터타입중하나 clob : varchar2로는 4천byte까지만 가능해서 더 큰텍스트가 필요할때 
+
+트랜잭션명령어 
+
+db와dbms 데이터베이스
+최소한의중복은 허용을한다 데이터무결성때문
+db의치명적인단점 통합시스템이므로 문제가터졋을경우 시스템전체마비
+dba가 백업을 상시 해야한다 
+
+
+--JDBC
+1.드라이버로드
+2.Connection객체생성 연결 (필요한정보는?)
+3.pstmt/stmt 객체생성
+4.pstmt/stmt SQL전송 + 결과받기 executeQuery -> ResultSet (함수? 결과타입?)
+					    executeUpdate -> int
+---------------------------------------------------------------------
+2장 목표 : 글자관련태그, 목록 태그, 표 태그, 이미지태그, 오디오, 비디오 태그
+
+js파일 기본적으로 cp949 형식 문자로 저장이된다 
+메모장으로 다른이름저장 인코딩 utf-8
+
+html은 모두 태그로 이루어져있다
+태그이름, 속성, 속성값
+
+<a> 앵커태그 어디로 가라 - 주소앞 반드시 http프로토콜 작성 해야함 </a>
+
+<img src="이미지주소" alt="이미지못찾을시대체값"/>
+이미지주소는 절대경로는쓸수없고 상대경로를 사용해야한다. html저장중인 폴더기준 
+
+background-color:#00FF00ff; /*16진수 R(2)G(2)B(2)투명도(2) 투명도는 생략가능 */
+color picker 사이트에서 rgb값 확인후 적용가능 
+
+<h1>,<h2>,..<h6> 제목태그 h7은없음
+
+꺽쇄괄호를 출력하고싶으면 &lt; &gt; 라고 써야한다
+스페이스는 &nbsp;   줄바꿈은 <br/>
+
+<p>문단 단락태그 </p>
+<p>KOREA<i>이태릭체</i></p>
+<p>KOREA<b>진하게</b></p>
+<p>KOREA<strong>진하게</strong></p>
+<p>KOREA<sup>윗첨자</sup></p>
+<p>KOREA<sub>아랫첨자</sub></p>
+<p>KOREA<ins>언더라인</ins></p>
+<p><del>20,000원</del> -> 10,000원(50%할인)</p>
+<ruby>
+    <span>大韓民國</span>
+    <rt>대한민국</rt>
+</ruby>
+<pre>글자 줄바꿈 스페이스등이 화면에 그대로 출력되는 태그</pre>
+<span> css를 위해 사용하는 태그
+<h1 id="id"> id지정
+<a href="#id"> id로 이동 
+--------------------------------------------
+<ol> ordered list  순서가있는목록 type = 1, i, I, a, A
+<ul> unordered list 순서가없는목록 type = disc, square, circle
+<dl> 정의목록
+	<dt> 정의하고자하는용어
+	<dd> 정의용어에대한 상세설명 
+
+<details> 숨겻다가펼쳣다가하는기능
+	<summary> 세부정보의 요약이나 제목
+
+안여백 padding
+밖여백 margin
+여백지정순서 : 위, 오른쪽, 아래, 왼쪽 
+
+text-align:center;  가운데 정렬 
+
+table 만들기
+<table> 테이블
+<caption> 테이블제목
+<tr> 행
+<td> 열
+<th> (제목)열
+rowspan 여러행 합치기 로우
+colspan 여러열 합치기 컬럼
+
+<hr /> 수평가로선 내용구분선 
+-----------------------------------------------
+audio태그
+ img태그처럼 src="" 로 주소를 불러온다 
+controls속성
+preload속성
+loop속성
+
+video 태그
+controls속성
+poster속성 (썸네일)
+
+라인형태그(한줄로 쭉)
+블록형태그(문단별로 공간여백등 개행)
+------------------------------------------------
+3장 목표 form태그, 공간분할태그(div, 시맨틱태그)
+form태그 입력받는공간
+이 공간안에서 input태그로 입력상자를 만들면 입력값을 다른곳으로 전달가능 
+action속성 입력값을 보내는 주소
+method속성 보내는방식 get:256문자까지 가능 /url에 아이디비번다보인다 /속도는빠르다 
+			post: 256문자 이상 가능 / url에 안보임 / 예외날수도있음
+
+웹페이지 F12 개발자도구 
+ctrl shift c 요소검사 유용
+
+<input type="button" value="중복확인" /> 자바스크립트활용해 중복확인하는버튼 
+<button>중복확인</button> 위와똑같이생겼지만 파라미터를 전송하는역할
+
+type속성에따라 데이터타입이 다름
+input태그 기준
+text, button,password,tel,number,email,submit,file,radio,checkbox,date,url
+
+select태그 안의 option태그활용 
+select multiple속성
+
+textarea태그 
+
+
+

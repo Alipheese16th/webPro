@@ -1,0 +1,192 @@
+
+model1 - 우리가 지금 그냥 짜는거
+
+model2 - MVC 패턴
+
+### 어제 이어서 쿠키 학습
+
+쿠키는 반드시 String으로 저장
+
+쿠키가지고 로그인, 로그아웃, 회원가입, 메인화면 , 헤더, 푸터 등을 만들어보았다. 로그인은 쿠키를 할당, 로그아웃은 쿠키를 삭제
+
+쿠키는 사용자컴퓨터에 .txt 나 .db 로 저장됨. 4kb용량 이내로 300개까지만.
+
+-----------------------------------------------------------------
+# 세션
+브라우저 하나당 자동생성되는 객체
+쿠키와 달리 클라이언트에 저장하는게 아니고 서버상에 객체로 존재한다.
+웹컨테이너에 정보를 저장할수있는 내장객체 변수.
+서버에서만 접근이 가능하여 보안성이 높고, 데이터 저장한계가없다.
+클라이언트 측의 브라우저 하나당 하나의 세션객체가 생성되고 고유ID가 있다.
+
+ - setAttribute(String,Object) : 세션에 데이터를 저장 (키,값)
+
+ - getAttribute() : 세션에서 데이터를 얻는다.
+
+ - getAttributeNames() : 세션에 저장되어 있는 모든 데이터의 이름(유니크한 키값)을 얻는다.
+ 리턴값이 Enumeration<String> 이다. import 필요
+ 
+ - getId() : 자동 생성된 세션의 유니크한 아이디를 얻는다.
+
+ - getMaxInactiveInterval() : 세션의 유효시간을 얻는다. 가장 최근 요청시점을 기준으로 카운트 된다.
+
+(C:\webPro\IDE\apache-tomcat-9.0.63\conf\web.xml 참조 디폴트 유효기간은 30분으로 설정됨. 이것을 수정하면 유효시간이 수정될 수 있다)
+ - removeAttribute() : 세션에서 특정 데이터 하나 제거
+
+ - invalidate() : 세션의 모든 데이터를 삭제
+
+유효시간 : 마치 은행사이트를 생각해보자 30분유지가 되고 내가 뭔가 사이트를 계속 요청하면 다시 30분으로 초기화되는느낌
+
+쿠키는 내가 객체를 생성했지만 세션은 요청이 들어오면 자동적으로 생성되는것이다.
+
+---
+jsp에서는 내장객체라서 session을 바로 사용할수있다.
+session.setAttribute("sessionName","sessionValue");
+서블릿에서는
+HttpSession session2 = reqeust.getSession();
+로 변수에 담아서 사용해야한다.
+---
+
+이클립스 내 Servers 프로젝트 내 web.xml 
+session-config 를 찾아보면 session-timeout 을 설정할수있다 
+디폴트 30분
+
+
+## 기본적인문법
+1.세션추가하기
+2.특정 세션 가져오기
+3.세션 리스트 출력
+4.세션 삭제
+
+### 세션추가
+session.setAttribute(name,value) 메서드 활용
+서블릿에선 변수에 객체생성해야함 
+HttpSession session = request.getSession();
+
+### 세션가져오기
+
+session.getAttribute(name) 으로 값가져오기 
+String name = (String)session.getAttribute("name");
+리턴타입이 object이기때문에 해당 코드위에 명시적으로 set을 한게 아닌이상 어느 타입인질 모른다. 형변환을 해줘야함
+
+
+### 세션리스트
+세션내 모든 이름(키)를 가져오는 메서드
+session.getAttributeNames() 를 사용하면 
+Enumeration<String> 타입으로 리턴한다
+해당 리턴값을 변수에 담아서 hasMoreElements() 불리언으로 조건 확인하고 만약
+가져올 값이 있다면 nextElement() 로 변수에담아서 값을 출력
+
+### 세션삭제
+session.removeAttribute("name"); 해당 name의 세션삭제 
+session.invalidate(); 모든 세션삭제(세션까지 날라감. 후에 set을 사용하면 새로운 세션 ID가 할당된다)
+
+
+---
+String 형변환
+객체를포함한경우 .toString()   null이면 널포인트익셉션
+null을포함한경우 (String)    객체는 변환안됨
+---
+---------
+회원가입예제
+회원가입->약관동의사이트
+매개변수로 받은 데이터를 세션에 추가
+약관 동의/거부 submit  -> 동의체크사이트
+동의시 세션데이터를 db에 저장,id를 제외한 세션값은 삭제
+거부시 모든세션삭제
+그리고 결과페이지
+
+이제 로그인페이지 만들기
+
+위에서 보면 회원가입성공시 id세션 하나 가지고있음 
+로그인상태를 확인하려면 id세션가지고는 안됨. name세션을 추가해서
+name세션을 가지고있으면 로그인이 되어있는 상태라는 것.
+로그인페이지 첫부분에
+name 세션이 null이 아니라면 response.sendRedirect()로 웰컴페이지로 바로 보내버리기.(로그인중인데 로그인페이지 올필요가없음)
+
+회원가입 성공후에 로그인사이트오면 input value에 세션id가져와서 입력해놓기
+세션id가 null이 아니라면 출력
+
+이제 로그인체크하는 페이지 작성
+id나 pw를 검수하고 틀리면 alert() 뜨고 다시 전페이지로 가는거
+if문으로 id가 null 이아니고 해당값이 아니면 msg 가지고 redirect로 가서 alert에 msg출력
+id가 성공이면 그 안에서 또 if문으로 pw체크
+둘다 성공하면 세션에 추가하고 웰컴페이지로 이동
+
+welcome 페이지
+세션 name이 null이 아니라면 로그인상태로서 출력
+else 손님 게스트모드로 출력
+
+-------
+직접해보는예제
+회원가입,로그인,헤더,푸터 설정
+헤더는 로그인상태에 따라 상태가 다름
+로그인페이지는 아이디나 비밀번호 잘못입력시 메세지뜸
+
+회원가입했을때 세션에 데이터 추가 id만 
+로그인했을때 세션에 데이터 추가 name
+name 세션이 있다면 로그인상태임 
+
+로그아웃페이지에서
+session.invalidate(); 코드가 핵심인데
+이 코드 위에 header를 include해오면
+header가 바뀌지않은 상태로 출력된다.
+
+
+
+
+
+
+
+
+
+
+------------------
+이번주 금요일 논술 시험문제
+1. 로그인을 하기위해 쿠키와 세션이 왜필요한가
+
+2. 쿠키와 세션의 차이점이 무엇인가
+
+---구글검색
+servletContext
+
+git stash 
+
+자바 Enumeration<>
+
+자바 형변환 종류   자바 null 형변환
+
+---개인생각
+servletContext  (뉴렉쳐에서 배운 어플리케이션 데이터유지공간)
+웹서버는 한번 실행하고 소멸하는데 데이터 유지하는것에 3가지라고 뉴렉처에서 봄
+1. servletContext 를 이용한 객체로 setAttribute() 이용 
+(피트니스센터공용창고)
+2. session을 이용한 setAttribute()  
+(피트니스센터 개인사물함)
+3. Cookie 를 이용한 response.addCookie()
+(개인휴대용품)
+
+
+구글에서 보니까 context 라고 하는 프로젝트 별 구분경로가 웹어플리케이션이라는 하나의 단위인거같다. context = web application
+context path 는 url의 포트명 뒤에 나오는 경로
+context root 는 메타정보와 웹정보를 관리하는 META-INF 와 WEB-INF 이 자동으로 생성되고 jsp파일들이 모여있는 루트경로.
+라고 구분하지만 사실 거의같은느낌으로 사용하자 나도 햇갈린다.
+이클립스 내 프로젝트 우클릭 > Properties > Web Project Settings > Context root : 를 설정하면 url에서 어떻게 들어갈지 정할수있다  ' / ' 는 기본루트 
+
+---복습
+
+required="required" 미작성시 submit불가
+autofocus="autofocus" 시작시 포커스
+
+<option selected="selected"> 
+select 태그의 option태그 미리 셀렉되어있는 속성
+
+checked="checked"
+인풋 체크박스나 라디오 타입의 체크되어있는 속성
+
+.checked  selected   자바스크립트에서 해당 노드가 체크되어있는지 불리언으로 리턴하는 속성
+
+URLEncoder.encode("가나다라","utf-8");
+response.sendRedirect()로 그냥 보내면 깨지는 문자를 인코딩
+
+평소에 get메소드로 보내진거는 알아서 인코딩이 된것이다

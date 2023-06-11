@@ -1,0 +1,145 @@
+8장 어제 이어서 기본내장객체
+
+### Array : 배열 객체
+ - Array() 배열 생성자함수 
+   - 매개변수를 여러개넣으면 배열이된다.
+   - 한개만 넣으면 그 숫자만큼의 배열길이가 생성.(빈배열)
+ - length 길이 리턴
+ - sort() 배열 요소 정렬
+   - 그냥실행하면 ascii 코드 기준 정렬
+   - 콜백함수((자바의 comparator와 비슷)매개변수 두개받아서 비교한후 리턴을 숫자로 양수면 바꾸고, 음수면 바꾸지않는다 0이여도 바꾸지않음)를 매개변수로 넣으면 해당 기준으로 정렬
+ - reverse() 배열요소 순서를 뒤집는다
+ - slice(beginIndex,finishIndex) substring처럼 원하는 만큼 추출
+ - splice()  배열 요소의 지정부분 삭제후 리턴 
+ - push() 배열 끝에 요소 추가
+ - pop()  배열 마지막 요소 제거하고 리턴
+
+-----------
+Date : 날짜와 시간을 처리하기 위한 객체
+ - 특정한 날짜를 생성하기 위해서는, Date()의 매개변수에 숫자를 연, 월-1, 일, 시, 분, 초, 밀리초 순서로 입력해 객체를 생성한다. 
+ - toLocaleString()
+ 해당 컴퓨터의 로케일언어 설정대로 날짜형식을 바꿔서 출력한다
+ - toLocaleDateString()
+ 위에서 날짜만 따로 출력
+ - toLocaleTimeString()
+ 위에서 시간만 따로 출력
+
+
+--------------
+Math : 수학 계산을 위한 객체
+-----------------
+
+퀴즈예제
+이름 특수문자 숫자 안됨. 문자만됨 알파벳이나 한글
+메일 우리가생각하는메일형식(match혹은 인덱스)
+비밀번호 위아래가 같아야하고 4글자이상이여야하고
+소문자확인, 대문자확인, 숫자확인, 특수문자 확인
+
+
+----------------------------------------------------
+# 9장 브라우저 객체 모델(BOM, Browser Object Model)
+
+### window객체 
+window객체는 브라우저 기반 자바스크립트의 최상위 객체.
+
+우리가 그동안 전역변수라고 사용해온것이 window객체의 변수였다.
+alert(),prompt(),confirm() 메소드 역시 window객체의 메소드
+
+on으로 시작되는 변수들이 많다. 이 on으로 시작되는변수는 이벤트 속성 변수라고 한다.
+이 변수에 함수를 넣으면 해당 이벤트 상황에서 함수가 실행이된다.
+
+ - onload = function(){};
+  브라우저 로드시 함수실행
+
+ - open(url,name,features,replace)
+  새로운 window객체 생성. 새 창이 뜨는것.
+   - url : 열릴 새창의 url
+   - name : 윈도우의 이름
+   - features : 사이즈,위치 지정(px안적고 숫자만 적어도됨) (필수값)
+
+ - onsubmit  submit시에 작동 (input type submit) form태그에 속성으로 사용가능)
+ - onclick  클릭시에 작동 (button 태그에 속성으로 사용가능)
+ - onmouseover  마우스갖다댔을때 실행
+ - onmouseout  마우스 치웠을때 실행
+
+onmouseover를 이용해 마우스를 갖다대면 커다란 사진이 open되는 스크립트 만들어보기
+---------------------------------------
+ - moveTo(x,y) x,y좌표에 위치 지정.
+ - moveBy(x,y) x,y 만큼 움직여라.
+ - resizeTo(width,height) 윈도우 크기 조정
+
+---------------------
+### screen객체
+ - width 모니터 화면 크기 가로 값
+ - height 모니터 화면 크기 세로 값
+
+screen.width 계산해서 resizeTo()이용 새창 크기 조정 가능.
+
+---------------------
+### location객체
+페이지 이동하는 객체.
+href 변수에 주소값 넣어서 초기화하면 그 주소로 이동.
+
+location.href = '9_history.html';
+location = '9_history.html';
+location.assign('9_history.html');
+
+셋다 똑같은 결과. 9_history.html 로 이동.
+
+---------------------
+### history객체
+
+history.back();
+history.go(-1);
+이전페이지로 이동.
+
+history.go(1);
+앞으로 가기
+-------------------
+navigation객체
+-----------------------------------------------------------------
+
+# 10장 문서 객체 모델(Document Object Model : DOM)
+
+넓은 의미로 HTML 페이지를 인식하는 방식이고 
+좁은 의미로 document객체와 관련된 객체의 집합
+
+document객체
+
+
+
+
+------------기타
+<input type="button" value="새창열기">
+    <button>새창열기</button>
+
+form태그 안에서는 button태그를 쓰면 submit이 되어버리기때문에 input type="button"을 사용해야 중복확인 같은걸 할수있다.
+근데 form태그가 아니면 상관없다.
+
+-----------------복습
+new 할때 객체가 생기고 생성자함수를 사용하면 데이터가 초기화된다.
+생성자함수의 내용은 매개변수를 받아서 데이터를 초기화하는 식만 짜면되고,
+메소드는 생성자함수.prototype.메소드명 = 함수식 으로 공통영역에 짜놓으면된다.
+
+js에서 this는 꼭 써줘야할때가 많다.
+
+화살표함수는 생성자함수나 메소드로 사용할수없다. this가 아예없기때문
+이 점이 장점으로 작용할수있는데 this의 바인딩이다. 
+예를들어 어떤 객체에 함수안에서 또 함수를 호출시 그 이중함수안에서 this를 사용하면 js에서는 함수호출시 함수내부의 this는 지정되지않기때문에 곧 전역객체를 가리키게되고 오류가난다. 그러나 여기서 화살표함수를 사용하면 this가 없기때문에 상위환경을 검색하고 그 상위 함수의 this를 참조하기때문에 작동이 된다.
+
+
+window객체의 메소드 
+alert() 경고창
+confirm() 예 아니오 경고창
+prompt() 답변작성할수있는 경고창
+
+<a href="http://www.daum.net" target="_blank">
+target="_blank"시 새창이 열림.
+
+
+setTimeout(콜백함수,밀리세컨) 특정시간되면 콜백함수실행 한번만
+setInterval(콜백함수,밀리세컨) 특정시간마다 콜백함수 반복실행 
+clearInterval(변수) 해당변수의 interval함수를 멈춘다.
+
+document.write하면 css 초기화된다. 
+

@@ -1,0 +1,257 @@
+# 9장 예외페이지
+
+예외상황에 전환되는 페이지.
+실무에서는 반드시 구현하는 기능. 개별프로젝트에서도 구현하면 세심하게 보일수있다. 반드시 잊지말도록하자.
+
+-------------
+### 예외 페이지의 필요성
+
+JAVA언어에서의 예외처리에 대한 사전 학습을 상기해 보자. 특정 상황에서 예외 발생시 프로세스가 멈추면 안되서 try-catch나 throw를 이용해서 예외처리를 하였다.
+
+웹페이지(jsp페이지)에서는 웬만하면 try-catch를 사용하지않는다.
+try-catch를 사용하면 결국에 대처할수있는 방법이 다른페이지로 전환시키는것인데
+로딩도 오래걸리고 이유도알수없기에 좋지않다.
+
+
+--------------
+### 지시자를 이용한 전환 및 예외 처리 페이지
+
+<%@ page %> 지시자를 이용해 만약 해당 페이지에서 예외가 발생하였을 경우 
+이 페이지로 이동하라고 지정하는것.
+
+##### <%@ page errorPage="exceptionPage.jsp" %>
+
+전에 배웠던 jsp내부객체 response, request, out, session 등등 기본적으로 사용할수 있는 객체가 있다. 그리고 예외가 발생하면 exception 이라는 객체를 사용할수 있다. 발생안하면 못씀
+
+##### <%@ page isErrorPage=”true”%> 
+이페이지는 에러페이지를 받을 수 있다는 의미
+이 지시자를 명시해야 exception 객체를 사용할수 있다. 왜냐면 에러가 없으면 객체가 발생안하거든.
+
+##### <% response.setStatus(200); %>
+브라우저에 따라 500에러상태면 예외처리사이트도 출력안하고 그냥 에러사이트가 나온다. 따라서 response객체에 200 상태로 해놓으면 정상출력이 된다.
+
+|에러코드|설명|
+|---|---|
+|200|정상 상태|
+|400|잘못된 요청 문법상 오류(url잘못입력)|
+|404|요청한 문서를 찾지 못한 경우|
+|407|시스템이 로그인할때 인증 못받는 경우|
+|500|서버 내부 오류(웹 서버가 수행못함 예외발생)|
+
+
+예외 타입 : exception.getClass().getName()
+예외 메세지 : exception.getMessage()
+
+--------------
+### web.xml을 이용한 전환 및 예외 처리 페이지 
+
+<a href="x.html">없는 파일로 가면 에러</a>
+페이지를 못찾는 404에러가 발생
+이런식으로 하면 다른페이지로 가버리기때문에 위에서 지시자로 명시하는게 의미가 없다 
+
+web.xml 에서 아래의 코드를 작성
+<error-page>
+	<error-code>404</error-code>
+	<location>/error/error404.jsp</location>
+</error-page>
+
+404에러코드일경우 location 위치로 전환된다.
+
+예외처리페이지 작성
+404에러는 파일못찾는 에러지 예외가 아니다. exception 객체 없음
+그냥 공사중이라고만 작성
+
+500에러는 문법에러 예외가 발생한다. exception 객체 발생 
+<%@ page isErrorPage="true" %> 를 명시해야 exception 객체 사용가능 
+
+web.xml에서 이런식으로 명시할수도있다
+<error-page>
+	<exception-type>java.lang.NullPointerException</exception-type>
+	<location>/error/errorNull.jsp</location>
+</error-page>
+그러나 이런게 있다고만 알아두고 쓸일은없다 
+왜냐하면 개발을 끝내고 배포하는 시기에 예외가 발생할것을 예상을 못하기때문에 무슨 예외일지도 모르기때문.
+
+------
+우선순위
+web.xml 내의 코드에서는
+Exception 예외가 500 에러보다 우선순위 높음
+web.xml 페이지 보다 <%@ page errorPage="" %>지시자가 우선순위가 높음 
+
+--------------------------------------------------------------
+# 10장 빈
+빈이라는건 클래스다. 반복적인 작업을 위해 빈을 사용. DTO (데이터 전송을 위한 그릇)이라고 생각하면된다.
+
+회원가입을 한다고하면 10가지가 넘는 정보가 매개변수로 올텐데 
+request.getParameter로 그걸 다 작성한다고 생각해보자 너무 귀찮다
+그래서 빈에 담아서 오는것 
+
+저번에 배웠던 액션태그
+표준액션태그와 커스텀액션태그로 나뉘는데
+표준액션태그가 기본적으로 쓸수있는태그
+저번에 표준액션태그 3개배웠다 foward, include, param
+오늘 배울 마지막 표준액션태그가 빈 관련 태그이다 useBean
+
+bean태그 사용하려면 클래스(DTO)를 만들자.
+매개변수 없는 생성자, setter, getter 3개는 필수 (없으면 500에러)
+
+---
+### <jsp:useBean id="" class=""></jsp:useBean> 
+bean 생성 태그 (빈태그를 생성하려면 매개변수없는 생성자함수가 있어야한다)
+id는 내가 사용할 객체변수이름 
+class는 클래스 경로(패키지까지 다써야한다)
+scope 속성을 줄수도 있다 
+
+---
+##### scope
+- page : 빈이 생성된 페이지 내에서만 사용 가능
+- request : 요청된 request 범위 내에서만 사용 가능 ( forward 액션태그를 사용하면 request를 새로 요청하지않기때문에 유지됨)
+- session : 하나의 웹 브라우저 당 1개의 session객체 생성. 웹브라우저 생명주기와 동일하게 사용 가능
+- application : 하나의 웹어플리케이션 당 1개의 application 객체 생성. 웹 어플리케이션 생명주기와 동일하게 사용 가능
+
+---
+### step2 setter기능의 태그
+<jsp:setProperty name="p" property="name" value="홍길동"/>
+위에서 만든 빈 객체에 setter 태그 (클래스를 만들때 setter를 명시하지 않으면 에러가 난다. 해당 setter를 참조해서 사용하는 태그이기 때문)
+p 라는 객체의 name 속성의 값은 홍길동이다.
+name은 위에서 명시한 id값
+property는 속성
+value는 속성값
+
+이렇게 bean태그로 만든 객체는 자바처럼 객체로 그냥 쓸수도 있다. 스크립트릿에서 p로 불러올수있음.
+
+---
+### step3 getter기능의 태그
+<jsp:getProperty name="p" property="name">
+빈 객체의 getter 태그 (역시 클래스만들때 getter를 작성하지 않으면 에러)
+위 코드는 p 라는 이름의 객체변수의 name 속성값을 get 한다는 의미
+
+### step4 
+프로세스단, 뷰단으로 페이지를 나눈다.
+프로세스단에서 useBean태그를 사용하여 객체를 생성하고 scope="request" 범위로 명시
+setProperty태그로 데이터 입력 
+forward로 뷰단으로 넘어간다
+뷰단에서 객체를 불러와서 getProperty태그로 값을 가져온다 
+
+### step5
+위처럼 마찬가지로 프로세스단만 따로 짜기 (scope를 request로 명시)
+<jsp:setProperty name="p" property="name" param="name"/>
+param 속성을 이용하면 request.getParameter 도 필요없이 그냥 알아서 매개변수를 입력받아서 setter한다
+심지어 형변환도 알아서한다!
+
+### step6 <- ★ 사실 이것만 알면 된다 
+프로세스단을 작성하는데
+<jsp:useBean id="p" class="com.lec.ex.Person" scope="request"/>
+<jsp:setProperty name="p" property="*"/>
+
+이 두개만 쓰면 끝난다
+property="*" 라고 명시하면 모든 매개변수의 입력값을 해당 매개변수 이름의 setter로 들어간다. (이래서 클래스 만들때 이름 맞출필요가있음)
+
+-----------
+연습문제 
+빈을 사용해서 사용자로부터 학번,이름,학년,반,점수를 입력받아서 
+프로세스단 - st라는 이름의 변수객체에 매개변수값을 넣고 뷰단으로 보내기
+객체유지는 scope : request 범위로
+뷰단 - 프로세스단에서 넣은값을 보여줌(객체에서 get)
+
+---------------------------------------------------
+# 11장 웹프로그래밍에서의 데이터베이스(db)연동
+(14장까지의 mode1패턴을 위한 단계)(15~19장은 mvc패턴)
+
+### 개발환경구축
+
+데이터베이스연동 JDBC를 사용하기 위해서는 저번에도 해봤었지만
+오라클이나 mysql의 드라이버.jar 파일을 연동해야한다.
+
+오라클 드라이버를 사용하기 위한
+ C:\oraclexe\app\oracle\product\11.2.0\server\jdbc\lib\ojdbc6.jar 
+에 있는 파일을 
+파일을 C:\Program Files\Java\jre1.8.0_101\lib\ext
+안에 복붙하고 (%JAVA_HOME%/JRE/LIB/EXT)환경변수 경로랑 맞아야함
+
+그럼 물리적으로는 일단 복붙된거고 이제 이클립스에서 연동해야함
+Windows – preferences – Java – Installed JREs – edit – Add External JARs을 통해 jar(아까 옮긴 jre안의 라이브러리폴더 내)를 등록 후 Restore Default 클릭 후 finish
+이러면 완료.
+
+그럴일은 없지만 하나의 프로젝트에서만 적용하고싶으면 프로젝트 내 WEB-INF- lib 폴더안에 jar파일을 둔다.
+
+-----------
+### mysql jdbc 복습
+
+mysql 들어가서 personal 테이블과 division 테이블에 데이터 넣고 jsp로 만져볼것이다.
+
+Class.forName(driver); // 1단계 : 드라이버로드
+conn = DriverManager.getConnection(url,uid,upw); // 2단계 : DB 연결
+stmt = conn.createStatement(); // 3단계 : SQL문 전송 객체
+rs = stmt.executeQuery(sql); // 4단계(SQL문 전송) + 5단계(전송후 결과 받기)
+
+select문이아니라 update,delete,create문은 결과값을 받지않기때문에
+executeUpdate() 를 사용
+
+
+while(rs.next()){
+	원하는 로직수행
+	String name = rs.getString("name");
+	...
+	Date 형으로도 받을수있다 java.sql.Date로 임포트
+	Timestamp 형으로 하면 시간까지 출력 가능
+	String 으로 받으면 Timestamp 와 똑같은 모양으로 출력되지만 후에 simpledateformat 등으로 거치려면 String은 부적합하다
+	
+}
+
+jdbc는 다시말하지만 close()가 굉장히 중요하다. 이상한 에러가 발생할수도 있음
+
+------
+이클립스에서 sql편집기 하는법 
+Database Connections 우클릭 - new - oracle - drivers 자세히 클릭 -
+Oracle Thin Drvier 11버전 -  JAR List 원래있던 jar지우고 add JAR (jre안에 있는 ojdbc6.jar 추가 - Properties 의 url 수정 (server -> localhost) - 이제 마무리 SID : xe / user name (scott) password (tiger) - finish
+원하는 sql파일만들어서 type : Oracle_11 / name : New Oracle / database : xe
+실행하고자 하는 SQL문을 블럭잡고 alt + X 로 실행하면 쿼리결과가 나온다.
+
+이 sql파일을 sql developer에 적용시키면 또 한글이 깨진다
+인코딩이 다르기때문
+sql developer의 환경설정에서 인코딩을 기존의 MS949 에서 utf-8로 바꾸면되는데 그러면 또 기존의 글자가 깨진다 
+
+------
+select 태그로 원하는 부서번호를 고르면 해당 부서번호의 사원목록을 출력하는 페이지 예제
+
+form action = "" 빈스트링이면 다시 자기 페이지로 돌아온다.
+매개변수를 가지고올수도있고 처음방문시 없을테니 
+매개변수가 null이면 0으로 초기화 
+매개변수가 있다면 해당 매개변수를 int형으로 형변환하고
+option을 출력할때 해당 매개변수와 부서번호가 같다면 selected 속성을 부여한다
+즉 페이지가 전환되도 선택이 고정되는 효과
+
+SELECT * FROM EMP WHERE DEPTNO LIKE '%' || ?
+
+? 부분이 0이면 10번부서나 20번부서 등 전부 출력이 되는 효과
+단 1의자릿수가 0이 아닌 부서가 존재한다면
+초기화값을 0보다는 빈문자열로 하고 int형변환을 하지말고 비교할때 String으로 비교해야할듯
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---복습
+jsp와 서블릿에서 인코딩 utf-8
+
+.getClass().getName()
+
+자바 super 생성자 
+
+String.charAt(index) index번째 문자열 하나를 char 타입으로 반환
+
+db 쿼리문 기억도안나네 복습좀하자   LIKE '%'
+
+이클립스 단축키 ctrl + shift + X   대문자로
+ctrl + shift + Y   소문자로

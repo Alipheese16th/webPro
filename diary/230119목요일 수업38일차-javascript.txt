@@ -1,0 +1,170 @@
+# 자바스크립트
+
+자바스크립트의 라이브러리중 데이터베이스와 연동한 node.js
+
+연산자가 자바랑 같다. 
+그리고 if,while,do while등등 비슷
+
+document 바디   document.write() 메세지출력  console.log() 콘솔메세지출력
+
+자바스크립트는 어디든지 올수있다. body안이든 html밖인듯 
+
+git에는 수많은 라이브러리가있는데 라이브러리를 여러개쓰면 충돌이날수있다.
+아예 설명에도 html제일 밑에 쓰라는 라이브러리도있다. 그런경우는 맞춰서 써주는게 좋다. 충돌이 날수있다.
+
+자바스크립트는
+- 앞에 변수타입 안붙이고 선언해도 가능함. 안쓰면 앞에 var 한거랑 똑같음. var 변수선언.
+- 변수에 숫자넣었다가 문자넣었다가 상관없음.
+- var변수는 전역변수. 다른곳에서도 사용가능.  let은 지역변수
+- 홀따옴표 쌍따옴표 상관없음
+
+자바스크립트 해당스크립트구간에 오류가있으면 해당오류밑부분은 전부 실행이안된다.
+
+submit이 이루어져서 전페이지에서 어떤 오류가있었는지 f12로도 확인을 못하는경우
+alert(1)을 중간에 넣어서 확인
+
+변수선언시 var(전역변수), let(지역변수) const(상수)
+
+vscode - 보기 - 모양 - 패널 (ctrl + J)
+해당 폴더에서 파워셸 연거랑 똑같다.
+
+파워셸이 좋은점 
+dir(도스명령어)  ls(리눅스명령어) 둘다먹는다
+
+document, console등 이미 있는 기본내장객체 8장에서 배운다.
+
+자바스크립트관련 도큐먼트 설명사이트 
+https://www.w3schools.com/jsref, http://devdocs.io/javascript
+
+boolean false==0 true==0이아닌나머지수
+
+function 형 변수. 함수형 언어(변수에 함수를 넣는게 함수형언어)
+
+------------
+자료형: string, number, boolean, function, object(array), undefined
+문자는 그냥 문자, 숫자는 전부 숫자, 불리언 true false, 함수는 함수형언어, 객체는 해쉬맵처럼 지정
+
+'use strict'; 엄격한 규칙적용. 앞에 변수선언타입 지정해줘야되는것.
+
+쌍따옴표 안에 또 따옴표로 감쌀문자가있다면 홀따옴표를 써야한다. 반대로도 가능
+
+같은 변수에 다른타입의 데이터를 할당해도 되는이유 : 기존에 있던 변수를 메모리에서 지워버리고 새로 할당을 한다.
+
+함수를 변수에 할당할경우 딱히 이름도 필요없다 
+원래라면 function a(){} 를 할당하는데 function(){} 이렇게 할당가능 
+variable = function(){alert('함수속');};	//함수할당
+variable();	//함수호출
+
+자바에서는 객체안에 private String name 데이터 선언하고 생성자매개변수로 홍길동을 입력하면 name은 홍길동이된다.
+자바스크립트에서 객체는 아래와같다. (내생각엔 해쉬맵느낌)
+variable = { 'name':'홍길동','age':20};
+document.write(variable.name);
+
+json xml csv  객체데이터파일
+
+함수() 객체는 {}  배열은[]
+
+배열에도 지정된타입이없고 마음대로 넣을수있다.
+함수도 넣을수있고, 객체 , 심지어 배열을 또 넣을수도있음.
+----------
+10진수 8진수(0수) 16진수(0x수)
+소수형 지수형(수E+8 or 수E-9)  수e10
+
+window (브라우저 관련객체)
+window.onload 화면에 로드됐을때
+
+confirm() 확인 취소 출력함수
+typeof() 타입확인하는 함수
+
+=== type까지 boolean인지 확인하는 연산자
+== 1 은 true       === 1 은 false      === true 는 true
+
+prompt() 입력받는 함수
+취소누르면 null값
+
+브라우저에서 입력받는건 무조건 String
+
+Number(); String을 number로 형변환 함수
+빈값 입력하면  0, 문자넣으면 NaN
+
+입력받은값을 Number()로 형변환해서 출력해보면 문자는 NaN : not a number
+으로 된다. NaN 은 number type
+
+isNaN();  NaN인지 확인하는 불리언함수
+
+Number(); 형변환은 엄격해서 중간에 문자라도 껴있으면 NaN 확정
+
+parseInt(); 형변환은 숫자만 추출해서 형변환해준다. 
+str = "B";  i = parseInt(str,16); 16진수형식으로 넘버형변환
+parseInt는 빈문자열,null은 NaN으로 취급한다
+
+Boolean() 불리언형으로 형변환 함수
+String() 문자로 형변환
+------
+false 인 값들
+0, NaN, Null, undefined, '' (빈문자열 단 스페이스없음)
+------
+
+Infinity 무한대의수
+
+isFinite() 유한수인가 여부 확인하는 불리언함수
+
+-----실습 총괄예제
+입력값받고 
+입력값이 유효한지 확인한후
+입력값을 계산해서
+출력
+
+취소는 null
+빈칸은 숫자형변환시 0
+문자는 NaN
+-----
+eval('자바스크립트 식') : eval 매개변수 안의 식을 수행한 결과를 return
+----
+함수를 소괄호 없이 변수처럼 쓸수도있다 나중에 함수공부할때 자세히 배울것
+
+prompt() 에서 빈스트링 혹은 스페이스 혹은 null을 받아오면
+Number()로 형변환하면 0 이된다.
+parseInt()는 NaN으로 전부 거를수있다.
+
+isNaN(undefined) == true
+
+ParseInt()는 정수형이라 소수계산하려면 parseFloat()
+
+bgColor 배경색 지정하는 css속성 
+
+--------------------
+자바스크립트에서 쓸수있는 짧은 조건문
+ var su = Number(prompt('자연수를 입력하세요'));
+(su % 2 == 0) || alert('홀수입니다');
+(su % 2 == 0) && alert('짝수입니다');
+
+|| 연산자 : 앞이 true면 앞의 식을 실행함.
+(반대로말하면 false면 뒤의식을 실행)
+
+&& 연산자 : 앞이 true여야 뒤의 식을 실행함.
+
+------------------
+
+
+----구글검색
+writeln
+16진수  지수 
+함수형언어
+jQuery & aJax
+user strict
+
+
+-------기타 복습용
+:hover
+마우스갖다댔을때
+::first-line
+첫라인
+::first-letter
+첫글자
+::selection
+드래그했을때
+input:focus
+인풋상자 클릭했을때
+
+

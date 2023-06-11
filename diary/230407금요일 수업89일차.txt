@@ -1,0 +1,75 @@
+
+# 10장 RequestMapping
+
+-----
+스프링 프로젝트 생성할때
+프로젝트 이름과는 별개로 기본 패키지경로를 적으라고하는데
+이 패키지 3번째 경로가 contextroot다
+url 보면 프로젝트이름이 아닌 위이름 기준으로 url이 된다
+
+즉 스프링에서 conPath는 내가 설정한 3번째 패키지명임
+-----
+
+web.xml에서 / 로 매핑되어있는걸 *.do로 바꾼다
+
+컨트롤러에서 .do 로 되어있는것만 낚아채간다
+
+servlet-context.xml 에서 정의되어있는 설정중에
+<context:component-scan base-package="com.lec.ch11" />
+라고 되어있는 부분이 바로 컨트롤러 스캔하는 경로다
+만약 컨트롤러가 이 경로에 없으면 작동을 안하기때문에 이 하위경로에 작성해야함
+
+---
+컨트롤러에서 어떤 작업이 끝나면 view로 가는게아니고
+다른 작업을 다시 시키고싶을때 jsp에서는 그냥 그 작업으로 forward시켯다
+Spring에서도 사용할수있는데
+String을 return 하는 함수에서
+"forward:login.do" 이런식으로 문자열을 리턴시키면 알아서 forward를 인식한다
+또는 "redirect:login.do" 처럼 redirect시켜줄수도 있다
+일부로 매개변수를 보내고싶지않을때는 리다이렉트하면된다
+
+그러나 주의사항이 있다
+만약 첫 함수가 post방식으로 받았는데
+forward한 두번째 함수가 get방식만 처리하고 post방식을 처리하지못하는 경우라면
+에러가난다
+forward는 RequestMethod형식을 유지시키기때문
+이런경우 redirect를 쓰거나 post방식을 받는 함수를 추가작성해야함
+
+
+@RequestMapping해서 사용하는 컨트롤러 함수에서
+매개변수 받을때 form에서 입력받은 데이터를 Spring에서 알아서 받아지는 편리한 기능이 있는데 Date형은 sql의 Date형만 되고, String이나 int는 당연히 된다
+근데 Timestamp는 안된다 에러남. 왜냐면 input날짜형에 시간정보는 없기때문
+String으로 받고 형변환해줘야함
+
+------------------------------------------------------------------
+
+# 11장 MVC게시판
+
+기존 jsp프로젝트 ch19_mvcBoard 에서 대거 복사해와서 사용
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+구글검색
+
+component-scan
+
+@RequestMapping
+
+lombok
+
+
+
+
+
+

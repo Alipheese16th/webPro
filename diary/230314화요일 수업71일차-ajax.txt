@@ -1,0 +1,198 @@
+# 어제 이어서 jQuery 1장 좀더
+
+<canvas>태그 캔버스처럼 사용할수있는 태그
+
+offset() // 좌표를 가져오는 함수
+var img = $('img').offset(); // img태그가 현재 10,10좌표에 있다면 
+img = {top:10, left:10};   // 이것과 같다
+
+event.pageX : 문서객체(document body기준) 마우스의 x좌표
+event.offsetX : 이벤트 대상 객체에서 상대적 마우스 x좌표
+event.screenX : 모니터 화면 기준 마우스 x좌표
+
+----------------
+# jquery 2장 예약페이지
+
+jquery.com 사이트의 jQueryUI 탭을 들어가보자
+여기서 보면 사용할수있는 코드예시들이 많이있는데
+
+이번에는 Datepicker 를 가져와본다
+그냥 코드 복붙하면 끝 사용하기 간편하다
+
+날짜를 선택하는 ui이다. 기존의 기본 input 태그의 date타입은 브라우저에 따라 지원이 안되는 경우도 있는데 이건 모든 브라우저에서 사용 가능하다.
+
+그러나 이게 만족스럽다면 다행인데 수정하고싶은경우도 있을것이다.
+페이지 아래의 API documentation 를 들어가서 어떻게 설정되어있는지 확인하고
+내가 원하는대로 바꿀수도있다
+
+1. dateFormat 
+datepicker() 메서드사용시 매개변수에 객체를 넣고 객체 안에 dateFormat : "yy-mm-dd" 라고하면 포맷이 바뀜.
+객체 안의 속성을 더 추가할수록 나만의 설정이 되는것.
+
+$( function() {
+    $( "#datepicker" ).datepicker({
+    	dateFormat: "yy-mm-dd",
+    	dayNamesMin: [ "일", "월", "화", "수", "목", "금", "토" ],
+    	monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+    	yearSuffix: '년',
+    	changeMonth: true, 	// 월을 바꿀수 있는 셀렉트 박스를 표시한다.
+    	changeYear: true,  	// 년을 바꿀수 있는 셀렉트 박스를 표시한다.
+    	showMonthAfterYear: true,
+    	showOtherMonths: true, 	 // 현재 달이 아닌 달의 날짜도 회색으로 표시
+    	minDate: '-100y', 		// 현재날짜로부터 100년이전까지 년을 표시한다
+    	yearRange: 'c-100:c+10', 	// 년도 선택 셀렉트박스를 현재 년도에서 이전, 이후로 얼마의 범위를 표시할것인가.
+    });
+});
+
+ex2 예약페이지예제 (굉장히 복잡하니 ch02_ui/ex2_reservation.html 를 그냥 보자)
+
+input 태그가 아니라 div 태그에 id를 datepicker로 주면 처음부터 달력이 열려있는 채로 페이지가 나온다.
+단 div는 파라미터로 전달이 안되기때문에
+input태그에 값을 전달할것이다.
+
+datepicker 설정에서
+onSelect 속성을 부여해서 함수를 설정한다. 
+날짜 눌렀을때 실행되는 이벤트. 여기서이제 설정한다
+이 함수의 매개변수 첫번째가 날짜를 문자로 받아옴.
+인풋태그를 선택해서 .val()로 값을 넣는다.
+
+---
+ex3 jquery-ui - tabs
+
+www.getbootstrap.com - 원하는 요소 사용
+필요한 cdn은 docs의 첫페이지보면 CDN links가있음. css나 js 링크 적용시키고
+원하는 기능 사용하면됨
+
+-------------------------------------------------------------------
+
+# 2장 Ajax
+
+ajax 관련 함수 : $.get(), $.post(), $.ajax()
+
+url요청하면 전체가 바뀌는게 아니고 일부만 바뀜.
+회원가입페이지에서 아이디 중복체크하는 기능. 프로젝트에서 빠지면 안되는 필수기능
+
+## get함수
+
+아이디를 입력하고 중복체크버튼을 누르면 아이디가 중복인지 아닌지 메세지 출력하는 예제 만들기
+
+midConfirm.jsp문서에서 매개변수받고 처리하는로직 작성
+midConfirm.jsp?mid=aaa 라고 요청하면 매개변수에 따라 달라지는 응답
+
+그리고 아이디 입력받는 문서에서 input에 아이디입력후 button을 누르면 이벤트
+$('button').click(function(){}); 에서 설정
+$.get(요청경로, 콜백함수(데이터,스테이터스){
+	데이터: 요청경로 수행결과 (ex.중복된아이디입니다)
+	스테이터스: 'success' / 'fail'  (요청성공시/실패시 문자열로 반환)
+})
+즉 $.get() 메서드에 요청경로와 파라미터등을 입력하고 사용하면 
+요청경로를 수행한 결과를 알아서 가져옴. 가져온 데이터를 아래에 출력하면 되는것.
+
+
+## post함수
+
+post방식으로 매개변수를 전달해서 결과를 받는 과정인데 post방식은 한글이 깨질수있으니 받는 쪽에서 utf-8을 명시해야할수도 있다는것은 주의점
+
+위와 사용방식은 거의 똑같은데 post방식이니 url에 파라미터가 담겨가는것이 아니라
+아래처럼 쓴다
+$.post('요청url',요청파라미터,callback);
+
+아래의 get방식과 비교해보면 더 이해가쉬움
+$.get('요청url',callback);
+
+요청파라미터는 객체형식처럼 써야함.(map처럼 키와 데이터가 쌍을 이루는 구조)
+$.post('midConfirm.jsp',{mid:"aaa"},function(data,status){});
+이렇게 써야함.
+
+
+## ajax함수
+사실 위의 두함수보다 그냥 ajax함수쓰는게 좋다
+
+$.ajax(); 안에 객체를 넣는다.
+이 객체 안에는 여러 속성을 넣을수 있는데
+{ 
+url : '요청경로'
+type : 'get' / 'post'
+data : '요청파라미터 이름과 값' (ex. 'id=aaa' )
+dataType : 'html' / 'json' / .. 요청한 경로로 실행한 결과의 타입
+success : 성공시 수행할 콜백함수(콜백함수의 매개변수는 실행한 결과의 data가 들어옴)
+error : 실패시 수행할 콜백함수(콜백함수의 매개변수는 에러코드다 에러코드.status혹은 에러코드.statusText로 확인가능)
+}
+
+-----
+외부데이터를 처리할때 자주 접하는 파일형식 (xml, json, csv..등)
+
+*.xml
+<product>
+	<id>1</id>
+	<name>레몬</name>
+	<price>3000</price>
+	<description>레몬이어쩌구저쩌구</description>
+</product>
+
+
+*.json
+{
+	"id":"1",
+	"name":"레몬",
+	"price":"3000",
+	"description":"레몬에 포함되어 있는 구엔산은 피로회복에 좋다"
+}
+
+
+*.csv
+id,name,price,description
+1,레몬,3000,레몬어쩌구
+2,키위,...
+
+-----
+
+ajax함수를 이용하면 json파일을 읽어올때 편하다
+
+$.ajax({
+url : 'json파일경로',
+dataType : 'json',
+success : function(data){},
+});
+이렇게 하면 success속성의 콜백함수의 매개변수 data에 객체 배열로 값이 들어온다.
+
+배열을 each함수로 처리하면 끝
+
+-----
+
+회원가입 예제
+
+진짜로 통째로 만들어보기
+
+아이디중복확인
+
+비밀번호 두개 같게 썻는지 확인
+
+서브밋 제한(제대로적었을경우에만 서브밋)
+"사용가능한 ID입니다" , "비밀번호 일치" 가 출력되었을 경우만 submit 가능
+
+$('form').submit(콜백함수);
+로 콜백함수 설정하면 서브밋시에 설정가능
+if조건문으로 원하는 조건을 만족하지않으면 return false 로 서브밋 제한
+
+
+
+
+
+
+
+
+
+
+
+
+---구글검색
+canvas 태그
+
+----복습
+자바스크립트 new Date() 현재날짜의 데이트객체
+getFullYear() //년도 2023
+getMonth() // 월 0 ~ 11
+getDate() // 일 1 ~ 31
+getHours() // 시간 0 ~ 23
+

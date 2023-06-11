@@ -1,0 +1,103 @@
+mysql
+
+워크밴치에서 기본설정보면 update랑 delete를 거부하게 체크되어있다.
+set sql_safe_updates = 0;
+이렇게 하면 delete가 마음대로된다.
+
+
+오라클은 계정별로 테이블을 관리하지만
+mysql은 데이터베이스 공간으로 나뉜다
+처음 접속시 데이타베이스에 엑세스 해야 그다음 작업을 할수있다
+
+outer join
+오라클에선 더 적은 부분에 (+)를 해주었지만
+mysql에선 더 많은 부분에 right나 left지정해서 outer join .. on 을 해야한다
+
+단일행함수 다른점
+sysdate()  함수로쓰인다 현재 날짜와 시간까지 
+curdate()  현재 날짜'만'
+concat() 매개변수 제한없이 여러개 가능 
+math 관련 함수 from절 없이도 사용가능 더미테이블 노필요 
+
+now(), year(), month(), day(), hour(), minute(), second()
+weekday() (숫자로 나온다 0월요일 1화요일..)(case when then문법을 사용)
+dayname() 영어로 요일 출력
+monthname() 영어로 월 출력 
+date(), time(), current_date(), curdate(), current_time(),curtime()
+
+date_format()
+날짜를 문자로 바꾸거나 문자를 날짜로 바꿀수 있는 포맷함수
+format()
+숫자 -> 문자 
+
+굉장히 유용한 함수 if() 자바의 삼항연산자와 비슷하다
+if(조건,true일때 출력,false일때 출력)
+
+top-n구문 (오라클보다 훨씬 쉽다) limit 이용
+limit n (1 ~ n등)
+limit n1, n2 (n1번째부터 n2개. 첫번째는 0번째)
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+ # JDBC
+ 
+ ### 자바와 db연동  
+오라클 드라이버
+mysql드라이버
+jar파일을 이클립스에 연동시켜야한다
+
+오라클 드라이버또는 MySQL 드라이버를 자바가 설치되어 있는 C:\Program Files\Java\jre1.8.0_XXX\lib\ext 폴더(%JAVA_HOME%/JRE/LIB/EXT 폴더)에 다음의 두 파일을 복사한다.
+
+ojdbc6.JAR (C:\oraclexe\app\oracle\product\11.2.0\server\jdbc\lib)
+
+mysql-connector-java-8.0.28.jar (C:\Program Files (x86)\MySQL\Connector J 8.0)
+
+Java 8, 11이상에서 방법 : Project – 오른쪽 마우스 클릭 –Properties –Java Build Path – libraries - (java11이상)Classpath – Add External JARs – 두개의 jar를 등록 후 – Apply and Close
+이 경우는 jre라이브러리에 포함되는게 아닌 개별 프로젝트에 라이브러리가 추가되는것 뿐이라 프로젝트마다 이렇게 external 에 등록해줘야 하는 번거로움이 있다.
+
+Java 8에서 방법 : 이클립스에서 Windows 메뉴 – preferences – Java – Installed JREs – edit – Add External JARs을 통해 두개의 jar를 등록 후 finish (취소: Restore Default 클릭)
+
+INSERT/UPDATE/DELETE/SELECT 몇행 업데이트됨. 몇행 추가됨. 등등
+몇 행인지 숫자를 자바에서 받는다
+
+ ### JDBC프로그래밍 단계  
+1단계 드라이버로드
+2단계 db연결객체 생성
+3단계 sql문 수행할 객체 생성
+4단계 sql 전송
+5단계 결과받기
+6단계 결과받아 로직수행
+7단계 연결해제 
+
+java.sql Date형 날짜'만'
+java.sql Timestamp 날짜 + 시간
+
+null을 String으로 받으면 null로 출력
+int로 받으면 0으로 출력 
+
+
+이클립스
+ctrl + shift + X  블록잡은부분 대문자로
+ctrl + shift + Y  블록잡은부분 소문자로
+
+
+COMMIT을 신경쓰지않으면 자바에서 SQL문 사용하다가 무한반복문이 돌수도있다
+트랜젝션에서만 삭제가 되면 자바에서는 애매하기 때문
+
+
+
+
+
+
+
+---------------
+벌써까먹을려하네
+
+오라클에서 
+
+from절에 서브쿼리를 사용해서 조인을 하든 활용을 하는게
+인라인뷰
+
+인라인뷰를 이중으로 활용해서
+rownum을 사용해
+랭킹을 추출해 출력하는게 탑앤구문
+

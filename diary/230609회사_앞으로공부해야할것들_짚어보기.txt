@@ -1,0 +1,287 @@
+
+
+rest api 는 외부환경에서 데이터를 전달받거나 하는것이고
+postman 은 데이터 전달을 테스트해볼수있는 프레임워크 
+
+
+뷰를 사용하면
+모든 페이지 정보를 받아놓고
+화면이 바뀔때마다 해당 정보만 가져오기때문에 속도가 빠르고 
+
+단점으로는
+jsp를 하려면 was랑 db서버 2개만 필요하지만
+
+뷰는
+노드 js 서버까지 3개가필요하다
+
+
+뷰-레이아웃폴더-디폴트.뷰 등 기본 레이아웃 단위
+
+페이지 디렉토리
+acdtmgnt 등 모듈별로 또 쪼개놧다
+
+공통으로쓰는건 따로 뷰파일만들어서 변수를 만들어놓고 import하는데
+개별적으로 쓰는건 data안에서 사용
+
+computed, watch
+watch는 변수의 변경을 감지하는것
+computed는 변수 안에 함수가 포함되어있는것.
+
+v-show
+태그를 조건에 따라 보이거나 안보이게 할수있는 것 true나 false로 
+v-if 
+조건에따라 태그를 활성화하거나 비활성화한다
+v-else
+v-else if 
+이런 것을 쓸때 computed를 활용을 잘하면 굉장히 좋다
+
+
+watch같은경우는 메모리를 많이 잡아먹기때문에 권장하지 않는다
+성능저하를 유발하기때문에 진짜 필요할때 아니면 안쓴다
+
+
+라이프사이클
+create
+mount
+destroy
+beforePageLeave 디스트로이 전에 적용되는 라이프사이클
+
+nuxt가 뷰 프레임워크인데
+mounted를 할때 화면에서 쓰는 코드값을 가져온다
+
+$붙여서 쓰는건 그냥 이름 붙인거다 html에서 id값 주는것처럼
+
+v-row
+뷰 템플릿으로 만든 컴포넌트
+v-container가 nuxt에서 만든것이고
+v-col 이 12인것도 다 설정되어있는값
+v-select 태그의 outlined 속성 등   그냥 outlined라고 명시하면 디폴트 값으로 정의
+
+usermultislct 등등 컴포넌트를 만들수있다
+
+
+vue를 잘쓰려면 탬플릿을 잘쓰고 마운트 타이밍을 잘 이해하면 된다
+
+v-model 은 실시간으로 계속 바뀌는 편한 데이터바인딩
+
+v전체에 대해서 공부는 따로하고 일단 화면 위주로 공부하자
+
+rest api 에 대한것
+axios
+ajax등
+
+
+async  promise
+await 이것이 끝나야 다음코드가 시작된다.
+
+axios를 안쓰고 팻치를 쓴다면
+
+logger.debug("");
+sysout은 권장하지않음
+개발자도구 네트워크에서 확인하는게 좋다
+
+interceptor.java
+인터셉터
+호출하기전에 가로채가서
+권한 체크라든가 주소체크, 파라미터에 특수문자 있어서 오류 일으킬만한것 짤라내기
+쿼리도 캐치할수있다
+MybatisExecuteInterceptor 에서 페이징 count 추가한다는가
+쌩으로 쿼리를 만들기보다 효율적이다
+
+디버그 사용하는게 좋다
+벌레모양 아이콘 (생활코딩에서 잠깐 써봣던)
+
+
+쿼리
+with
+union all
+
+조인을 남발하면 성능저하가 일어날수있다
+
+옵티마이저?
+
+쿼리 플랜이라는게 툴에서 옵티마이저가 어떻게 인덱스 타고 들어가는지 보면서 해야 성능효율이
+
+토드 이런 비싼툴
+
+코드 정렬같은것도 프로젝트마다 중요하다 (고참이나 선임이 어떻게 하는지 따라하면된다)
+공식문서에 다 나와있다.
+
+코드 정렬만 잘해도 코딩 잘해보이니까 신경쓰자
+
+with를 왜쓰냐 포스트그레에서
+계층형구조를 위해
+
+오라클은 start with connect by 로 아주 쉽게 계층형 구조를 완성시킬수있다
+
+right inner join 이렇게 쓰는 사람있는데 의미없다 그냥 join 이라고 쓰면 된다
+
+
+
+
+테이블 약어 table common api
+	테이블  모듈  상세
+모듈별로 테이블을 구분한다
+
+del_yn 삭제 여부 컬럼
+바로 삭제하면 안되고 정보를 일정기간 남겨두기때문에
+
+트리거? 프로시저 
+
+시퀀스 아주많이씀
+
+
+
+
+LB0000042  이런게 뭐지? 다국어 관련이다
+언어마다 db에 저장해야한다
+이것에 해당하는 id가 db에 있고
+세션정보에 국가코드라는게 담겨있고 그것에 따라서 해당되는언어로 표현하기 위해서 vue에서 사용
+라우터 거기에 담겨져있다
+
+코드값을 가져올때 그 나라에 맞춰서 가져온다
+#{SESS_LANG}
+
+v-text-field
+
+ESLint 
+.eslintrc.js 
+문법적인 오류를 찾아주는 플러그인
+
+신입으로 중요한것 줄맞춤이라든가 정렬이라든것 중요하다
+
+nuxtjs
+https://v2.nuxt.com/docs/get-started/installation
+doc 사전들어가서 어떻게 사용하는지 방법등등
+여유있을때 확인해보자 넉스트
+
+
+개발할때 그리드를 엄청많이쓴다 그리드때매 머리깨진다
+그리드를 잘 알아야한다
+
+그리드만 잘써도 화면개발을 공장처럼 찎어낼수있다
+
+realgrid 외국라이브러리
+realgrid 
+this.grid.fields = {}
+그리드에 필드값 세팅   프론트의  dto 같은갠ㅁ
+
+dataProvider
+그리드와 데이터를 매핑한이후에
+컬럼을 정의하고
+
+this.grid.gridView.setTopItem()
+
+dto에 totCnt를 넣기도하고 베이스dto에 정의하고 extend를 처리할수있따
+
+this.grid.gridView.onCellDblClicked 이벤트
+공식문서를 찾아보는게 좋다
+
+this.dialog.frmData = this.grid.rowData[clickData
+
+./userInfo 
+.이니까 같은폴더내에 있는경로
+
+for문이 건수가 많아지면 성능저하가 심하기때문에 가급적 지양하는게 좋다
+
+lodash 라이브러리 굉장히 편한 라이브러리
+
+cloneDeep은 메모리를 새로 따는것
+
+
+그리드 이벤트를 잘 아는게 중요!
+
+oprnbgbfchkmgntlist.vue
+
+return '/sftchk/oprnbgnbfchkmgnt/${route
+
+SSO 큰회사는 자체 로그인시스템이 있기때문에 큰프로젝트에서 우리는 로그인을 실제로 할일이 없을수도있다
+
+권한체크나 세션정보 이런것이 중요
+
+로그인페이지에서
+this.$store.dispatch("auth/setUser",response); 세션에 유저정보저장
+this.$router.push('main'); 페이지이동
+
+scss 라고 있다 코딩형 css
+그냥 css안쓴다
+
+
+@PathVariable
+
+
+예를들어 url에 데이터베이스id로 접근하는경우가있다
+get방식이아닌 특정함수를 통해서 접근하는것
+이런경우는 권한이나 보안때문이다
+특정인물만 조회한다거나
+
+사용자별 권한
+
+
+test 테이블이 6개가 있는데 실습때는 user dtl_l, m 두개만 사용해볼것이고
+평가때는 6개 다써볼것이다
+
+자바에서는 최대한 코드를 간결하게 하는것이고
+프론트에서 처리하는경우가 많다. 
+백엔드는 서버쪽에서 과부하가 걸리는것이고
+프론트는 개인pc에서 처리하는것
+
+자바에서 하는것은 batch
+https://khj93.tistory.com/entry/Spring-Batch%EB%9E%80-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B3%A0-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0
+
+파일첨부 기능은 보통 라이브러리를 쓰고 
+공통기능으로 들어가있기때문에 만들일은 없다 누군가 다 만들어놓았다
+
+실습에 그리드는 없으니까 당장 공부할필요는 없다
+fetch
+
+vue의 pages 경로를 보면
+url 경로와 이름이 같기때문에 그걸로 찾아보면된다
+
+헤더의
+시스템관리 (사용자 조회), 기준정보
+2개만 보셧다고 김태규과장님이
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+추천폰트 ibm mono plex
+
+
+
+
+https://toma0912.tistory.com/75
+https://docs.realgrid.com/refs/grid-base#oncelldblclicked
+https://velog.io/@kysung95/%EC%A7%A4%EB%A7%89%EA%B8%80-lodash-%EC%95%8C%EA%B3%A0-%EC%93%B0%EC%9E%90
+https://ingg.dev/eslint/
+https://v2.nuxt.com/docs/get-started/installation
+https://donglnemo.tistory.com/54
+https://gent.tistory.com/571
+
+
