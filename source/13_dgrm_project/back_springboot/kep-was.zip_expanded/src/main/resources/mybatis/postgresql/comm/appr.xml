@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.common.chems.mapper.ApprMapper">
+
+	<!-- 결재 목록 조회 -->
+	<select id="selectApprList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectApprList */
+		select a.aprv_no
+			  ,a.arpv_cd
+			  ,fn_get_cd('CO00000023', a.arpv_cd, 'NM', #{SESS_LANG}) as arpv_nm
+			  ,a.biz_no
+			  ,a.aprv_usr_id
+			  ,(select case when #{SESS_LANG} = 'KO' then u.usr_ko_nm 
+				            when #{SESS_LANG} = 'EN' then u.usr_en_nm 
+				            else u.usr_zh_nm 
+				       end as usr_nm
+			      from tb_co_user u
+			     where u.usr_id = a.aprv_usr_id 
+			   ) as aprv_usr_nm
+			  ,a.aprv_stt_cd
+			  ,fn_get_cd('CO00000024', a.aprv_stt_cd, 'NM', #{SESS_LANG}) as aprv_stt_nm
+			  ,a.aprv_mthd_nm
+			  ,a.aprv_ttl
+			  ,a.aprv_cntn
+			  ,a.aprv_note
+			  ,a.usg_yn
+			  ,a.crt_usr_id
+			  ,to_char(to_timestamp(a.crt_dt, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as crt_dt
+			  ,a.upt_usr_id
+			  ,to_char(to_timestamp(a.upt_dt, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as upt_dt
+		  from tb_co_aprv a
+		 where a.crt_dt between replace(#{sDate}, '-', '') || '000000' and replace(#{eDate}, '-', '') || '999999'
+		 <if test='aprv_no != null and aprv_no != ""'>
+		   and a.aprv_no = #{aprv_no}
+		 </if>
+		 <if test='arpv_cd != null and arpv_cd != ""'>
+		   and a.arpv_cd = #{arpv_cd}
+		 </if>
+		 <if test='biz_no != null and biz_no != ""'>
+		   and a.biz_no like '%' || #{biz_no} || '%'
+		 </if>
+		 <if test='aprv_usr_id != null and aprv_usr_id != ""'>
+		   and a.aprv_usr_id = #{aprv_usr_id}
+		 </if>
+		 <if test='aprv_stt_cd != null and aprv_stt_cd != ""'>
+		   and a.aprv_stt_cd = #{aprv_stt_cd}
+		 </if>
+		 <if test='aprv_ttl != null and aprv_ttl != ""'>
+		   and a.aprv_ttl like '%' || #{aprv_ttl} || '%'
+		 </if>
+		 <if test='usg_yn != null and usg_yn != ""'>
+		   and a.usg_yn = #{usg_yn}
+		 </if>
+		 order by a.crt_dt desc
+	</select>
+
+	<!-- 결재 상세 조회 -->
+	<select id="selectApprDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectApprDtl */
+		select a.aprv_no
+			  ,a.arpv_cd
+			  ,fn_get_cd('CO00000023', a.arpv_cd, 'NM', #{SESS_LANG}) as arpv_nm
+			  ,a.biz_no
+			  ,a.aprv_usr_id
+			  ,(select case when #{SESS_LANG} = 'KO' then u.usr_ko_nm 
+				            when #{SESS_LANG} = 'EN' then u.usr_en_nm 
+				            else u.usr_zh_nm 
+				       end as usr_nm
+			      from tb_co_user u
+			     where u.usr_id = a.aprv_usr_id 
+			   ) as aprv_usr_nm
+			  ,a.aprv_stt_cd
+			  ,fn_get_cd('CO00000024', a.aprv_stt_cd, 'NM', #{SESS_LANG}) as aprv_stt_nm
+			  ,a.aprv_mthd_nm
+			  ,a.aprv_ttl
+			  ,a.aprv_cntn
+			  ,a.aprv_note
+			  ,a.usg_yn
+			  ,a.crt_usr_id
+			  ,to_char(to_timestamp(a.crt_dt, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as crt_dt
+			  ,a.upt_usr_id
+			  ,to_char(to_timestamp(a.upt_dt, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as upt_dt
+		  from tb_co_aprv a
+		 where a.aprv_no = #{aprv_no}
+	</select>
+	
+	<!-- 결재 수신 이력 조회 -->
+	<select id="selectApprDtlRecv" parameterType="sqlMap" resultType="sqlMap">
+		/* selectApprDtlRecv */
+		select a.aprvseq
+			  ,a.reqno
+			  ,a.unid
+			  ,a.docst
+			  ,fn_get_cd('CO00000024', a.docst, 'NM', #{SESS_LANG}) as docst_nm
+			  ,a.ecm_url
+			  ,to_char(to_timestamp(a.recdt, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as recdt
+			  ,a.trn_yn
+			  ,to_char(to_timestamp(a.trn_dt, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as trn_dt
+		  from ti_co_aprv_recv a
+		 where a.reqno = #{aprv_no}
+		 order by a.aprvseq desc
+	</select>
+	
+	<!-- 결재 저장 -->
+	<insert id="updateApprDtl" parameterType="sqlMap">
+		/* updateApprDtl */
+        update tb_co_aprv
+           set usg_yn = #{usg_yn}
+         where aprv_no = #{aprv_no}
+    </insert>
+    
+	<!-- 결재 수신 이력 상태 초기화 저장 -->
+	<insert id="updateApprRecvDtl" parameterType="sqlMap">
+		/* updateApprRecvDtl */
+        update ti_co_aprv_recv
+           set trn_yn = 'N'
+              ,trn_dt = '00000000000000'
+         where reqno = #{aprv_no}
+    </insert>
+    
+	<!-- 결재 수신 이력 저장 -->
+	<insert id="insertApprDtlRecv" parameterType="sqlMap">
+		/* insertApprDtlRecv */
+        insert into ti_co_aprv_recv (
+        	reqno
+		   ,docst
+		   ,recdt
+		) values (
+	 		#{aprv_no}
+	 	   ,#{docst}
+		   ,to_char(current_timestamp, 'YYYYMMDDHH24MISS')
+		)
+    </insert>
+</mapper>

@@ -1,0 +1,6 @@
+"nuxt": "^2.15.8",
+
+"@nuxtjs/vuetify": "^1.12.3",
+
+
+node-v16.19.0-x64.msi

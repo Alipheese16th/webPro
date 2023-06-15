@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.sh.opem.mapper.OpemMgntMapper">
+
+	<!-- 작업환경측정관리 조회 -->
+	<select id="selectOpemMgntList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectOpemMgntList - 작업환경측정관리 조회 */
+		select t1.wkpl_id || '-' || t1.wem_year || '-' || t1.wem_sn as wem_id
+		      ,t1.wem_year 
+		      ,fn_get_cd('ST00000002', t1.wkpl_id, 'nm', #{SESS_LANG}) as wkpl_nm
+		      ,fn_get_cmpy(t1.wkpl_id, 'NM', #{SESS_LANG}) as cmpy_nm
+		      ,fn_get_cd('SH00000016', t1.wem_cl_cd, 'nm', #{SESS_LANG}) as wem_cl_nm
+		      ,fn_get_cd('SH00000017', t1.wem_cyc_cd, 'nm', #{SESS_LANG}) as wem_cyc_nm
+		      ,substring(t1.wem_bgn_dt, 0, 5) || '-' || substring(t1.wem_bgn_dt, 5, 2) || '-' || substring(t1.wem_bgn_dt, 7, 2) || ' ~ ' ||
+			   substring(t1.wem_end_dt, 0, 5) || '-' || substring(t1.wem_end_dt, 5, 2) || '-' || substring(t1.wem_end_dt, 7, 2) as wem_dt
+			  ,t1.wem_orga_nm
+			  ,fn_get_user(t1.wem_req_usr_id, 'nm', #{SESS_LANG}) as wem_req_usr_nm
+			  ,t1.wem_btrm_tgt_yn
+			  ,t1.wem_prst_cd
+			  ,fn_get_cd('SH00000065', t1.wem_prst_cd, 'nm', #{SESS_LANG}) as wem_prst_nm
+			  ,t1.wem_aprv_no
+			  ,(select u.dept_cd
+			      from tb_co_user u
+			     where u.usr_id = t1.upt_usr_id
+			   ) as dept_cd
+			  ,case when (select dept_cd
+				   		    from tb_co_user
+				    	   where usr_id = t1.crt_usr_id
+						 ) = #{SESS_DEPT} then 'U'
+		       else 'R' end as mode
+		  from tb_sh_wem t1
+		 where 1 = 1
+		<if test='wkpl_id != null and wkpl_id != ""'>
+		   and t1.wkpl_id = #{wkpl_id}
+		</if>
+		<if test='wem_cl_cd != null and wem_cl_cd != ""'>
+		   and t1.wem_cl_cd = #{wem_cl_cd}
+		</if>
+		<if test='wem_cyc_cd != null and wem_cyc_cd != ""'>
+		   and t1.wem_cyc_cd  = #{wem_cyc_cd}
+		</if>
+		<if test='wem_year != null and wem_year != ""'>
+		   and t1.wem_year = #{wem_year}
+		</if>
+		<if test='sch_dt != null and sch_dt != ""'>
+		   and replace(#{sch_dt}, '-', '') between t1.wem_bgn_dt and t1.wem_end_dt
+		</if>
+		<if test='cmpy_cd != null and cmpy_cd != ""'>
+		   and exists (select 1
+		      			 from tb_sh_wkpl w
+		      			where w.wkpl_id = t1.wkpl_id 
+		      			  and w.cmpy_cd = #{cmpy_cd}
+		   			  )
+		</if>
+		 order by crt_dt desc
+	</select>
+	
+	<!-- 작업환경측정 기본정보 조회 -->
+	<select id="selectOpemMgnt" parameterType="sqlMap" resultType="sqlMap">
+		/* selectOpemMgnt - 작업환경측정 기본정보 조회 */
+		select wkpl_id || '-' || wem_year || '-' || wem_sn as wem_id
+			  ,wkpl_id,fn_get_cd('ST00000002', wkpl_id, 'nm', #{SESS_LANG}) as wkpl_nm
+			  ,wem_year
+			  ,wem_sn
+			  ,wem_cl_cd
+			  ,fn_get_cd('SH00000016', wem_cl_cd, 'nm', #{SESS_LANG}) as wem_cl_nm
+			  ,wem_cyc_cd
+			  ,fn_get_cd('SH00000017', wem_cyc_cd, 'nm', #{SESS_LANG}) as wem_cyc_nm
+			  ,substring(t1.wem_bgn_dt, 0, 5) || '-' || substring(t1.wem_bgn_dt, 5, 2) || '-' || substring(t1.wem_bgn_dt, 7, 2) as wem_bgn_dt
+			  ,substring(t1.wem_end_dt, 0, 5) || '-' || substring(t1.wem_end_dt, 5, 2) || '-' || substring(t1.wem_end_dt, 7, 2) as wem_end_dt
+			  ,wem_orga_nm
+			  ,wem_req_usr_id
+			  ,fn_get_user(wem_req_usr_id, 'nm', #{SESS_LANG}) as wem_req_usr_nm
+			  ,wem_oval_opin_txt
+			  ,wem_btrm_tgt_yn
+			  ,wem_btrm_plan_txt
+			  ,wem_atfl_no
+			  ,wem_prst_cd
+			  ,wem_aprv_no
+			  ,fn_get_user(upt_usr_id, 'nm', #{SESS_LANG}) as lsch_nm
+		  from tb_sh_wem t1
+		 where wkpl_id || '-' || wem_year || '-' || wem_sn = #{wem_id}
+	</select>
+	
+	<!-- 작업환경측정 측정결과 조회 -->
+	<select id="selectOpemMgntRslt" parameterType="sqlMap" resultType="sqlMap">
+		/* selectOpemMgntRslt - 작업환경측정 측정결과 조회 */
+		select wkpl_id
+			  ,wem_year
+			  ,wem_sn
+			  ,hmfc_cd
+			  ,fn_get_cd('SH00000018', hmfc_cd, 'nm', #{SESS_LANG}) as hmfc_nm
+			  ,hmfc_unit_nm
+			  ,hmfc_msrm_vl
+			  ,hmfc_exps_stnd_vl
+			  ,hmfc_rslt_jgmt_cd
+			  ,fn_get_cd('SH00000046', hmfc_rslt_jgmt_cd, 'nm', #{SESS_LANG}) as hmfc_rslt_jgmt_nm
+			  ,wem_dept_nm
+			  ,wem_pl_nm
+		  from tb_sh_wem_rslt
+	     where wkpl_id || '-' || wem_year || '-' || wem_sn = #{wem_id}
+		 order by hmfc_sn
+	</select>
+	
+	<!-- 작업환경측정 기본정보 등록 -->
+	<insert id="insertOpemMgnt" parameterType="sqlMap">
+		<selectKey keyProperty="wem_sn" resultType="int" order="BEFORE">
+        	select coalesce(max(wem_sn), 0) + 1 as wem_sn from tb_sh_wem t1
+			where wkpl_id = #{wkpl_id} and wem_year = #{wem_year}
+    	</selectKey>
+      	/* insertOpemMgnt - 작업환경측정 기본정보 등록 */
+		insert into tb_sh_wem (
+			wkpl_id
+		   ,wem_year
+		   ,wem_sn
+		   ,wem_cl_cd
+		   ,wem_cyc_cd
+		   ,wem_bgn_dt
+		   ,wem_end_dt
+		   ,wem_orga_nm
+		   ,wem_req_usr_id
+		   ,wem_oval_opin_txt
+		   ,wem_btrm_tgt_yn
+		   ,wem_btrm_plan_txt
+		   ,wem_atfl_no
+		   ,wem_prst_cd
+		   ,wem_aprv_no
+		   ,crt_usr_id
+		   ,upt_usr_id
+		) values (
+			#{wkpl_id}
+			,#{wem_year}
+			,#{wem_sn}::INTEGER
+			,#{wem_cl_cd}
+			,#{wem_cyc_cd}
+			,replace(#{wem_bgn_dt}, '-', '')
+			,replace(#{wem_end_dt}, '-', '')
+			,#{wem_orga_nm}
+			,#{wem_req_usr_id}
+			,#{wem_oval_opin_txt}
+			,#{wem_btrm_tgt_yn}
+			,#{wem_btrm_plan_txt}
+			,#{wem_atfl_no}::INTEGER
+			,#{wem_prst_cd}
+			,#{wem_aprv_no}
+			,#{SESS_USR_ID}
+			,#{SESS_USR_ID}
+		)
+    </insert>
+    
+    <!-- 작업환경측정 측정결과 등록  -->
+    <insert id="insertOpemMgntRslt" parameterType="sqlMap">
+      	/* insertOpemMgntRslt - 작업환경측정 측정결과 등록 */
+      	insert into tb_sh_wem_rslt (
+			wkpl_id
+		   ,wem_year
+		   ,wem_sn
+		   ,hmfc_cd
+		   ,hmfc_sn
+		   ,hmfc_unit_nm
+		   ,hmfc_msrm_vl
+		   ,hmfc_exps_stnd_vl
+		   ,hmfc_rslt_jgmt_cd
+		   ,wem_dept_nm
+		   ,wem_pl_nm
+		   ,crt_usr_id
+		   ,upt_usr_id
+		) values (
+			#{wkpl_id}
+		   ,#{wem_year}
+		   ,#{wem_sn}::INTEGER
+		   ,#{hmfc_cd}
+		   ,(select coalesce(max(hmfc_sn), 0) + 1		<!-- 2022-11-16 유해인자 순번 컬럼 추가 -->
+			   from tb_sh_wem_rslt 
+			  where wkpl_id = #{wkpl_id}
+			    and wem_year 	= #{wem_year}
+			    and wem_sn		= #{wem_sn}::INTEGER
+			)
+		   ,#{hmfc_unit_nm}
+		   ,#{hmfc_msrm_vl}::NUMERIC
+		   ,#{hmfc_exps_stnd_vl}::NUMERIC
+		   ,#{hmfc_rslt_jgmt_cd}
+		   ,#{wem_dept_nm}
+		   ,#{wem_pl_nm}
+		   ,#{SESS_USR_ID}
+		   ,#{SESS_USR_ID}
+		)
+    </insert>
+    
+    <!-- 작업환경측정 기본정보 수정 -->
+    <update id="updateOpemMgnt" parameterType="sqlMap">
+        /* updateOpemMgnt - 작업환경측정 기본정보 수정 */
+        update tb_sh_wem
+           set wem_cl_cd		= #{wem_cl_cd}
+			  ,wem_cyc_cd		= #{wem_cyc_cd}
+			  ,wem_bgn_dt			= replace(#{wem_bgn_dt}, '-', '')
+			  ,wem_end_dt			= replace(#{wem_end_dt}, '-', '')
+			  ,wem_orga_nm			= #{wem_orga_nm}
+			  ,wem_req_usr_id		= #{wem_req_usr_id}
+			  ,wem_oval_opin_txt	= #{wem_oval_opin_txt}
+			  ,wem_btrm_tgt_yn		= #{wem_btrm_tgt_yn}
+			  ,wem_btrm_plan_txt	= #{wem_btrm_plan_txt}
+			  ,wem_atfl_no		= #{wem_atfl_no}::INTEGER
+			  ,wem_prst_cd		= #{wem_prst_cd}
+			  ,wem_aprv_no		= #{wem_aprv_no}
+			  ,upt_usr_id				= #{SESS_USR_ID}
+			  ,upt_dt 			= statement_timestamp()
+		 where wkpl_id = #{wkpl_id}
+		   and wem_year    = #{wem_year}
+		   and wem_sn      = #{wem_sn}::INTEGER
+    </update>
+    
+    <!-- 작업환경측정 결재 -->
+    <update id="updateAppr" parameterType="sqlMap">
+        /* updateAppr - 작업환경측정 결재 */
+        update tb_sh_wem
+		   set wem_aprv_no = #{wem_aprv_no}
+			  ,upt_usr_id 	   = #{SESS_USR_ID}
+			  ,upt_dt	   = statement_timestamp()
+		 where wkpl_id = #{wkpl_id}
+		   and wem_year	   = #{wem_year}
+		   and wem_sn	   = #{wem_sn}::INTEGER
+    </update>
+    
+    <!-- 작업환경측정 기본정보 삭제 -->
+    <delete id="deleteOpemMgnt" parameterType="sqlMap">
+        /* deleteOpemMgnt - 작업환경측정 기본정보 삭제 */
+        delete from tb_sh_wem
+		where wkpl_id || '-' || wem_year || '-' || wem_sn = #{wem_id}
+    </delete>
+    
+    <!-- 작업환경측정 측정결과 삭제 -->
+    <delete id="deleteOpemMgntRslt" parameterType="sqlMap">
+        /* deleteOpemMgntRslt - 작업환경측정 측정결과 삭제 */
+        delete from tb_sh_wem_rslt
+			  where wkpl_id = #{wkpl_id}
+				and wem_year    = #{wem_year}
+				and wem_sn 		= #{wem_sn}::INTEGER
+    </delete>
+    
+    <!-- 결재정보 조회  -->
+	<select id="selectOpemMgntAprvDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectOpemMgntAprvDtl - 결재정보 조회 */
+		select wem_aprv_no
+		      ,wem_prst_cd
+		  from tb_sh_wem
+		 where wem_aprv_no = #{wem_aprv_no}
+	</select>
+	
+	<!-- 결재 진행상태 수정 -->
+	<update id="updateOpemMgntAprvAf" parameterType="sqlMap">
+        /* updateOpemMgntAprvAf - 결재 진행상태 수정 */
+        update tb_sh_wem
+		   set wem_prst_cd = #{wem_prst_cd}
+		      ,upt_dt = now()
+		 where wem_aprv_no = #{wem_aprv_no}
+    </update>
+    
+</mapper>

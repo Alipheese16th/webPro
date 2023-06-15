@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.common.chems.mapper.CdMapper">
+
+	<select id="selectCdGrpList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectCdGrpList */
+		select cd_grp_no
+			  ,biz_cd
+		      ,cd_grp_nm
+		from tb_co_cd_grp
+		where 1=1
+		<if test='cd_grp_nm != null and cd_grp_nm != ""'>
+		  and cd_grp_nm like concat('%', trim(BOTH FROM #{cd_grp_nm}::text), '%')
+		</if>
+		<if test='cd_grp_no != null and cd_grp_no != ""'>
+		   and cd_grp_no = #{cd_grp_no}
+		 </if>
+		<if test='biz_cd != null and biz_cd != ""'>
+		   and biz_cd = #{biz_cd}
+		</if>
+		and usg_yn = 'Y'
+		and del_yn = 'N'
+		order by cd_grp_no
+	</select>
+	
+	<select id="selectCdList" parameterType="sqlMap" resultType="sqlMap">
+		select tcc.cd
+		      ,tcm.mlang_cntn as cd_nm
+		      ,tcm.mlang_no
+		      ,tcc.sort_seq
+		      ,tcc.usg_yn
+		      ,coalesce(tcc.buf_1st_cntn, '') as buf_1st_cntn
+		      ,coalesce(tcc.buf_2nd_cntn, '') as buf_2nd_cntn
+		      ,coalesce(tcc.buf_3rd_cntn, '') as buf_3rd_cntn
+		      ,coalesce(tcc.buf_4th_cntn, '') as buf_4th_cntn
+		      ,coalesce(tcc.buf_5th_cntn, '') as buf_5th_cntn
+		  from tb_co_cd tcc
+		  join tb_co_cd_grp tccg on tccg.cd_grp_no = tcc.cd_grp_no 
+		  join tb_co_mlang tcm on tcc.cd_grp_no = tcm.cd_grp_no and tcc.cd = tcm.cd
+		 where 1=1
+		   and tcc.cd_grp_no = #{cd_grp_no}
+		 <if test='lang_cd != null and lang_cd != ""'>
+		   and tcm.lang_cd = #{lang_cd}
+		 </if>
+		   and tcc.del_yn = 'N'
+		   and tccg.usg_yn = 'Y'
+		   and tccg.del_yn = 'N'
+		   and tcm.usg_yn = 'Y'
+		   and tcm.del_yn = 'N'
+		order by tcc.sort_seq
+	</select>
+	
+	<select id="selectBizCdKey" parameterType="sqlMap" resultType="string">
+		/* selectApiKey */
+		select case when count(*) > 0 then concat(#{biz_cd}, lpad((max(substring(cd_grp_no, char_length(#{biz_cd})+1, 8)::integer) + 1)::text, 8, '0'))
+					else concat(#{biz_cd}, '00000001') 
+					end as key
+		from tb_co_cd_grp
+		where substring(cd_grp_no, 0, char_length(#{biz_cd})+1) = #{biz_cd}
+	</select>
+	
+	<insert id="insertCdGrpList" parameterType="sqlMap">
+       insert into tb_co_cd_grp (
+        	 cd_grp_no
+        	,cd_grp_nm
+        	,biz_cd
+        	,crt_usr_id
+        	,crt_dt
+        	,upt_usr_id
+        	,upt_dt
+		) values (
+			 #{cd_grp_no}
+			,trim(BOTH FROM #{cd_grp_nm}::text)
+			,#{biz_cd}
+			,#{username}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{username}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+		)
+    </insert>
+    
+    <update id="updateCdGrpList" parameterType="sqlMap">
+        /* updateCdGrpList */
+        update tb_co_cd_grp set
+        	 cd_grp_nm = trim(BOTH FROM #{cd_grp_nm}::text)
+        	,upt_usr_id = #{username}
+        	,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+        where cd_grp_no = #{cd_grp_no}
+    </update>
+    
+    <update id="deleteCdGrpList" parameterType="sqlMap">
+        /* deleteCdGrpList */
+        update tb_co_cd_grp set
+        	 usg_yn = 'N'
+        	,del_yn = 'Y' 
+        	,upt_usr_id = #{username}
+        	,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+        where cd_grp_no = #{cd_grp_no}
+    </update>
+    
+    <update id="deleteCdList" parameterType="sqlMap">
+        /* deleteCdList */
+        update tb_co_cd set
+        	 usg_yn = 'N'
+        	,del_yn = 'Y' 
+        	,upt_usr_id = #{username}
+        	,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+        where cd_grp_no = #{cd_grp_no}
+    </update>
+    
+    <insert id="insertCdList" parameterType="sqlMap">
+       insert into tb_co_cd (
+        	 cd_grp_no
+        	,cd
+        	,sort_seq
+        	,usg_yn
+        	,buf_1st_cntn
+        	,buf_2nd_cntn
+        	,buf_3rd_cntn
+        	,buf_4th_cntn
+        	,buf_5th_cntn
+        	,crt_usr_id
+        	,crt_dt
+        	,upt_usr_id
+        	,upt_dt
+		) values (
+			 #{cd_grp_no}
+			,trim(BOTH FROM #{cd}::text)
+			,#{sort_seq}::integer
+			,#{usg_yn}
+			,trim(BOTH FROM #{buf_1st_cntn}::text)
+			,trim(BOTH FROM #{buf_2nd_cntn}::text)
+			,trim(BOTH FROM #{buf_3rd_cntn}::text)
+			,trim(BOTH FROM #{buf_4th_cntn}::text)
+			,trim(BOTH FROM #{buf_5th_cntn}::text)
+			,#{username}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{username}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+		) on conflict (cd_grp_no, cd)
+		do update set usg_yn = 'Y'
+		       ,buf_1st_cntn = trim(BOTH FROM #{buf_1st_cntn}::text)
+		       ,buf_2nd_cntn = trim(BOTH FROM #{buf_2nd_cntn}::text)
+		       ,buf_3rd_cntn = trim(BOTH FROM #{buf_3rd_cntn}::text)
+		       ,buf_4th_cntn = trim(BOTH FROM #{buf_4th_cntn}::text)
+		       ,buf_5th_cntn = trim(BOTH FROM #{buf_5th_cntn}::text)
+			   ,del_yn = 'N'
+			   ,upt_usr_id = #{username}
+			   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_co_cd.cd_grp_no = #{cd_grp_no} 
+		  and tb_co_cd.cd = #{cd}
+    </insert>
+    
+    <update id="updateCdList" parameterType="sqlMap">
+        /* updateCdList */
+        update tb_co_cd set
+             cd = trim(BOTH FROM #{cd}::text)
+        	,sort_seq = #{sort_seq}::integer
+        	,usg_yn = #{usg_yn}
+        	,buf_1st_cntn = trim(BOTH FROM #{buf_1st_cntn}::text)
+        	,buf_2nd_cntn = trim(BOTH FROM #{buf_2nd_cntn}::text)
+        	,buf_3rd_cntn = trim(BOTH FROM #{buf_3rd_cntn}::text)
+        	,buf_4th_cntn = trim(BOTH FROM #{buf_4th_cntn}::text)
+        	,buf_5th_cntn = trim(BOTH FROM #{buf_5th_cntn}::text)
+        	,upt_usr_id = #{username}
+        	,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+        where cd_grp_no = #{cd_grp_no}
+          and cd = #{cd}
+    </update>
+    
+    <update id="deleteCd" parameterType="sqlMap">
+        /* deleteCd */
+        update tb_co_cd set
+             usg_yn = 'N'
+            ,del_yn = 'Y'
+        	,upt_usr_id = #{username}
+        	,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+        where cd_grp_no = #{cd_grp_no}
+          and cd = #{cd}
+    </update>
+    
+    <select id="selectMlangCdGrpKey" parameterType="sqlMap" resultType="string">
+		/* selectMlangCdGrpKey */
+		select
+			concat('CD', lpad((max(substring(mlang_no, 3, 8)::integer) + 1)::text, 8, '0')) as key
+		from tb_co_mlang
+		where mlang_type_cd = 'CD' 
+	</select>
+    
+    <insert id="insertCdMlangList" parameterType="sqlMap">
+       insert into tb_co_mlang
+		(
+		             mlang_no 
+		        	,lang_cd 
+		        	,mlang_type_cd 
+		        	,biz_cd
+		        	,mlang_cntn
+		        	,mlang_abbr  
+		        	,cd_grp_no 
+		        	,cd 
+		        	,usg_yn 
+		        	,del_yn 
+		        	,crt_usr_id 
+					,crt_dt 
+					,upt_usr_id 
+					,upt_dt 
+		) select * from (
+				select a.mlang_no 
+		        	,b.lang_cd 
+		        	,a.mlang_type_cd 
+		        	,a.biz_cd
+		        	,case when b.lang_cd = #{lang_cd} then a.mlang_cntn else a.mlang_cntn || '(' || b.lang_cd || ')' end as mlang_cntn
+		        	,case when b.lang_cd = #{lang_cd} then a.mlang_abbr else a.mlang_abbr || '(' || b.lang_cd || ')' end as mlang_abbr
+		        	,a.cd_grp_no 
+		        	,a.cd 
+		        	,a.usg_yn 
+		        	,a.del_yn 
+		        	,#{username} as crt_usr_id 
+					,to_char(now(), 'YYYYMMDDHH24MISS') as crt_dt 
+					,#{username} as upt_usr_id 
+					,to_char(now(), 'YYYYMMDDHH24MISS') as upt_dt 
+		        from 
+		        	(
+		        		select 
+							 #{mlang_key} as mlang_no
+							,'CD' as mlang_type_cd
+							,#{biz_cd} as biz_cd
+							,trim(BOTH FROM #{cd_nm}::text) as mlang_cntn
+							,trim(BOTH FROM #{cd_nm}::text) as mlang_abbr
+							,#{cd_grp_no} as cd_grp_no
+							,trim(BOTH FROM #{cd}::text) as cd
+							,'Y' as usg_yn
+							,'N' as del_yn
+					) a
+					,(
+						select cd as lang_cd  
+						from tb_co_cd cd 
+						where cd.cd_grp_no = 'CO00000002'
+					) b
+		) so on conflict ( mlang_no, lang_cd ) do update 
+				set mlang_cntn = excluded.mlang_cntn
+				   ,usg_yn = 'Y'
+				   ,del_yn = 'N'
+			 	   ,crt_usr_id = #{username}
+			 	   ,crt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+			 	   ,upt_usr_id = #{username}
+			 	   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+    </insert>
+    
+    <update id="updateCdMlangList" parameterType="sqlMap">
+        /* updateCdMlangList */
+        update tb_co_mlang set
+             mlang_cntn = trim(BOTH FROM #{cd_nm}::text)
+        	,upt_usr_id = #{username}
+        	,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+        where mlang_no = #{mlang_no}
+          and lang_cd = #{lang_cd}
+    </update>
+    
+    <update id="deleteCdMlangList" parameterType="sqlMap">
+        /* deleteCdMlangList */
+        update tb_co_mlang set
+             usg_yn = 'N'
+            ,del_yn = 'Y'
+        	,upt_usr_id = #{username}
+        	,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+        where cd_grp_no = #{cd_grp_no}
+          and cd = #{cd}
+    </update>
+    
+    <update id="deleteMlangAllCdList" parameterType="sqlMap">
+        /* deleteMlangAllCdList */
+        update tb_co_mlang set
+             usg_yn = 'N'
+            ,del_yn = 'Y'
+        	,upt_usr_id = #{username}
+        	,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+        where cd_grp_no = #{cd_grp_no}
+    </update>
+    
+    <select id="selectCdDetail" parameterType="sqlMap" resultType="sqlMap">
+		/* selectCdDetail */
+		select 
+			 cd 
+		from tb_co_cd
+		where cd_grp_no = #{cd_grp_no}
+		  and cd = #{cd}
+		  and usg_yn = 'Y'
+		  and del_yn = 'N'
+	</select>
+	
+	<select id="selectCdMlangNoInfo" parameterType="sqlMap" resultType="sqlMap">
+		/* selectCdMlangNoInfo */
+		select mlang_no 
+		      ,cd
+		      ,cd_grp_no 
+		      ,lang_cd 
+		  from tb_co_mlang
+		 where cd_grp_no = #{cd_grp_no}
+		   and cd = #{cd}
+		   and lang_cd = #{lang_cd}
+		   and mlang_type_cd = #{mlang_type_cd}
+		   and biz_cd = #{biz_cd}
+	</select>
+
+</mapper>

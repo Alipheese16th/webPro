@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html {{ HTML_ATTRS }}>
+  <head {{ HEAD_ATTRS }}>
+    {{ HEAD }}
+    <script>			  
+      var realGrid2Lic = 'upVcPE+wPOmtLjqyBIh9RkM/nBOseBrflwxYpzGZyYl7CwX6ItpP+4U0zSTlY4+PFxSEyfwskvUP6kMdW9dXOnSzSGr8wNVrNTakk0yR9Ue65ucahXxNyxc+z9oH3/au';
+      var realPivotLic = 'upVcPE+wPOlpAyL7N9uhT0M/nBOseBrflwxYpzGZyYl7CwX6ItpP+4U0zSTlY4+PFxSEyfwskvUP6kMdW9dXOnSzSGr8wNVrNTakk0yR9UeblJ3McVuw8tEHiG7csiBBkxValpjT3ck=';
+    </script>
+    <link rel="stylesheet" type="text/css" href="https://dev-front-apchems.donggramisoft.co.kr/pivot/css/default_blue.css">
+    <script type="text/javascript" src="https://dev-front-apchems.donggramisoft.co.kr/pivot/messages/realpivot-messages.js"></script>
+    <script type="text/javascript" src="https://dev-front-apchems.donggramisoft.co.kr/pivot/realpivot_eval.1.0.7.min.js"></script>
+    <script type="text/javascript" src="https://dev-front-apchems.donggramisoft.co.kr/jszip/jszip.min.js"></script>
+  </head>
+  <body {{ BODY_ATTRS }}>
+    {{ APP }}
+  </body>
+</html>

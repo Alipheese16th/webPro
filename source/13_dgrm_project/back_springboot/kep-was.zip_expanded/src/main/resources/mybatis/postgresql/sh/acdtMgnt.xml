@@ -1,0 +1,1062 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.sh.acdtmgnt.mapper.AcdtMgntMapper">
+
+	<select id="selectAcdtMgntList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtMgntList */
+		select
+		    t1.acdt_id
+		    ,fn_get_cmpy(t1.wkpl_id, 'NM', #{SESS_LANG}) as cmpy_nm
+		    ,fn_get_cd('ST00000002', t1.wkpl_id, 'nm', #{SESS_LANG}) as wkpl_nm
+		    ,to_char(t1.acdt_occr_tsp, 'YYYY-MM-DD') as acdt_occr_dt
+		    ,fn_get_cd('SH00000024', t1.acdt_cl_cd, 'nm', #{SESS_LANG}) as acdt_cl_nm
+		    ,fn_get_cd('SH00000025', t1.acdt_dtl_cl_cd, 'nm', #{SESS_LANG}) as acdt_dtl_cl_nm
+		    ,fn_get_cd('SH00000071', t1.acdt_tp_cd, 'nm', #{SESS_LANG}) as acdt_tp_nm	<!-- 사고유형  -->
+		    ,fn_get_cd('SH00000072', t1.acdt_caus_tgt_cd, 'nm', #{SESS_LANG}) || ' / ' || t1.acdt_caus_tgt_txt as acdt_caus_tgt_txt	/* 사고기인물명/ 상세내용  */
+		    ,t1.inac_ivst_sbms_tgt_yn
+		    ,t1.kor_acdt_occr_org_nm
+		    ,t3.dfdt_dept_nm
+		    ,t1.acdt_wkpl_loc_id
+		    ,t2.upp_incl_wkpl_loc_nm as acdt_wkpl_loc_nm
+		    ,t1.acdt_dtl_loc_nm
+		    ,t1.acdt_prst_cd
+		    ,fn_get_cd('SH00000056', t1.acdt_prst_cd, 'nm', #{SESS_LANG}) as acdt_prst_nm
+		    ,substring(t1.acdt_brie_reg_dt, 0, 5) || '-' || substring(t1.acdt_brie_reg_dt, 5, 2) || '-' || substring(t1.acdt_brie_reg_dt, 7, 2) as acdt_brie_reg_dt
+		    ,substring(t1.acdt_occr_hm, 0, 3) || ':' || substring(t1.acdt_occr_hm, 3, 5) as acdt_occr_hm   	<!-- 사고발생시분  -->
+		    ,substring(t1.acdt_accp_hm, 0, 3) || ':' || substring(t1.acdt_accp_hm, 3, 5) as acdt_accp_hm	<!-- 사고접수시분  -->
+		    ,substring(t1.acdt_bgng_rpos_hm, 0, 3) || ':' || substring(t1.acdt_bgng_rpos_hm, 3, 5) as acdt_bgng_rpos_hm	<!-- 초기대응시분  -->
+		    ,substring(t1.acdt_af_actn_hm, 0, 3) || ':' || substring(t1.acdt_af_actn_hm, 3, 5) as acdt_af_actn_hm	<!-- 사후조치시분  -->
+		    ,fn_get_cd('SH00000070', t1.inac_yn, 'nm', #{SESS_LANG}) as inac_yn
+		    ,substring(t1.ivst_rprt_reg_dt, 0, 5) || '-' || substring(t1.ivst_rprt_reg_dt, 5, 2) || '-' || substring(t1.ivst_rprt_reg_dt, 7, 2) as ivst_rprt_reg_dt
+		    ,substring(t1.btrm_rslt_reg_dt, 0, 5) || '-' || substring(t1.btrm_rslt_reg_dt, 5, 2) || '-' || substring(t1.btrm_rslt_reg_dt, 7, 2) as btrm_rslt_reg_dt
+		    ,t1.acdt_brie_aprv_no
+		    ,case when (select dept_cd from tb_co_user where usr_id = t1.crt_usr_id) = #{SESS_DEPT} then 'U'
+		     else 'R' end as mode
+		    ,t1.crt_usr_id
+		    ,(select array_to_string(array_agg(fn_get_cd('SH00000026', acdt_oprn_txt_cl_cd, 'nm', #{SESS_LANG})), ', ') 
+			  	from tb_sh_acdt_oprn_txt
+			  	where acdt_id = t1.acdt_id
+			  	and oprn_txt_chc_yn ='Y') as acdt_oprn_txt_cl_nm
+			,(select array_to_string(array_agg(fn_get_cd('SH00000027', usft_txt_cl_cd, 'nm', #{SESS_LANG})), ', ') 
+			  	from tb_sh_acdt_usft_txt
+			  	where acdt_id = t1.acdt_id
+			  	and usft_txt_chc_yn ='Y') as usft_txt_cl_nm
+			,(select array_to_string(array_agg(fn_get_cd('SH00000028', usft_st_cd, 'nm', #{SESS_LANG})), ', ') 
+			  	from tb_sh_acdt_usft_st
+			  	where acdt_id = t1.acdt_id
+			  	and usft_txt_chc_yn ='Y') as usft_st_nm
+			,t1.del_yn
+			,t3.dfdt_nm
+            ,t3.dfdt_cl_cd
+            ,t1.acdt_occr_txt
+            ,fn_get_cd('SH00000069', t3.dfdt_cl_cd, 'nm', #{SESS_LANG}) as dfdt_cl_nm
+            ,fn_get_cd('SH00000057', t3.dfdt_sex_cd, 'nm', #{SESS_LANG}) as dfdt_sex_nm	<!-- 성별 -->
+            ,t3.dfdt_age	<!-- 연령 -->
+            ,t3.dfdt_care_days	<!-- 휴업시간 -->
+            ,round(((extract(year from age(case when t4.joinc_da = '' then null else t4.joinc_da end::timestamp))::numeric * 12) + extract(month from age(case when t4.joinc_da = '' then null else t4.joinc_da end::timestamp))::numeric) / 12, 1) as dfdt_los
+			,t1.acdt_news_eml_send_yn	/* 사고속보발송 */
+			,t1.wkpl_id /* SHE시스템사업장ID */	
+			,t1.acdt_cl_cd	/* 사고구분 */	
+			,t5.cmpy_cd /* 사업장코드 */
+			,t3.dfdt_sn	/* 사고자순번 */	 	
+			,concat((select tcd.dept_ko_nm from tb_co_dept tcd where tcd.dept_cd = (select tcu.dept_cd from tb_co_user tcu where usr_id = t1.upt_usr_id)),' ',(select tcu.usr_ko_nm from tb_co_user tcu where usr_id = t1.upt_usr_id)) as writer_department
+		from tb_sh_acdt t1
+		left outer join tb_sh_wkpl_loc t2 on t1.acdt_wkpl_loc_id = t2.wkpl_loc_id
+		left outer join tb_sh_acdt_dfdt t3 on t1.acdt_id = t3.acdt_id
+		left outer join tb_co_user t4 on t4.usr_id = t3.dfdt_pric_id
+		left outer join tb_sh_wkpl t5 on t1.wkpl_id = t5.wkpl_id
+		where (t1.del_yn = 'N' or t1.del_yn is null or t1.del_yn = '')
+		<if test='sDate != null and sDate != "" and eDate != null and eDate != ""'>
+		and to_char(t1.acdt_occr_tsp, 'YYYY-MM-DD') between #{sDate} and #{eDate}
+		</if>
+		<if test='wkpl_id_list != null and wkpl_id_list != ""'>
+			and t1.wkpl_id = ANY (regexp_split_to_array(#{wkpl_id_list}, ','))
+		</if>
+		<if test='acdt_prst_cd != null and acdt_prst_cd != ""'>
+			and t1.acdt_prst_cd = #{acdt_prst_cd}
+		</if>
+		<if test='dfdt_dept_nm != null and dfdt_dept_nm != ""'>
+			and t3.dfdt_dept_nm like '%' || #{dfdt_dept_nm} || '%'
+		</if>
+		<if test='cmpy_cd != null and cmpy_cd != ""'>
+		   and exists (select 1
+		      			 from tb_sh_wkpl w
+		      			where w.wkpl_id = t1.wkpl_id 
+		      			  and w.cmpy_cd = #{cmpy_cd}
+		   			  )
+		 </if>
+		 <if test='acdt_cl_cd != null and acdt_cl_cd != ""'>
+			and t1.acdt_cl_cd like '%' || #{acdt_cl_cd} || '%'
+		</if>
+		 <if test='acdt_tp_cd != null and acdt_tp_cd != ""'>
+			and t1.acdt_tp_cd like '%' || #{acdt_tp_cd} || '%'
+		</if>
+		<if test='inac_yn != null and inac_yn != ""'>
+			and t1.inac_yn like '%' || #{inac_yn} || '%'
+		</if>
+		order by t1.acdt_id desc
+	</select>
+	
+	<!-- 사고속보리포트조회 -->
+	<select id="selectAcdtReport" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtReport */
+		select 
+			 coalesce(fn_get_cd('SH00000024', a.acdt_cl_cd, 'nm', #{SESS_LANG}),'') as acdt_cl_nm  <!-- 사고구분  -->
+			,coalesce(fn_get_cd('SH00000025', a.acdt_dtl_cl_cd, 'nm', #{SESS_LANG}),'') as acdt_dtl_cl_nm <!-- 사고구분상세  -->
+			,coalesce(fn_get_cd('SH00000071', a.acdt_tp_cd, 'nm', #{SESS_LANG}),'') as acdt_tp_nm	<!-- 사고유형  -->
+			,coalesce(fn_get_cd('SH00000024', a.acdt_cl_cd, 'nm', #{SESS_LANG}) || '(' || fn_get_cd('SH00000025', a.acdt_dtl_cl_cd, 'nm', #{SESS_LANG}) || ')','') as acdt_cl_dtl_nm /* 사고유형(사고유형상세) */
+			,coalesce(b.upp_incl_wkpl_loc_nm,'') as acdt_wkpl_loc_nm	<!-- 사고위치  -->
+			,coalesce((b.upp_incl_wkpl_loc_nm || ' > ' || a.acdt_dtl_loc_nm),'') as acdt_wkpl_loc_all
+			,coalesce(a.acdt_dtl_loc_nm,'')	as acdt_dtl_loc_nm <!-- 사고상세위치  -->
+			,coalesce(b.upp_incl_wkpl_loc_nm || '(' || a.acdt_dtl_loc_nm || ')','') as acdt_wkpl_loc_dtl_nm /* 사고위치 + 상세 */
+			,coalesce(to_char(a.acdt_occr_tsp, 'YYYY-MM-DD') || ' ' || substring(a.acdt_occr_hm, 0, 3) || ':' || substring(a.acdt_occr_hm, 3, 5),'') as acdt_occr_hm /* 사고일시분 */
+			,coalesce(to_char(a.acdt_occr_tsp, 'YYYY-MM-DD'),'') as acdt_occr_dt	<!-- 사고일시(사고발생일) -->
+			,coalesce((to_char(a.acdt_occr_tsp, 'YYYY-MM-DD') || ', ' || (case to_char(a.acdt_occr_tsp, 'd')
+					WHEN '1' THEN '일요일'
+					WHEN '2' THEN '월요일'
+					WHEN '3' THEN '화요일'
+					WHEN '4' THEN '수요일'
+					WHEN '5' THEN '목요일'
+					WHEN '6' THEN '금요일'
+					WHEN '7' THEN '토요일'
+				end) || ', ' || to_char(a.acdt_occr_tsp, 'HH24') || '시' || to_char(a.acdt_occr_tsp, 'MI') || '분'),'') as acdt_occr_all
+			,coalesce(a.kor_acdt_occr_org_nm,'') as kor_acdt_occr_org_nm	<!-- 사고발생부서  -->
+			,coalesce(a.bsns_rel_acdt_yn,'') as bsns_rel_acdt_yn	<!-- 업무상 사고(Y/N)  -->
+			,coalesce(a.inac_ivst_sbms_tgt_yn,'') as inac_ivst_sbms_tgt_yn	<!-- 산업재해(Y/N)  -->
+			,coalesce(c.dfdt_dept_nm,'') as dfdt_dept_nm	<!-- 소속부서/협력사 -->
+			,coalesce(c.dfdt_nm,'') as dfdt_nm	<!-- 성명 -->
+			,coalesce(fn_get_cd('SH00000057', c.dfdt_sex_cd, 'nm', #{SESS_LANG}),'') as dfdt_sex_nm	<!-- 성별 -->
+			,c.dfdt_age	<!-- 연령 -->
+			,round(((extract(year from age(c.joinc_da::timestamp))::numeric * 12) + extract(month from age(c.joinc_da::timestamp))::numeric) / 12, 1) as dfdt_los <!-- 근속(입사일) -->
+			,coalesce(substring(a.acdt_occr_hm, 0, 3),'') as occrhour 	<!-- 사고발생시 -->  
+			,coalesce(substring(a.acdt_occr_hm, 3, 5),'') as occrminute	<!-- 사고발생분 --> 
+			,coalesce(substring(a.acdt_occr_hm, 0, 3) || ':' || substring(a.acdt_occr_hm, 3, 5),'') as occr_hour_min /* 사고발생시분  */
+			,coalesce(substring(a.acdt_accp_hm, 0, 3),'') as accphour	<!-- 사고접수시 --> 
+			,coalesce(substring(a.acdt_accp_hm, 3, 5),'') as accpminute	<!-- 사고접수분 -->
+			,coalesce(substring(a.acdt_accp_hm, 0, 3) || ':' || substring(a.acdt_accp_hm, 3, 5),'') as accp_hour_min /* 사고접수시분  */
+			,coalesce(substring(a.acdt_bgng_rpos_hm, 0, 3),'') as bgng_rposhour <!-- 초기대응시 -->
+			,coalesce(substring(a.acdt_bgng_rpos_hm, 3, 5),'') as bgng_rposminute	<!-- 초기대응분 -->
+			,coalesce(substring(a.acdt_bgng_rpos_hm, 0, 3) || ':' || substring(a.acdt_bgng_rpos_hm, 3, 5),'') as bgng_rpos_hour_min /* 초기대응시분  */
+			,coalesce(substring(a.acdt_af_actn_hm, 0, 3),'') as af_actnhour	<!-- 사후조치시 -->
+			,coalesce(substring(a.acdt_af_actn_hm, 3, 5),'') as af_actnminute <!-- 사후조치분 -->
+			,coalesce(substring(a.acdt_af_actn_hm, 0, 3) || ':' || substring(a.acdt_af_actn_hm, 3, 5),'') as af_actn_hour_min /* 사후조치시분  */
+			,coalesce(a.acdt_occr_txt,'') as acdt_occr_txt	<!-- 사고발생내용 -->
+			,coalesce(a.acdt_accp_txt,'') as acdt_accp_txt	<!-- 사고접수내용 -->
+			,coalesce(a.acdt_bgng_rpos_txt,'') as acdt_bgng_rpos_txt	<!-- 초기대응내용 -->
+			,coalesce(a.acdt_af_actn_txt,'') as acdt_af_actn_txt	<!-- 사후조치내용 -->
+			,coalesce(a.acdt_occr_caus_txt,'') as acdt_occr_caus_txt	<!-- (사고발생원인)사고발생원인내용 -->
+			,coalesce(a.acdt_dept_prvt_meas_txt,'') as acdt_dept_prvt_meas_txt	<!-- (재발방지대책)사고부서예방대책내용 -->
+			,coalesce(a.sft_dept_prvt_meas_txt,'') as sft_dept_prvt_meas_txt	<!-- (재발방지대책)안전부서예방대책내용 -->
+			,'사고보고서 작성자 ' || fn_get_dept(c.dept_cd) || ' ' || (select tce.usr_ko_nm from tb_co_user tce where tce.usr_id = a.crt_usr_id) as author_team_name
+			/* 소속부서/협력사, 성명, 성별(연령),  근속년 근무 */
+			<!-- ,c.dfdt_dept_nm || ', ' || c.dfdt_nm || ', ' || fn_get_cd('SH00000057', c.dfdt_sex_cd, 'nm', #{SESS_LANG}) || '(' || c.dfdt_age || '), ' || round(((extract(year from age(d.joinc_da::timestamp))::numeric * 12) + extract(month from age(d.joinc_da::timestamp))::numeric) / 12, 1) || '년 근무' as acdpr_infrm -->
+			,case when round(((extract(year from age(c.joinc_da::timestamp))::numeric * 12) + extract(month from age(c.joinc_da::timestamp))::numeric) / 12, 1) is null then coalesce(c.dfdt_dept_nm,'') || ', ' || coalesce(c.dfdt_nm,'') || ', ' || coalesce(fn_get_cd('SH00000057', c.dfdt_sex_cd, 'nm', '#OZParam.SESS_LANG#'),'') || '(' || coalesce(c.dfdt_age::TEXT,'') || ')'
+		     	  else coalesce(c.dfdt_dept_nm,'') || ', ' || coalesce(c.dfdt_nm,'') || ', ' || coalesce(fn_get_cd('SH00000057', c.dfdt_sex_cd, 'nm', '#OZParam.SESS_LANG#'),'') || '(' || coalesce(c.dfdt_age::TEXT,'') || '), ' || round(((extract(year from age(c.joinc_da::timestamp))::numeric * 12) + extract(month from age(c.joinc_da::timestamp))::numeric) / 12, 1) || '년 근무' 
+				  end as acdpr_infrm
+		from 
+			tb_sh_acdt a
+		left join
+			tb_sh_wkpl_loc b
+		on
+			a.acdt_wkpl_loc_id = b.wkpl_loc_id
+		left join	
+		(
+		 SELECT 
+		 	  sad.acdt_id
+	 		 ,sad.dfdt_dept_nm
+	         ,sad.dfdt_nm
+	         ,sad.dfdt_sn
+	         ,sad.dfdt_sex_cd
+	         ,sad.dfdt_age
+	         ,tcu.dept_cd
+	         ,tcu.joinc_da
+         FROM   
+         	 tb_sh_acdt_dfdt sad
+             left join tb_co_user tcu on sad.dfdt_pric_id = tcu.usr_id
+       ) c
+       on
+       	a.acdt_id = c.acdt_id
+		where 
+			a.acdt_id  = #{acdt_id}
+			<if test='dfdt_sn != null and dfdt_sn != ""'>
+				and c.dfdt_sn = #{dfdt_sn}::numeric
+			</if>	
+			and (a.del_yn = 'N' or a.del_yn is null or a.del_yn = '')				
+		order by a.acdt_id desc			
+	</select>
+	
+	<!-- 사고속보리포트 3. 사고발생 원인(SHAMSD_사고불안전한행동내용 상위 4개 조회) -->
+	<select id="selectAcdtRpUnBhc" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtRpUnBhc */		
+		select
+			fn_get_cd('SH00000027', usft_txt_cl_cd, 'nm', #{SESS_LANG}) as cd_nm
+		from
+			tb_sh_acdt_usft_txt	<!-- SHAMSD_사고불안전한행동내용 -->
+		where 
+			acdt_id  = #{acdt_id}
+			and usft_txt_chc_yn = 'Y'
+		order by usft_txt_cl_cd asc	
+		limit 4
+	</select>
+	
+	<!-- 사고속보리포트 3. 사고발생 원인(SHAMSD_사고불안전상태 상위 4개 조회) -->
+	<select id="selectAcdtRpUnStCn" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtRpUnStCn */
+		select
+			fn_get_cd('SH00000028', usft_st_cd, 'nm', #{SESS_LANG}) as cd_nm
+		from
+			tb_sh_acdt_usft_st	<!-- SHAMSD_사고불안전상태 -->
+		where 
+			acdt_id  = #{acdt_id}
+			and usft_txt_chc_yn = 'Y'
+		order by usft_st_cd asc	
+		limit 4	
+	</select>
+	
+	
+	<select id="selectAcdtMgnt" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtMgnt */
+		select
+			t1.acdt_id
+			,t1.wkpl_id
+			,fn_get_cd('ST00000002', t1.wkpl_id, 'nm', #{SESS_LANG}) as wkpl_nm
+			,t1.acdt_cl_cd
+			,fn_get_cd('SH00000024', t1.acdt_cl_cd, 'nm', #{SESS_LANG}) as acdt_cl_nm
+			,t1.acdt_dtl_cl_cd
+			,fn_get_cd('SH00000025', t1.acdt_dtl_cl_cd, 'nm', #{SESS_LANG}) as acdt_dtl_cl_nm
+			,t1.acdt_tp_cd			/* 사고유형  */
+			,t1.acdt_caus_tgt_cd	/* 사고기인물 코드  */
+			,fn_get_cd('SH00000072', t1.acdt_caus_tgt_cd, 'nm', #{SESS_LANG}) as acdt_caus_tgt_cd_nm	/* 사고기인물명 */ 
+			,t1.acdt_caus_tgt_txt		/* 사고기인물 상세내용  */
+			,fn_get_cd('SH00000071', t1.acdt_tp_cd, 'nm', #{SESS_LANG}) as acdt_tp_nm
+			,t1.acdt_wkpl_loc_id
+			,t2.upp_incl_wkpl_loc_nm as acdt_wkpl_loc_nm
+			,t1.acdt_dtl_loc_nm
+			,t1.acdt_occr_org_cd
+			,t1.kor_acdt_occr_org_nm
+			,t1.engl_acdt_occr_org_nm
+			,t1.acdt_occr_tsp
+			,to_char(t1.acdt_occr_tsp, 'YYYY-MM-DD') as acdt_occr_dt
+			,to_char(t1.acdt_occr_tsp, 'HH24') as acdt_occr_hour	/* 사고일시 시  */
+			,to_char(t1.acdt_occr_tsp, 'MI') as acdt_occr_minute	/* 사고일시 분  */	
+			,t1.acdt_brie_stp_cd
+			,t1.acdt_prst_cd
+			,t1.acdt_brie_aprv_no
+			,substring(t1.acdt_occr_hm, 0, 3) as occrhour 	/* 사고발생시  */
+			,substring(t1.acdt_occr_hm, 3, 5) as occrminute	/* 사고발생분  */
+			,substring(t1.acdt_accp_hm, 0, 3) as accphour	/* 사고접수시  */
+			,substring(t1.acdt_accp_hm, 3, 5) as accpminute	/* 사고접수분  */
+			,substring(t1.acdt_bgng_rpos_hm, 0, 3) as bgng_rposhour 	/* 초기대응시  */
+			,substring(t1.acdt_bgng_rpos_hm, 3, 5) as bgng_rposminute 	/* 초기대응분  */
+			,substring(t1.acdt_af_actn_hm, 0, 3) as af_actnhour 		/* 사후조치시  */
+			,substring(t1.acdt_af_actn_hm, 3, 5) as af_actnminute 		/* 사후조치분  */
+			,t1.acdt_occr_txt				/* 사고발생내용 */
+			,t1.acdt_accp_txt				/* 사고접수내용 */
+			,t1.acdt_bgng_rpos_txt			/* 초기대응내용 */
+			,t1.acdt_af_actn_txt			/* 사후조치내용 */
+			,t1.acdt_occr_caus_txt			/* 사고발생원인내용 */
+			,t1.acdt_dept_prvt_meas_txt		/* 사고부서예방대책내용 */
+			,t1.sft_dept_prvt_meas_txt		/* 안전부서예방대책내용 */
+			,substring(t1.acdt_brie_reg_dt, 0, 5) || '-' || substring(t1.acdt_brie_reg_dt, 5, 2) || '-' || substring(t1.acdt_brie_reg_dt, 7, 2) as acdt_brie_reg_dt
+		    ,substring(t1.ivst_rprt_reg_dt, 0, 5) || '-' || substring(t1.ivst_rprt_reg_dt, 5, 2) || '-' || substring(t1.ivst_rprt_reg_dt, 7, 2) as ivst_rprt_reg_dt
+		    ,substring(t1.btrm_rslt_reg_dt, 0, 5) || '-' || substring(t1.btrm_rslt_reg_dt, 5, 2) || '-' || substring(t1.btrm_rslt_reg_dt, 7, 2) as btrm_rslt_reg_dt
+			,t1.acdt_brie_atfl_no
+			,t1.acdt_ivst_atfl_no
+			,t1.btrm_rslt_atfl_no
+			,t1.inac_yn
+			,fn_get_cd('SH00000070', t1.inac_yn, 'nm', #{SESS_LANG}) as inac_yn_nm
+			,t1.bsns_rel_acdt_yn
+			,t1.inac_ivst_sbms_tgt_yn
+			,t1.crt_usr_id
+			,t1.temp_save_yn	/* 임시저장여부 */
+		from tb_sh_acdt t1
+		left outer join tb_sh_wkpl_loc t2 on t1.acdt_wkpl_loc_id = t2.wkpl_loc_id
+		where t1.acdt_id = #{acdt_id}
+	</select>
+	
+	<select id="selectAcdtOprn" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtOprn */
+		select
+			acdt_id
+			,acdt_oprn_txt_cl_cd as cd
+			,fn_get_cd('SH00000026', acdt_oprn_txt_cl_cd, 'nm', #{SESS_LANG}) as cd_nm
+			,coalesce(oprn_txt_chc_yn, '') as chk
+		from tb_sh_acdt_oprn_txt
+		where acdt_id = #{acdt_id}
+		order by acdt_oprn_txt_cl_cd
+	</select>
+	
+	<select id="selectAcdtUsftTxt" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtUsftTxt */
+		select
+			acdt_id
+			,usft_txt_cl_cd as cd
+			,fn_get_cd('SH00000027', usft_txt_cl_cd, 'nm', #{SESS_LANG}) as cd_nm
+			,coalesce(usft_txt_chc_yn, '') as chk
+		from tb_sh_acdt_usft_txt
+		where acdt_id = #{acdt_id}
+		order by usft_txt_cl_cd
+	</select>
+	
+	<select id="selectAcdtUsftSt" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtUsftSt */
+		select
+			acdt_id
+			,usft_st_cd as cd
+			,fn_get_cd('SH00000028', usft_st_cd, 'nm', #{SESS_LANG}) as cd_nm
+			,coalesce(usft_txt_chc_yn, '') as chk
+		from tb_sh_acdt_usft_st
+		where acdt_id = #{acdt_id}
+		order by usft_st_cd
+	</select>
+	
+	<select id="selectAcdtDfdt" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtDfdt */
+		select 
+			t1.acdt_id
+			,t1.dfdt_sn
+			,t1.wkpl_id
+			,t1.dfdt_cl_cd
+			,fn_get_cd('SH00000069', t1.dfdt_cl_cd, 'nm', 'KO') as dfdt_cl_nm
+			,t1.dfdt_nm
+			,t1.dfdt_dept_nm
+			,t1.dfdt_pric_id
+			,coalesce(substring(t2.joinc_da, 0, 5) || '-' || substring(t2.joinc_da, 5, 2) || '-' || substring(t2.joinc_da, 7, 2), '') as jncm_dt
+			,t1.dfdt_age
+			,t1.disa_cl_cd
+			,fn_get_cd('SH00000059', t1.disa_cl_cd, 'nm', #{SESS_LANG}) as disa_cl_nm
+			,t1.smkd_bsns_crr_txt
+			,t1.dfdt_note_txt
+			,fn_get_cd('SH00000070', t1.inac_yn, 'nm', #{SESS_LANG}) as inac_yn
+			,t1.dfdt_disa_prts_nm
+			,t1.dfdt_hspz_yn
+			,t1.dfdt_care_days
+			,t1.dfdt_dgns_rslt_txt
+			,t1.dfdt_sex_cd
+			,fn_get_cd('SH00000057', t1.dfdt_sex_cd, 'nm', #{SESS_LANG}) as dfdt_sex_nm
+		from tb_sh_acdt_dfdt t1
+		left join tb_co_user t2 on t2.usr_id = t1.dfdt_pric_id
+		where acdt_id = #{acdt_id}
+		order by dfdt_sn
+	</select>
+	
+	<select id="selectAcdtIvstRslt" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtIvstRslt */
+		select 
+			acdt_id
+			,acdt_ivst_sn
+			,acdt_ivst_cl_cd
+			,fn_get_cd('SH00000029', acdt_ivst_cl_cd, 'nm', #{SESS_LANG}) as acdt_ivst_cl_nm
+			,acdt_ivst_cat_cd
+			,fn_get_cd('SH00000030', acdt_ivst_cat_cd, 'nm', #{SESS_LANG}) as acdt_ivst_cat_nm
+			,acdt_caus_anl_txt_cd
+			,fn_get_cd('SH00000031', acdt_caus_anl_txt_cd, 'nm', #{SESS_LANG}) as acdt_caus_anl_txt_nm
+		from tb_sh_acdt_ivst_rslt
+		where acdt_id = #{acdt_id}
+		order by acdt_ivst_sn
+	</select>
+	
+	<select id="selectAcdtActnPlan" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtActnPlan */
+		select 
+			acdt_id
+			,acdt_actn_plan_sn
+			,acdt_actn_cl_cd
+			,fn_get_cd('SH00000058', acdt_actn_cl_cd, 'nm', #{SESS_LANG}) as acdt_actn_cl_nm
+			,acdt_actn_plan_txt
+			,substring(acdt_actn_tmlm_dt, 0, 5) || '-' || substring(acdt_actn_tmlm_dt, 5, 2) || '-' || substring(acdt_actn_tmlm_dt, 7, 2) as acdt_actn_tmlm_dt
+			,acdt_actn_txt
+			,substring(acdt_acco_dt, 0, 5) || '-' || substring(acdt_acco_dt, 5, 2) || '-' || substring(acdt_acco_dt, 7, 2) as acdt_acco_dt
+			,acdt_actn_rslt_atfl_no
+			,acdt_actn_usr_id
+			,fn_get_user(acdt_actn_usr_id, 'nm', #{SESS_LANG}) as acdt_actn_usr_nm
+		from tb_sh_acdt_actn_plan
+		where acdt_id = #{acdt_id}
+		order by acdt_actn_plan_sn
+	</select>
+	
+	<select id="selectAcdtAtfl1" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtAtfl1 */
+		select 
+			acdt_id
+			,acdt_atfl_tp_cd
+			,acdt_atfl_item_cd as cd
+			,fn_get_cd('SH00000061', acdt_atfl_item_cd, 'nm', #{SESS_LANG}) as cd_nm
+			,fn_get_cd('SH00000061', acdt_atfl_item_cd, 'B1', #{SESS_LANG}) as cd_buf_1st_cntn	<!-- 버퍼1(구분) -->
+			,case when fn_get_cd('SH00000061', acdt_atfl_item_cd, 'B1', #{SESS_LANG}) = 'S' then fn_get_mlang('LB00000106', #{SESS_LANG})
+				  when fn_get_cd('SH00000061', acdt_atfl_item_cd, 'B1', #{SESS_LANG}) = 'E' then '필수'	
+				  when fn_get_cd('SH00000061', acdt_atfl_item_cd, 'B1', #{SESS_LANG}) = 'SE' then '해당시 필수'
+			end as buf_1st_cntn_nm
+			,coalesce((select atfl_nm as nm  from tb_co_atfl where atfl_no = acdt_atfl_no order by atfl_seq asc limit 1) , '') as acdt_atfl_nm				 
+			,(select 
+					atfl_size as size
+		        from tb_co_atfl
+				where atfl_no = acdt_atfl_no order by atfl_seq asc limit 1) as acdt_atfl_size_vl
+			,acdt_atfl_no
+			,(select 
+					atfl_no as no
+		        from tb_co_atfl
+				where atfl_no = acdt_atfl_no order by atfl_seq asc limit 1) as acdt_atfl_no
+		from tb_sh_acdt_atfl
+		where acdt_id = #{acdt_id}
+			and acdt_atfl_tp_cd = 'F1'
+		order by acdt_atfl_item_cd
+	</select>
+	
+	<select id="selectAcdtAtfl2" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtAtfl2 */
+		select 
+			acdt_id
+			,acdt_atfl_tp_cd
+			,acdt_atfl_item_cd as cd
+			,fn_get_cd('SH00000062', acdt_atfl_item_cd, 'nm', #{SESS_LANG}) as cd_nm
+			,coalesce((select atfl_nm as nm  from tb_co_atfl where atfl_no = acdt_atfl_no limit 1) , '') as acdt_atfl_nm
+			,(select 
+					atfl_size as size
+		        from tb_co_atfl
+				where atfl_no = acdt_atfl_no limit 1) as acdt_atfl_size_vl
+			,acdt_atfl_no
+			,(select 
+					atfl_no as no
+		        from tb_co_atfl
+				where atfl_no = acdt_atfl_no limit 1) as acdt_atfl_no
+		from tb_sh_acdt_atfl
+		where acdt_id = #{acdt_id}
+			and acdt_atfl_tp_cd = 'F2'
+		order by acdt_atfl_item_cd
+	</select>
+	  
+	<!-- 사고발생현장사진 조회 -->
+	<select id="selectAcdtOccurAtfl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtOccurAtfl */
+		select a.acdt_id
+			  ,a.acdt_atfl_tp_cd	/* 유형 */
+			  ,a.acdt_atfl_item_cd as cd	/* 항목 */
+			  ,fn_get_cd('SH00000073', acdt_atfl_item_cd, 'nm', #{SESS_LANG}) as cd_nm
+			  ,fn_get_cd('SH00000073', acdt_atfl_item_cd, 'B1', #{SESS_LANG}) as cd_buf_1st_cntn	<!-- 버퍼1(구분) -->
+			  ,(select atfl_nm as nm
+				  from tb_co_atfl 
+				 where atfl_no = acdt_atfl_no limit 1) as acdt_atfl_nm
+			  ,(select atfl_size as size
+			      from tb_co_atfl
+				 where atfl_no = acdt_atfl_no limit 1) as acdt_atfl_size_vl
+			  ,acdt_atfl_no	/* 첨부사진파일 번호 */	
+			  ,(select atfl_no as no
+			      from tb_co_atfl
+				 where atfl_no = acdt_atfl_no limit 1) as acdt_atfl_no
+		  from tb_sh_acdt_atfl a
+		  left join tb_co_atfl b
+			on a.acdt_atfl_no = b.atfl_no
+		 where a.acdt_id = #{acdt_id}
+		   and a.acdt_atfl_tp_cd = 'F3'
+		   and a.acdt_atfl_item_cd = '01'
+		 order by a.acdt_atfl_item_cd
+	</select>
+	
+	<!-- 사고재현사진 조회 -->
+	<select id="selectAcdtReenactAtfl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtReenactAtfl */
+		select a.acdt_id
+			  ,a.acdt_atfl_tp_cd	/* 유형 */
+			  ,a.acdt_atfl_item_cd as cd	/* 항목 */
+			  ,fn_get_cd('SH00000073', acdt_atfl_item_cd, 'nm', #{SESS_LANG}) as cd_nm
+			  ,fn_get_cd('SH00000073', acdt_atfl_item_cd, 'B1', #{SESS_LANG}) as cd_buf_1st_cntn	<!-- 버퍼1(구분) -->
+			  ,(select atfl_nm as nm
+				  from tb_co_atfl 
+				 where atfl_no = acdt_atfl_no limit 1) as acdt_atfl_nm
+			  ,(select atfl_size as size
+			      from tb_co_atfl
+				 where atfl_no = acdt_atfl_no limit 1) as acdt_atfl_size_vl
+			  ,acdt_atfl_no	/* 첨부사진파일 번호 */	
+			  ,(select atfl_no as no
+			      from tb_co_atfl
+				 where atfl_no = acdt_atfl_no limit 1) as acdt_atfl_no
+		  from tb_sh_acdt_atfl a
+		  left join tb_co_atfl b
+			on a.acdt_atfl_no = b.atfl_no
+		 where a.acdt_id = #{acdt_id}
+		   and a.acdt_atfl_tp_cd = 'F3'
+		   and a.acdt_atfl_item_cd = '02'
+		 order by a.acdt_atfl_item_cd
+	</select>
+	
+	<insert id="insertAcdtMgnt" parameterType="sqlMap">
+		<selectKey keyProperty="acdt_id" resultType="String" order="BEFORE">
+        	select to_char(now(), 'ATYYMMDD') || to_char(substring(coalesce(MAX(acdt_id), to_char(now(), 'ATYYMMDD0000')), 9, 4)::INTEGER + 1, 'FM0000') acdt_id
+			from tb_sh_acdt 
+			where acdt_id like to_char(now(), 'ATYYMMDD') || '%'
+    	</selectKey>
+    	
+      	/* insertAcdtMgnt */
+      	insert into tb_sh_acdt (
+			acdt_id
+			,wkpl_id
+			,acdt_cl_cd
+			,acdt_dtl_cl_cd
+			,acdt_tp_cd	<!-- 사고유형  -->
+			,acdt_caus_tgt_cd	<!-- 사고기인물 코드  -->
+			,acdt_caus_tgt_txt	<!-- 사고기인물 상세내용  -->
+			,acdt_wkpl_loc_id
+			,acdt_dtl_loc_nm
+			,acdt_occr_org_cd
+			,kor_acdt_occr_org_nm
+			,engl_acdt_occr_org_nm
+			,acdt_occr_tsp	/* 사고발생시각 */
+			,acdt_brie_stp_cd
+			,acdt_prst_cd
+			,acdt_brie_aprv_no
+			,acdt_occr_hm		<!-- 사고발생시분  -->
+			,acdt_accp_hm		<!-- 사고접수시분  -->
+			,acdt_bgng_rpos_hm	<!-- 초기대응시분  -->
+			,acdt_af_actn_hm	<!-- 사후조치시분  -->
+			,acdt_occr_txt  <!-- 사고발생내용 -->
+			,acdt_accp_txt  <!-- 사고접수내용 -->
+			,acdt_bgng_rpos_txt  <!-- 초기대응내용 -->
+			,acdt_af_actn_txt  <!-- 사후조치내용 -->
+			,acdt_occr_caus_txt  <!-- 사고발생원인내용 -->
+			,acdt_dept_prvt_meas_txt  <!-- 사고부서예방대책내용 -->
+			,sft_dept_prvt_meas_txt	<!-- 안전부서예방대책내용 -->
+			,acdt_brie_reg_dt
+			,ivst_rprt_reg_dt
+			,btrm_rslt_reg_dt
+			,acdt_brie_atfl_no
+			,acdt_ivst_atfl_no
+			,btrm_rslt_atfl_no
+			,inac_yn
+			,del_yn
+			,bsns_rel_acdt_yn
+			,inac_ivst_sbms_tgt_yn
+		    ,crt_usr_id
+			,upt_usr_id
+			,temp_save_yn	/* 임시저장여부 */
+			,temp_save_dttm	/* 임시저장일시 */			
+		) values (
+			#{acdt_id}
+			,#{wkpl_id}
+			,#{acdt_cl_cd}
+			,#{acdt_dtl_cl_cd}
+			,#{acdt_tp_cd}
+			,#{acdt_caus_tgt_cd}
+			,#{acdt_caus_tgt_txt}
+			,#{acdt_wkpl_loc_id}
+			,#{acdt_dtl_loc_nm}
+			,#{acdt_occr_org_cd}
+			,#{kor_acdt_occr_org_nm}
+			,#{engl_acdt_occr_org_nm}			
+			,to_timestamp(#{acdt_occr_dt} || #{acdt_occr_hour} || ':' || #{acdt_occr_minute}, 'YYYY-MM-DDHH24:MI')	/* 사고발생시각 */	
+			,#{acdt_brie_stp_cd}
+			,#{acdt_prst_cd}
+			,#{acdt_brie_aprv_no}
+			,#{occrhour} || #{occrminute}	<!-- 사고발생시분  -->
+			,#{accphour} || #{accpminute}	<!-- 사고접수시분  -->
+			,#{bgng_rposhour} || #{bgng_rposminute}	<!-- 초기대응시분  -->
+			,#{af_actnhour} || #{af_actnminute}	<!-- 사후조치시분  -->
+			,#{acdt_occr_txt}
+			,#{acdt_accp_txt}
+			,#{acdt_bgng_rpos_txt}
+			,#{acdt_af_actn_txt}
+			,#{acdt_occr_caus_txt}
+			,#{acdt_dept_prvt_meas_txt}
+			,#{sft_dept_prvt_meas_txt}
+		    ,replace(#{acdt_brie_reg_dt}, '-', '')
+		    ,replace(#{ivst_rprt_reg_dt}, '-', '')
+		    ,replace(#{btrm_rslt_reg_dt}, '-', '')
+			,#{acdt_brie_atfl_no}::INTEGER
+			,#{acdt_ivst_atfl_no}::INTEGER
+			,#{btrm_rslt_atfl_no}::INTEGER
+			,#{inac_yn}
+			,'N'
+			,#{bsns_rel_acdt_yn}
+			,#{inac_ivst_sbms_tgt_yn}
+		    ,#{SESS_USR_ID}
+			,#{SESS_USR_ID}
+			,#{temp_save_yn}
+			,statement_timestamp()
+		)
+    </insert>
+    
+    <insert id="insertAcdtOprn" parameterType="sqlMap">
+      	/* insertAcdtOprn */
+      	insert into tb_sh_acdt_oprn_txt (
+			acdt_id
+			,acdt_oprn_txt_cl_cd
+			,wkpl_id
+			,oprn_txt_chc_yn
+			,crt_usr_id
+			,upt_usr_id
+		) values (
+			#{acdt_id}
+			,#{acdt_oprn_txt_cl_cd}
+			,#{wkpl_id}
+			,#{oprn_txt_chc_yn}
+		    ,#{SESS_USR_ID}
+			,#{SESS_USR_ID}
+		)
+    </insert>
+    
+    <insert id="insertAcdtUsftTxt" parameterType="sqlMap">
+      	/* insertAcdtUsftTxt */
+      	insert into tb_sh_acdt_usft_txt (
+			acdt_id
+			,usft_txt_cl_cd
+			,wkpl_id
+			,usft_txt_chc_yn
+		    ,crt_usr_id
+			,upt_usr_id
+		) values (
+			#{acdt_id}
+			,#{usft_txt_cl_cd}
+			,#{wkpl_id}
+			,#{usft_txt_chc_yn}
+		    ,#{SESS_USR_ID}
+			,#{SESS_USR_ID}
+		)
+    </insert>
+    
+    <insert id="insertAcdtUsftSt" parameterType="sqlMap">
+      	/* insertAcdtUsftSt */
+      	insert into tb_sh_acdt_usft_st (
+			acdt_id
+			,usft_st_cd
+			,wkpl_id
+			,usft_txt_chc_yn
+		    ,crt_usr_id
+			,upt_usr_id
+		) values (
+			#{acdt_id}
+			,#{usft_st_cd}
+			,#{wkpl_id}
+			,#{usft_txt_chc_yn}
+		    ,#{SESS_USR_ID}
+			,#{SESS_USR_ID}
+		)
+    </insert>
+    
+    <insert id="insertAcdtDfdt" parameterType="sqlMap">
+      	/* insertAcdtDfdt */
+      	insert into tb_sh_acdt_dfdt (
+			acdt_id
+			,dfdt_sn
+			,wkpl_id
+			,dfdt_cl_cd
+			,dfdt_dept_nm
+			,dfdt_nm
+			,dfdt_pric_id
+			,dfdt_age
+			,disa_cl_cd 
+			,smkd_bsns_crr_txt
+			,dfdt_note_txt
+			,inac_yn
+			,dfdt_disa_prts_nm
+			,dfdt_hspz_yn
+			,dfdt_care_days
+			,dfdt_dgns_rslt_txt
+			,dfdt_sex_cd
+		    ,crt_usr_id
+			,upt_usr_id
+		) values (
+		    #{acdt_id}
+			,#{dfdt_sn}::INTEGER
+			,#{wkpl_id}
+			,#{dfdt_cl_cd}
+			,#{dfdt_dept_nm}
+			,#{dfdt_nm}
+			,#{dfdt_pric_id}
+			,case when #{dfdt_age}::text  = '' then null 
+							   			    	else #{dfdt_age}::numeric 
+					    	 		    end
+			,#{disa_cl_cd}
+			,#{smkd_bsns_crr_txt}
+			,#{dfdt_note_txt}
+			,#{inac_yn}
+			,#{dfdt_disa_prts_nm}
+			,#{dfdt_hspz_yn}
+			,case when #{dfdt_care_days}::text  = '' then null 
+							   			    	else #{dfdt_care_days}::numeric 
+					    	 		    end
+			,#{dfdt_dgns_rslt_txt}
+			,#{dfdt_sex_cd}
+		    ,#{SESS_USR_ID}
+			,#{SESS_USR_ID}
+		)
+    </insert>
+    
+    <insert id="insertAcdtIvstRslt" parameterType="sqlMap">
+      	/* insertAcdtIvstRslt */
+      	insert into tb_sh_acdt_ivst_rslt (
+			acdt_id
+			,acdt_ivst_sn
+			,wkpl_id
+			,acdt_ivst_cl_cd
+			,acdt_ivst_cat_cd
+			,acdt_caus_anl_txt_cd
+		    ,crt_usr_id
+			,upt_usr_id
+		) values (
+			#{acdt_id}
+			,#{acdt_ivst_sn}::INTEGER
+			,#{wkpl_id}
+			,#{acdt_ivst_cl_cd}
+			,#{acdt_ivst_cat_cd}
+			,#{acdt_caus_anl_txt_cd}
+		    ,#{SESS_USR_ID}
+			,#{SESS_USR_ID}
+		)
+    </insert>
+    
+    <insert id="insertAcdtActnPlan" parameterType="sqlMap">
+      	/* insertAcdtActnPlan */
+      	insert into tb_sh_acdt_actn_plan (
+			acdt_id
+			,acdt_actn_plan_sn
+			,wkpl_id
+			,acdt_actn_cl_cd
+			,acdt_actn_plan_txt
+			,acdt_actn_tmlm_dt
+			,acdt_actn_txt
+			,acdt_acco_dt
+			,acdt_actn_rslt_atfl_no
+			,acdt_actn_usr_id
+			,crt_usr_id
+			,upt_usr_id
+		) values (
+			#{acdt_id}
+			,#{acdt_actn_plan_sn}::INTEGER
+			,#{wkpl_id}
+			,#{acdt_actn_cl_cd}
+			,#{acdt_actn_plan_txt}
+		    ,replace(#{acdt_actn_tmlm_dt}, '-', '')
+			,#{acdt_actn_txt}
+		    ,replace(#{acdt_acco_dt}, '-', '')
+			,#{acdt_actn_rslt_atfl_no}::INTEGER
+			,#{acdt_actn_usr_id}
+		    ,#{SESS_USR_ID}
+			,#{SESS_USR_ID}
+		)
+    </insert>
+    
+    <update id="updateAcdtActnPlan" parameterType="sqlMap">
+      	/* updateAcdtActnPlan */
+      	update tb_sh_acdt_actn_plan
+      	   set acdt_actn_txt = #{acdt_actn_txt}
+			  ,acdt_acco_dt = replace(#{acdt_acco_dt}, '-', '')
+			  ,acdt_actn_rslt_atfl_no = #{acdt_actn_rslt_atfl_no}::INTEGER
+			  <!-- ,acdt_actn_usr_id = #{acdt_actn_usr_id} -->
+			  ,upt_usr_id = #{SESS_USR_ID}
+      	 where acdt_id = #{acdt_id}
+      	   and acdt_actn_plan_sn = #{acdt_actn_plan_sn}::INTEGER
+    </update>
+    
+    <insert id="insertAcdtAtfl1" parameterType="sqlMap">
+      	/* insertAcdtAtfl1 */
+      	insert into tb_sh_acdt_atfl (
+			acdt_id
+			,acdt_atfl_tp_cd
+			,acdt_atfl_item_cd
+			,acdt_atfl_nm
+			,acdt_atfl_size_vl
+			,acdt_atfl_no
+		    ,crt_usr_id
+			,upt_usr_id
+		) values (
+			#{acdt_id}
+			,'F1'
+			,#{acdt_atfl_item_cd}
+			,#{acdt_atfl_nm}
+			,#{acdt_atfl_size_vl}::INTEGER
+			,#{acdt_atfl_no}::INTEGER
+		    ,#{SESS_USR_ID}
+			,#{SESS_USR_ID}
+		)
+    </insert>
+    
+    <insert id="insertAcdtAtfl2" parameterType="sqlMap">
+      	/* insertAcdtAtfl2 */
+      	insert into tb_sh_acdt_atfl (
+			acdt_id
+			,acdt_atfl_tp_cd
+			,acdt_atfl_item_cd
+			,acdt_atfl_nm
+			,acdt_atfl_size_vl
+			,acdt_atfl_no
+		    ,crt_usr_id
+			,upt_usr_id
+		) values (
+			#{acdt_id}
+			,'F2'
+			,#{acdt_atfl_item_cd}
+			,#{acdt_atfl_nm}
+			,#{acdt_atfl_size_vl}::INTEGER
+			,#{acdt_atfl_no}::INTEGER
+		    ,#{SESS_USR_ID}
+			,#{SESS_USR_ID}
+		)
+    </insert>
+    
+    <!-- 사고발생현장사진/사고재현사진 등록 -->
+    <insert id="insertAcdtPhtscOrRppht" parameterType="sqlMap">
+      	/* insertAcdtPhtscOrRppht */
+      	insert into tb_sh_acdt_atfl (
+			acdt_id
+			,acdt_atfl_tp_cd
+			,acdt_atfl_item_cd	<!-- SHE시스템사고첨부파일항목코드 -->
+			,acdt_atfl_nm
+			,acdt_atfl_size_vl
+			,acdt_atfl_no
+		    ,crt_usr_id
+			,upt_usr_id
+		) values (
+			#{acdt_id}
+			,'F3'
+			,#{acdt_atfl_item_cd}
+			,#{acdt_atfl_nm}
+			,#{acdt_atfl_size_vl}::INTEGER
+			,#{acdt_atfl_no}::INTEGER
+		    ,#{SESS_USR_ID}
+			,#{SESS_USR_ID}
+		)
+    </insert>       
+       
+    <update id="updateAcdtMgnt" parameterType="sqlMap">
+        /* updateAcdtMgnt */
+        update tb_sh_acdt set
+			wkpl_id					= #{wkpl_id}
+			,acdt_cl_cd				= #{acdt_cl_cd}
+			,acdt_dtl_cl_cd			= #{acdt_dtl_cl_cd}	
+			,acdt_tp_cd			    = #{acdt_tp_cd}	/* 사고유형  */
+			,acdt_caus_tgt_cd		= #{acdt_caus_tgt_cd}	/* 사고기인물 코드  */
+			,acdt_caus_tgt_txt			= #{acdt_caus_tgt_txt}	/* 사고기인물 상세내용  */	
+			,acdt_wkpl_loc_id		= #{acdt_wkpl_loc_id}
+			,acdt_dtl_loc_nm			= #{acdt_dtl_loc_nm}
+			,acdt_occr_org_cd			= #{acdt_occr_org_cd}
+			,kor_acdt_occr_org_nm		= #{kor_acdt_occr_org_nm}
+			,engl_acdt_occr_org_nm		= #{engl_acdt_occr_org_nm}
+			,acdt_occr_tsp				= to_timestamp(#{acdt_occr_dt} || #{acdt_occr_hour} || ':' || #{acdt_occr_minute}, 'YYYY-MM-DDHH24:MI')	/* 사고발생시각 */
+			,acdt_brie_stp_cd		= #{acdt_brie_stp_cd}
+			,acdt_prst_cd			= #{acdt_prst_cd}
+			,acdt_brie_aprv_no		= #{acdt_brie_aprv_no}
+			,acdt_occr_hm				= #{occrhour} || #{occrminute}	/* 사고발생시분  */
+			,acdt_accp_hm				= #{accphour} || #{accpminute}  /* 사고접수시분  */
+			,acdt_bgng_rpos_hm			= #{bgng_rposhour} || #{bgng_rposminute}  /* 초기대응시분 */
+			,acdt_af_actn_hm			= #{af_actnhour} || #{af_actnminute}  /* 사후조치시분  */
+			,acdt_occr_txt				= #{acdt_occr_txt}				/* 사고발생내용 */
+			,acdt_accp_txt				= #{acdt_accp_txt}				/* 사고접수내용 */
+			,acdt_bgng_rpos_txt			= #{acdt_bgng_rpos_txt}			/* 초기대응내용 */
+			,acdt_af_actn_txt			= #{acdt_af_actn_txt}			/* 사후조치내용 */	
+			,acdt_occr_caus_txt			= #{acdt_occr_caus_txt}			/* 사고발생원인내용 */
+			,acdt_dept_prvt_meas_txt	= #{acdt_dept_prvt_meas_txt}	/* 사고부서예방대책내용 */
+			,sft_dept_prvt_meas_txt		= #{sft_dept_prvt_meas_txt}		/* 안전부서예방대책내용 */
+			,acdt_brie_reg_dt			= replace(#{acdt_brie_reg_dt}, '-', '')
+			,ivst_rprt_reg_dt			= replace(#{ivst_rprt_reg_dt}, '-', '')
+			,btrm_rslt_reg_dt			= replace(#{btrm_rslt_reg_dt}, '-', '')
+			,acdt_brie_atfl_no		= #{acdt_brie_atfl_no}::INTEGER
+			,acdt_ivst_atfl_no		= #{acdt_ivst_atfl_no}::INTEGER
+			,btrm_rslt_atfl_no		= #{btrm_rslt_atfl_no}::INTEGER
+			,inac_yn					= #{inac_yn}
+			,bsns_rel_acdt_yn			= #{bsns_rel_acdt_yn}
+			,inac_ivst_sbms_tgt_yn		= #{inac_ivst_sbms_tgt_yn}
+			,upt_usr_id					= #{SESS_USR_ID}
+			,upt_dt 					= statement_timestamp()
+			,temp_save_yn				= #{temp_save_yn}	/* 임시저장여부 */
+			,temp_save_dttm				= statement_timestamp()	/* 임시저장일시 */
+		where acdt_id = #{acdt_id}
+    </update>
+    
+    <!-- 사고이메일발송수정 -->
+    <update id="updateAcdtMailSendingStatus" parameterType="sqlMap">
+        /* updateAcdtMailSendingStatus */
+        update tb_sh_acdt set 
+	         acdt_news_eml_send_yn = 'Y'	/* 사고뉴스이메일발송여부 */
+	        ,upt_usr_id = #{SESS_USR_ID}	/* 최종변경ID */
+	        ,upt_dt = statement_timestamp()	/* 최종변경시각 */
+	        ,acdt_news_eml_send_dttm = statement_timestamp() /* 사고뉴스이메일발송일시 */ 
+	     where acdt_id = #{acdt_id} 
+    </update>
+    
+    <!-- 임시저장후 수정처리 -->
+    <update id="updateTempAcdtMgnt" parameterType="sqlMap">
+    	/* updateTempAcdtMgnt */
+        update tb_sh_acdt set
+			wkpl_id					= #{wkpl_id}
+			,acdt_cl_cd				= #{acdt_cl_cd}
+			,acdt_dtl_cl_cd			= #{acdt_dtl_cl_cd}	
+			,acdt_tp_cd			    = #{acdt_tp_cd}	<!-- 사고유형  -->
+			,acdt_caus_tgt_cd		= #{acdt_caus_tgt_cd}	<!-- 사고기인물 코드  -->
+			,acdt_caus_tgt_txt			= #{acdt_caus_tgt_txt}	<!-- 사고기인물 상세내용  -->	
+			,acdt_wkpl_loc_id		= #{acdt_wkpl_loc_id}
+			,acdt_dtl_loc_nm			= #{acdt_dtl_loc_nm}
+			,acdt_occr_org_cd			= #{acdt_occr_org_cd}
+			,kor_acdt_occr_org_nm		= #{kor_acdt_occr_org_nm}
+			,engl_acdt_occr_org_nm		= #{engl_acdt_occr_org_nm}
+			,acdt_occr_tsp				= to_timestamp(#{acdt_occr_dt} || #{acdt_occr_hm}, 'YYYY-MM-DDHH24:MI')
+			,acdt_brie_stp_cd		= #{acdt_brie_stp_cd}
+			,acdt_prst_cd			= #{acdt_prst_cd}
+			,acdt_brie_aprv_no		= #{acdt_brie_aprv_no}
+			,acdt_occr_hm				= #{occrhour} || #{occrminute}	<!-- 사고발생시분  -->
+			,acdt_accp_hm				= #{accphour} || #{accpminute}  <!-- 사고접수시분  -->
+			,acdt_bgng_rpos_hm			= #{bgng_rposhour} || #{bgng_rposminute}  <!-- 초기대응시분  -->
+			,acdt_af_actn_hm			= #{af_actnhour} || #{af_actnminute}  <!-- 사후조치시분  -->
+			,acdt_occr_txt				= #{acdt_occr_txt}				<!-- 사고발생내용 -->
+			,acdt_accp_txt				= #{acdt_accp_txt}				<!-- 사고접수내용 -->
+			,acdt_bgng_rpos_txt			= #{acdt_bgng_rpos_txt}			<!-- 초기대응내용 -->
+			,acdt_af_actn_txt			= #{acdt_af_actn_txt}			<!-- 사후조치내용 -->	
+			,acdt_occr_caus_txt			= #{acdt_occr_caus_txt}			<!-- 사고발생원인내용 -->
+			,acdt_dept_prvt_meas_txt	= #{acdt_dept_prvt_meas_txt}	<!-- 사고부서예방대책내용 -->
+			,sft_dept_prvt_meas_txt		= #{sft_dept_prvt_meas_txt}		<!-- 안전부서예방대책내용 -->
+			,acdt_brie_reg_dt			= replace(#{acdt_brie_reg_dt}, '-', '')
+			,ivst_rprt_reg_dt			= replace(#{ivst_rprt_reg_dt}, '-', '')
+			,btrm_rslt_reg_dt			= replace(#{btrm_rslt_reg_dt}, '-', '')
+			,acdt_brie_atfl_no		= #{acdt_brie_atfl_no}::INTEGER
+			,acdt_ivst_atfl_no		= #{acdt_ivst_atfl_no}::INTEGER
+			,btrm_rslt_atfl_no		= #{btrm_rslt_atfl_no}::INTEGER
+			,inac_yn					= #{inac_yn}
+			,bsns_rel_acdt_yn			= #{bsns_rel_acdt_yn}
+			,inac_ivst_sbms_tgt_yn		= #{inac_ivst_sbms_tgt_yn}
+			,upt_usr_id					= #{SESS_USR_ID}
+			,upt_dt 					= statement_timestamp()
+			,temp_save_yn				= 'Y' 	<!-- 임시저장여부 -->
+			,temp_save_dttm				= statement_timestamp()	<!-- 임시저장일시 --> 
+		where acdt_id = #{acdt_id}
+    </update>
+    
+    <update id="updateAppr" parameterType="sqlMap">
+        /* updateAppr */
+        update tb_sh_acdt set
+			acdt_brie_aprv_no = #{acdt_brie_aprv_no}
+			,upt_usr_id = #{SESS_USR_ID}
+			,upt_dt = statement_timestamp()
+		where acdt_id = #{acdt_id}
+    </update>
+    
+    <delete id="deleteAcdtOprn" parameterType="sqlMap">
+        /* deleteAcdtOprn */
+        delete from tb_sh_acdt_oprn_txt
+		where acdt_id = #{acdt_id}
+    </delete>
+    
+    <delete id="deleteAcdtUsftTxt" parameterType="sqlMap">
+        /* deleteAcdtUsftTxt */
+        delete from tb_sh_acdt_usft_txt
+		where acdt_id = #{acdt_id}
+    </delete>
+    
+    <delete id="deleteAcdtUsftSt" parameterType="sqlMap">
+        /* deleteAcdtUsftSt */
+        delete from tb_sh_acdt_usft_st
+		where acdt_id = #{acdt_id}
+    </delete>
+    
+    <delete id="deleteAcdtDfdt" parameterType="sqlMap">
+        /* deleteAcdtDfdt */
+        delete from tb_sh_acdt_dfdt
+		where acdt_id = #{acdt_id}
+    </delete>
+    
+    <delete id="deleteAcdtIvstRslt" parameterType="sqlMap">
+        /* deleteAcdtIvstRslt */
+        delete from tb_sh_acdt_ivst_rslt
+		where acdt_id = #{acdt_id}
+    </delete>
+    
+    <delete id="deleteAcdtActnPlan" parameterType="sqlMap">
+        /* deleteAcdtActnPlan */
+        delete from tb_sh_acdt_actn_plan
+		where acdt_id = #{acdt_id}
+    </delete>
+    
+	<delete id="deleteAcdtAtfl1" parameterType="sqlMap">
+        /* deleteAcdtAtfl1 */
+        delete from tb_sh_acdt_atfl
+		where acdt_id = #{acdt_id}
+			and acdt_atfl_tp_cd = 'F1'
+    </delete>
+    
+    <delete id="deleteAcdtAtfl2" parameterType="sqlMap">
+        /* deleteAcdtAtfl2 */
+        delete from tb_sh_acdt_atfl
+		where acdt_id = #{acdt_id}
+			and acdt_atfl_tp_cd = 'F2'
+    </delete>
+    
+    <!-- 사고발생현장사진/사고재현사진 -->
+    <delete id="deleteAcdtPhtscOrRppht" parameterType="sqlMap">
+        /* "deleteAcdtPhtscOrRppht" */
+        delete from tb_sh_acdt_atfl
+		 where acdt_id = #{acdt_id}
+		   and acdt_atfl_tp_cd = 'F3'
+    </delete>
+    
+	<delete id="deleteAcdtMgnt" parameterType="sqlMap">
+        /* deleteAcdtMgnt */
+        delete from tb_sh_acdt
+		where acdt_id = #{acdt_id}
+    </delete>
+	
+	<select id="selectAcdtMgntId" parameterType="sqlMap" resultType="string">
+		/* selectAcdtMgntId */
+        select to_char(now(), 'ATYYMMDD') || to_char(substring(coalesce(MAX(acdt_id), to_char(now(), 'ATYYMMDD0000')), 9, 4)::INTEGER + 1, 'FM0000') acdt_id
+		from tb_sh_acdt 
+		where acdt_id like to_char(now(), 'ATYYMMDD') || '%'
+	</select>
+	
+	<select id="selectAcdtMgntAprvDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtMgntAprvDtl */
+		select acdt_brie_aprv_no
+		      ,acdt_prst_cd
+		  from tb_sh_acdt
+		 where acdt_brie_aprv_no = #{acdt_brie_aprv_no}
+	</select>
+	
+	<update id="updateAcdtMgntAprvAf" parameterType="sqlMap">
+        /* updateAcdtMgntAprvAf */
+        update tb_sh_acdt
+		   set acdt_prst_cd = #{acdt_prst_cd}
+		      ,upt_dt = now()
+		 where acdt_brie_aprv_no = #{acdt_brie_aprv_no}
+    </update>
+    
+     <update id ="delAcdt" parameterType="sqlMap">
+    /* delAcdt */
+        update tb_sh_acdt
+		   set	del_yn = 'Y'
+				,upt_usr_id  = #{username}
+		      	,upt_dt = current_timestamp
+		 where acdt_id = #{acdt_id}
+    </update>
+    
+	<!-- 사고속보 메일 수신처 목록 조회 -->
+	<select id="selectAcdtRecvList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtRecvList */
+		select #{cmpy_cd} as cmpy_cd
+			  ,a.wkpl_id 
+	          ,a.acdt_cl_cd
+	  		  ,a.eml_rcv_tp_cd
+	  		  ,a.eml_rcv_sn
+	  		  ,a.eml_dstn_cl_cd
+	 	      ,a.eml_dstn_id
+		  from tb_sh_acdt_news_dstn a
+		 where a.wkpl_id = #{wkpl_id}
+	       and a.acdt_cl_cd = #{acdt_cl_cd}
+	</select>
+	
+    <!-- 사고속보 메일 부서 전체 조회 -->
+    <select id="selectDeptMental" parameterType="sqlMap" resultType="sqlMap">
+		/* selectDeptMental */
+		select
+			 usr_id
+			,dept_cd
+			,usr_ko_nm
+			,usr_email
+			,cmpy_cd
+		from
+			tb_co_user
+		where
+			usg_yn = 'Y'
+			and del_yn = 'N' 
+			and usr_email != '' 
+			and cmpy_cd = #{cmpy_cd} /* 회사코드 */  
+			and dept_cd = #{dept_cd}	/* 부서코드 */
+		order by usr_ko_nm	 
+	</select>
+    
+</mapper>

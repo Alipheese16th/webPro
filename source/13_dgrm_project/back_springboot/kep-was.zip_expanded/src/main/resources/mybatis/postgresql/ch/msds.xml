@@ -1,0 +1,1701 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.ch.msds.mapper.msdsMapper">
+
+	<select id="selectMsdsList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMsdsList */
+		select tcm.mtrl_clsf_cd
+		      ,fn_get_cd('CO00000017', tcm.mtrl_clsf_cd, 'nm', #{SESS_LANG}) as mtrl_clsf_nm
+		      ,fn_get_cd('CH00000006', tcm.macl_cd, 'nm', #{SESS_LANG}) as macl_nm
+		      ,(
+		      	select array_to_string(array_agg(fn_get_cd('CO00000006', tcms2.wkpl_id, 'nm', #{SESS_LANG})), ', ') 
+		      	from tb_co_mtrl_site tcms2
+		      	where tcm.mtrl_no = tcms2.mtrl_no
+		       ) as wkpl_nm
+		      ,tcm.mtrl_no 
+		      ,case when #{SESS_LANG} = 'KO' then tcm.mtrl_ko_nm 
+		            when #{SESS_LANG} = 'EN' then tcm.mtrl_en_nm 
+		            else tcm.mtrl_zh_nm end as mtrl_nm
+		      ,substring(tcmm.rev_da, 0, 5) || '-' || substring(tcmm.rev_da, 5, 2) || '-' || substring(tcmm.rev_da, 7, 2) as msds_last_rev_da
+		      ,tcmm.msds_ver
+		      ,ko_atfl_no
+		      ,en_atfl_no
+		      ,(select 
+					atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = ko_atfl_no limit 1) as ko_atfl_nm
+			  ,(select 
+				    atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = en_atfl_no limit 1) as en_atfl_nm
+		      ,(select 
+					atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = ko_atfl_no limit 1) as ko_atfl_key
+			  ,(select 
+				    atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = en_atfl_no limit 1) as en_atfl_key
+		      ,tcm.imp_yn
+		      ,tcm.sbms_tgt_yn
+		from tb_co_mtrl tcm 
+		join tb_ch_mtrl_msds tcmm 
+			on tcm.mtrl_no = tcmm.mtrl_no
+		where 1=1
+		  and tcm.rglt_chk_yn = 'Y'
+		  /* 테스트용 and tcmm.en_atfl_no in (select atfl_no from tb_co_atfl where ext_yn = 'Y') */
+		<if test='mtrl_clsf_cd != null and mtrl_clsf_cd != ""'>
+		  and tcm.mtrl_clsf_cd = #{mtrl_clsf_cd}
+		</if>
+		<if test='sbst_yn != null and sbst_yn != "" and sbst_yn == "Y"'>
+		  and exists (select 1 from tb_ch_mtrl_sbst tcms
+		  			  where 1=1
+		  			    and tcm.mtrl_no = tcms.mtrl_no 
+		  			    and tcms.sbst_type_cd = '30'
+		  			    and tcm.usg_yn = 'Y' 
+		  			    and tcm.del_yn = 'N' 
+		  			    and tcms.usg_yn = 'Y' 
+		  			    and tcms.del_yn = 'N')
+		</if>
+		<if test='sbst_yn != null and sbst_yn != "" and sbst_yn == "N"'>
+		  and exists (select 1 from tb_ch_mtrl_sbst tcms
+		  			  where 1=1 
+		  			    and tcm.mtrl_no = tcms.mtrl_no 
+		  			    and tcms.sbst_type_cd != '30'
+		  			    and tcm.usg_yn = 'Y' 
+		  			    and tcm.del_yn = 'N' 
+		  			    and tcms.usg_yn = 'Y' 
+		  			    and tcms.del_yn = 'N')
+		</if>
+		<if test='macl_cd != null and macl_cd != ""'>
+		  and tcm.macl_cd = #{macl_cd}
+		</if>
+		<if test='mtrl_no != null and mtrl_no != ""'>
+		  and tcm.mtrl_no like concat('%', trim(#{mtrl_no}), '%')
+		</if>
+		<if test='mtrl_nm != null and mtrl_nm != ""'>
+		<if test='SESS_LANG == "KO"'>
+		  and tcm.mtrl_ko_nm like concat('%', trim(#{mtrl_nm}), '%')
+		</if>
+		<if test='SESS_LANG == "EN"'>
+		  and tcm.mtrl_en_nm like concat('%', trim(#{mtrl_nm}), '%')
+		</if>
+		<if test='SESS_LANG == "ZH"'>
+		  and tcm.mtrl_zh_nm like concat('%', trim(#{mtrl_nm}), '%')
+		</if>
+		</if>
+		  and tcm.usg_yn = 'Y'
+		  and tcm.del_yn = 'N'
+		  and tcmm.del_yn = 'N'
+		  and exists (select 1 from tb_co_mtrl_site tcms 
+			where tcm.mtrl_no = tcms.mtrl_no 
+			  and tcms.del_yn = 'N'
+			<if test='wkpl_id != null and wkpl_id != ""'>
+			  and tcms.wkpl_id = #{wkpl_id}
+			</if>
+			)
+		  <if test='sbst_nm != null and sbst_nm != ""'>
+		  and exists (select 1 from tb_ch_mtrl_sbst tcmcs 
+			where tcm.mtrl_no = tcmcs.mtrl_no 
+			  and tcmcs.del_yn = 'N'
+			<if test='SESS_LANG == "KO"'>
+			  and (tcmcs.sbst_ko_nm like concat('%', #{sbst_nm}, '%') or tcmcs.cas_no like concat('%', #{sbst_nm}, '%'))
+			</if>
+			<if test='SESS_LANG == "EN"'>
+			  and (tcmcs.sbst_en_nm like concat('%', #{sbst_nm}, '%') or tcmcs.cas_no like concat('%', #{sbst_nm}, '%'))
+			</if>
+			<if test='SESS_LANG == "ZH"'>
+			  and (tcmcs.sbst_en_nm like concat('%', #{sbst_nm}, '%') or tcmcs.cas_no like concat('%', #{sbst_nm}, '%'))
+			</if>
+			)
+		  </if>
+		  <if test='(law_cd != null and law_cd != "") or (rglt_type_cd != null and rglt_type_cd != "")'>
+		  and exists (select 1 
+		                from tb_ch_mtrl_rglt tcmr
+			           where tcmr.mtrl_no = tcm.mtrl_no
+			             and tcmr.del_yn = 'N'
+			             and tcmr.rglt_obj_yn = 'Y'
+			<if test='law_cd != null and law_cd != ""'>
+			             and tcmr.law_cd = #{law_cd}
+			</if>
+			<if test='rglt_no != null and rglt_no != ""'>
+			             and tcmr.rglt_no = #{rglt_no}
+			</if>
+			)
+		  </if>
+		  order by tcm.mtrl_no asc
+	</select>
+	
+	<select id="selectMsdsSubmitList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMsdsList */
+		select tcm.mtrl_clsf_cd
+		      ,fn_get_cd('CO00000017', tcm.mtrl_clsf_cd, 'nm', #{SESS_LANG}) as mtrl_clsf_nm
+		      ,fn_get_cd('CH00000006', tcm.macl_cd, 'nm', #{SESS_LANG}) as macl_nm
+		      ,(
+		      	select array_to_string(array_agg(fn_get_cd('CO00000006', tcms2.wkpl_id, 'nm', #{SESS_LANG})), ', ') 
+		      	from tb_co_mtrl_site tcms2
+		      	where tcm.mtrl_no = tcms2.mtrl_no
+		       ) as wkpl_nm
+		      ,tcm.mtrl_no 
+		      ,case when #{SESS_LANG} = 'KO' then tcm.mtrl_ko_nm 
+		            when #{SESS_LANG} = 'EN' then tcm.mtrl_en_nm 
+		            else tcm.mtrl_zh_nm
+		        end as mtrl_nm
+		      ,tcm.imp_yn
+		      ,tcm.sbms_tgt_yn
+		      ,tcmm.submit_msds_no
+		      ,tcmm.submit_stt_cd
+		      ,fn_get_cd('CH00000031', coalesce(tcmm.submit_stt_cd, 'S'), 'nm', #{SESS_LANG}) as submit_status_nm
+		      ,coalesce(tcmm.submit_reg_usr_id, (case when tcm.rglt_chk_wkpl_id = 'S04' then 'AP35005489' else 'AP35018627' end)) as submit_reg_usr_id
+              ,fn_get_user(coalesce(tcmm.submit_reg_usr_id, (case when tcm.rglt_chk_wkpl_id = 'S04' then 'AP35005489' else 'AP35018627' end)), 'nm', #{SESS_LANG}) as submit_reg_usr_nm
+		from tb_co_mtrl tcm 
+		join tb_ch_mtrl_msds tcmm 
+			on tcm.mtrl_no = tcmm.mtrl_no
+		where 1=1
+		  and tcm.rglt_chk_yn = 'Y'
+		<if test='mtrl_clsf_cd != null and mtrl_clsf_cd != ""'>
+		  and tcm.mtrl_clsf_cd = #{mtrl_clsf_cd}
+		</if>
+		<if test='macl_cd != null and macl_cd != ""'>
+		  and tcm.macl_cd = #{macl_cd}
+		</if>
+		<if test='mtrl_no != null and mtrl_no != ""'>
+		  and tcm.mtrl_no like concat('%', trim(#{mtrl_no}), '%')
+		</if>
+		<if test='mtrl_nm != null and mtrl_nm != ""'>
+		<if test='SESS_LANG == "KO"'>
+		  and tcm.mtrl_ko_nm like concat('%', trim(#{mtrl_nm}), '%')
+		</if>
+		<if test='SESS_LANG == "EN"'>
+		  and tcm.mtrl_en_nm like concat('%', trim(#{mtrl_nm}), '%')
+		</if>
+		<if test='SESS_LANG == "ZH"'>
+		  and tcm.mtrl_zh_nm like concat('%', trim(#{mtrl_nm}), '%')
+		</if>
+		</if>
+		  and tcm.usg_yn = 'Y'
+		  and tcm.del_yn = 'N'
+		  and tcmm.del_yn = 'N'
+		  and tcm.imp_yn = 'Y'
+		  and tcm.sbms_tgt_yn = 'Y'
+		<if test='submit_stt_cd != null and submit_stt_cd != ""'>
+		  and coalesce(tcmm.submit_stt_cd, 'S') = #{submit_stt_cd}
+		</if>
+		  order by tcm.mtrl_no asc
+	</select>
+	
+	<select id="selectMsdsHstList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMsdsHstList */
+		select tcmr.msds_rev_no
+		      ,tcm.mtrl_clsf_cd
+		      ,fn_get_cd('CH00000005', tcm.mtrl_clsf_cd, 'nm', #{SESS_LANG}) as mtrl_clsf_nm
+		      ,fn_get_cd('CH00000006', tcm.macl_cd, 'nm', #{SESS_LANG}) as macl_nm
+		      ,(
+		      	select array_to_string(array_agg(fn_get_cd('CO00000006', tcms2.wkpl_id, 'nm', #{SESS_LANG})), ', ') 
+		      	from tb_co_mtrl_site tcms2
+		      	where tcm.mtrl_no = tcms2.mtrl_no
+		       ) as wkpl_nm
+			  ,tcm.mtrl_no 
+		      ,case when #{SESS_LANG} = 'KO' then tcm.mtrl_ko_nm 
+		            when #{SESS_LANG} = 'EN' then tcm.mtrl_en_nm 
+		            else tcm.mtrl_zh_nm end as mtrl_nm
+		      ,substring(tcmm.rev_da, 0, 5) || '-' || substring(tcmm.rev_da, 5, 2) || '-' || substring(tcmm.rev_da, 7, 2) as msds_last_rev_da
+			  ,tcmr.rev_af_ver 
+			  ,tcmr.rev_af_ko_atfl_no as ko_atfl_no
+			  ,tcmr.rev_af_en_atfl_no as en_atfl_no
+			  ,(select 
+					atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = rev_af_ko_atfl_no limit 1) as ko_atfl_nm
+			  ,(select 
+				    atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = rev_af_en_atfl_no limit 1) as en_atfl_nm
+		      ,(select 
+					atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = rev_af_ko_atfl_no limit 1) as ko_atfl_key
+			  ,(select 
+				    atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = rev_af_en_atfl_no limit 1) as en_atfl_key
+		      ,tcm.imp_yn
+		      ,tcm.sbms_tgt_yn
+		from tb_ch_msds_rev tcmr 
+		left join tb_co_mtrl tcm 
+		  on tcmr.mtrl_no = tcm.mtrl_no 
+		join tb_ch_mtrl_msds tcmm 
+		  on tcm.mtrl_no = tcmm.mtrl_no
+		where tcmr.rev_prog_stt_cd = '50'
+		  and tcmr.chk_req_clsf_cd = '2'
+		  and tcm.rglt_chk_yn = 'Y'
+		  <if test='mtrl_clsf_cd != null and mtrl_clsf_cd != ""'>
+		  	and tcm.mtrl_clsf_cd = #{mtrl_clsf_cd}
+		  </if>
+		  <if test='macl_cd != null and macl_cd != ""'>
+		    and tcm.macl_cd = #{macl_cd}
+		  </if>
+		  <if test='mtrl_no != null and mtrl_no != ""'>
+		    and tcm.mtrl_no like concat('%', #{mtrl_no}, '%')
+		  </if>
+		  <if test='mtrl_nm != null and mtrl_nm != ""'>
+		  <if test='SESS_LANG == "KO"'>
+		    and tcm.mtrl_ko_nm like concat('%', #{mtrl_nm}, '%')
+		  </if>
+		  <if test='SESS_LANG == "EN"'>
+		    and tcm.mtrl_en_nm like concat('%', #{mtrl_nm}, '%')
+		  </if>
+		  <if test='SESS_LANG == "ZH"'>
+		    and tcm.mtrl_zh_nm like concat('%', #{mtrl_nm}, '%')
+		  </if>
+		  </if>
+		    and tcm.usg_yn = 'Y'
+		    and tcm.del_yn = 'N'
+		    and tcmm.del_yn = 'N'
+		    and exists (select 1 from tb_co_mtrl_site tcms 
+			  where tcm.mtrl_no = tcms.mtrl_no 
+			    and tcms.del_yn = 'N'
+			  <if test='wkpl_id != null and wkpl_id != ""'>
+			    and tcms.wkpl_id = #{wkpl_id}
+			  </if>
+			  )
+			<if test='sbst_nm != null and sbst_nm != ""'>
+		    and exists (select 1 from tb_ch_mtrl_sbst tcmcs 
+			  where tcm.mtrl_no = tcmcs.mtrl_no 
+			    and tcmcs.del_yn = 'N'
+			  <if test='SESS_LANG == "KO"'>
+			    and (tcmcs.sbst_ko_nm like concat('%', #{sbst_nm}, '%') or tcmcs.cas_no like concat('%', #{sbst_nm}, '%'))
+			  </if>
+			  <if test='SESS_LANG == "EN"'>
+			    and (tcmcs.sbst_en_nm like concat('%', #{sbst_nm}, '%') or tcmcs.cas_no like concat('%', #{sbst_nm}, '%'))
+			  </if>
+			  <if test='SESS_LANG == "ZH"'>
+			    and (tcmcs.sbst_en_nm like concat('%', #{sbst_nm}, '%') or tcmcs.cas_no like concat('%', #{sbst_nm}, '%'))
+			  </if>
+			  )
+			</if>
+			<if test='(law_cd != null and law_cd != "") or (rglt_type_cd != null and rglt_type_cd != "")'>
+			and exists (select 1 
+			              from tb_ch_mtrl_rglt tcmr
+				         where tcmr.mtrl_no = tcm.mtrl_no
+				           and tcmr.del_yn = 'N'
+				           and tcmr.rglt_obj_yn = 'Y'
+				<if test='law_cd != null and law_cd != ""'>
+				           and tcmr.law_cd = #{law_cd}
+				</if>
+				<if test='rglt_no != null and rglt_no != ""'>
+				           and tcmr.rglt_no = #{rglt_no}
+				</if>
+				)
+			  </if>
+		    order by tcmr.msds_rev_no desc
+	</select>
+	
+	<select id="selectMsdsDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMsdsDtl */
+		select tcm.mtrl_no
+		      ,case when #{SESS_LANG} = 'KO' then mtrl_ko_nm 
+		            when #{SESS_LANG} = 'EN' then mtrl_en_nm 
+		            when #{SESS_LANG} = 'ZH' then mtrl_zh_nm 
+		       end as mtrl_nm
+		      ,tcmm.msds_ver
+		      ,(
+				select array_to_string(array_agg(fn_get_cd('CO00000006', tcms2.wkpl_id, 'nm', #{SESS_LANG})), ', ') 
+				from tb_co_mtrl_site tcms2
+				where tcm.mtrl_no = tcms2.mtrl_no
+			   ) as wkpl_nm
+		      ,substring(tcmm.rev_da, 0, 5) || '-' || substring(tcmm.rev_da, 5, 2) || '-' || substring(tcmm.rev_da, 7, 2) as rev_da
+		      ,tcmm.ko_atfl_no 
+		      ,tcmm.en_atfl_no 
+		      ,(select 
+					atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = tcmm.ko_atfl_no limit 1) as ko_atfl_nm
+			  ,(select 
+				    atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = tcmm.en_atfl_no limit 1) as en_atfl_nm
+		      ,(select 
+					atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = tcmm.ko_atfl_no limit 1) as ko_atfl_key
+			  ,(select 
+				    atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = tcmm.en_atfl_no limit 1) as en_atfl_key
+			  ,fn_get_cd('CH00000027', tcm.dngr_kind_cd, 'nm', #{SESS_LANG}) as dngr_kind_nm
+			  ,fn_get_cd('CH00000028', tcm.dngr_dtl_kind_cd, 'nm', #{SESS_LANG}) as dngr_dtl_kind_nm
+			  ,coalesce(tcm.impt_yn, 'N') as impt_yn
+		      ,tcm.imp_yn
+		      ,tcm.sbms_tgt_yn
+		      ,tcmm.submit_msds_no
+		      ,coalesce(tcmm.submit_stt_cd, 'S') as submit_stt_cd
+		      ,tcmm.submit_complete_cntn
+		      ,tcmm.submit_reject_cntn
+		from tb_co_mtrl tcm 
+		left join tb_ch_mtrl_msds tcmm 
+		  on tcm.mtrl_no = tcmm.mtrl_no 
+		where tcm.mtrl_no = #{mtrl_no}
+		  and tcm.usg_yn = 'Y'
+		  and tcm.del_yn = 'N'
+		  and tcmm.del_yn = 'N'
+	</select>
+	
+	<select id="selectMtrlDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMtrlDtl */
+		select fn_get_cd('CH00000004', tcmcs.sbst_type_cd, 'nm', #{SESS_LANG}) as sbst_type_cd
+		      ,tcmcs.cas_no 
+		      ,case when #{SESS_LANG} = 'KO' then tcmcs.sbst_ko_nm 
+		            when #{SESS_LANG} = 'EN' then tcmcs.sbst_en_nm  
+		       end as sbst_nm
+		      ,RTRIM(RTRIM(tcmcs.sbst_rati::text,'0'),'.') as sbst_rati
+		from tb_ch_mtrl_sbst tcmcs 
+		where tcmcs.mtrl_no = #{mtrl_no}
+		  and tcmcs.usg_yn = 'Y'
+		  and tcmcs.del_yn = 'N'
+		order by sbst_seq asc
+	</select>
+	
+	<select id="selectRgltDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectRgltDtl */
+		select fn_get_cd('CH00000002', tcr.rglt_chk_doma_cd, 'nm', #{SESS_LANG}) as rglt_chk_doma_cd
+		      ,fn_get_cd('CH00000003', tcr.law_cd, 'nm', #{SESS_LANG}) as law_cd 
+		      ,tcr.rglt_nm 
+    , tcr.rglt_obj_yn as chk
+    ,(
+        select
+            ARRAY_TO_STRING(ARRAY_AGG((case when #{SESS_LANG}='KO' then tcs.sbst_ko_nm else tcs.sbst_en_nm end || '(' || tcs.cas_no || ')')), ',')
+        from
+            tb_ch_mtrl_rglt_sbst tcmrss
+        join tb_ch_sbst tcs on
+            tcmrss.sbst_no = tcs.sbst_no
+        where
+            tcmrss.mtrl_no = tcr.mtrl_no
+            and tcmrss.rglt_no = tcr.rglt_no
+    ) as rglt_rsn
+    	 from tb_ch_mtrl_rglt tcr
+		where tcr.mtrl_no = #{mtrl_no}
+	</select>
+	
+	<select id="selectAlertDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAlertDtl */
+		select tcmg.sgw_cd
+			  ,fn_get_cd('CH00000009', tcmg.sgw_cd, 'nm', #{SESS_LANG}) as sgw_nm 
+			  ,tcmg.hars_cntn 
+			  ,tcmg.prv_cntn 
+			  ,tcmg.act_cntn 
+			  ,tcmg.str_cntn 
+			  ,tcmg.scr_cntn 
+			  ,tcv.vndr_no
+			  ,tcv.vndr_nm 
+			  ,tcv.vndr_phon_no 
+			  ,tcv.vndr_addr 
+			  ,tcv.nat_cd
+			  ,fn_get_cd('CO00000003', tcv.nat_cd, 'nm' ,#{SESS_LANG}) as nat_nm
+			  ,tcv.vndr_rprs_nm 
+			  ,tcv.vndr_coreg_no 
+			  ,tcv.vndr_email
+		from tb_ch_mtrl_gwsgn tcmg 
+		left outer join tb_co_vndr tcv 
+		on tcmg.vndr_no = tcv.vndr_no 
+		and tcv.usg_yn = 'Y' 
+		and tcv.del_yn = 'N'
+		where tcmg.mtrl_no = #{mtrl_no}
+		  and tcmg.del_yn = 'N'
+	</select>
+	
+	<select id="selectPicDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectPicDtl */
+		select tcmgp.picg_cd 
+		from tb_ch_mtrl_gwsgn_picg tcmgp 
+		where tcmgp.mtrl_no = #{mtrl_no}
+		  and del_yn = 'N'
+	</select>
+	
+	<select id="selectRevDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectRevDtl */
+		select case when tcmr.rev_af_last_rev_da is null then ''
+		            else substring(tcmr.rev_af_last_rev_da, 0, 5) || '-' || substring(tcmr.rev_af_last_rev_da, 5, 2) || '-' || substring(tcmr.rev_af_last_rev_da, 7, 2) 
+		            end as rev_da
+		      ,tcmr.rev_af_ver as msds_ver
+		      ,tcmr.rev_af_ko_atfl_no 
+		      ,tcmr.rev_af_en_atfl_no 
+		      ,(select 
+					atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_af_ko_atfl_no limit 1) as rev_af_ko_atfl_nm
+			  ,(select 
+				    atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_af_en_atfl_no limit 1) as rev_af_en_atfl_nm
+		      ,(select 
+					atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_af_ko_atfl_no limit 1) as rev_af_ko_atfl_key
+			  ,(select 
+				    atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_af_en_atfl_no limit 1) as rev_af_en_atfl_key
+		from tb_ch_msds_rev tcmr 
+		where tcmr.mtrl_no = #{mtrl_no}
+		  and tcmr.del_yn = 'N'
+		  and tcmr.chk_req_clsf_cd = '2'
+	</select>
+	
+	<select id="selectMsdsRevReqList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMsdsRevReqList */
+		select
+			   tcmr.msds_rev_no
+		      ,tcm.mtrl_clsf_cd
+		      ,fn_get_cd('CH00000005', tcm.mtrl_clsf_cd, 'nm', #{SESS_LANG}) as mtrl_clsf_nm
+		      ,fn_get_cd('CH00000006', tcm.macl_cd, 'nm', #{SESS_LANG}) as macl_nm
+		      ,(
+				select array_to_string(array_agg(fn_get_cd('CO00000006', tcms2.wkpl_id, 'nm', #{SESS_LANG})), ', ') 
+				from tb_co_mtrl_site tcms2
+				where tcm.mtrl_no = tcms2.mtrl_no
+			   ) as wkpl_nm
+			  ,tcmr.mtrl_no 
+			  ,case when #{SESS_LANG} = 'KO' then tcm.mtrl_ko_nm 
+				    when #{SESS_LANG} = 'EN' then tcm.mtrl_en_nm 
+				    else tcm.mtrl_zh_nm end as mtrl_nm
+		      ,case when tcmr.req_da is null then ''
+		            else substring(tcmr.req_da, 0, 5) || '-' || substring(tcmr.req_da, 5, 2) || '-' || substring(tcmr.req_da, 7, 2) 
+		            end as req_da
+		      ,case when #{SESS_LANG} = 'KO' then tce.usr_ko_nm 
+				    when #{SESS_LANG} = 'EN' then tce.usr_en_nm 
+				    else tce.usr_zh_nm end as usr_nm
+		      ,fn_get_cd('CH00000010', tcmr.rev_prog_stt_cd, 'nm', #{SESS_LANG}) as rev_prog_stt_nm
+		      ,tcm.imp_yn
+		      ,tcm.sbms_tgt_yn
+		from tb_ch_msds_rev tcmr
+		left join tb_co_mtrl tcm
+		on tcmr.mtrl_no = tcm.mtrl_no
+		left outer join tb_co_user tce
+		on tcmr.req_usr_id = tce.usr_id 
+		where 1=1
+		  and tcmr.chk_req_clsf_cd = '1'
+		<if test='mtrl_clsf_cd != null and mtrl_clsf_cd != ""'>
+		  and tcm.mtrl_clsf_cd = #{mtrl_clsf_cd}
+		</if>
+		<if test='macl_cd != null and macl_cd != ""'>
+		  and tcm.macl_cd = #{macl_cd}
+		</if>
+		<if test='mtrl_no != null and mtrl_no != ""'>
+		  and tcm.mtrl_no like concat('%', #{mtrl_no}, '%')
+		</if>
+		<if test='mtrl_nm != null and mtrl_nm != ""'>
+		<if test='SESS_LANG == "KO"'>
+		  and tcm.mtrl_ko_nm like concat('%', #{mtrl_nm}, '%')
+		</if>
+		<if test='SESS_LANG == "EN"'>
+		  and tcm.mtrl_en_nm like concat('%', #{mtrl_nm}, '%')
+		</if>
+		<if test='SESS_LANG == "ZH"'>
+		  and tcm.mtrl_zh_nm like concat('%', #{mtrl_nm}, '%')
+		</if>
+		</if>
+		<if test='rev_prog_stt_cd != null and rev_prog_stt_cd != ""'>
+		  and tcmr.rev_prog_stt_cd = #{rev_prog_stt_cd}
+		</if>
+		<if test='req_usr_nm != null and req_usr_nm != ""'>
+		<if test='SESS_LANG == "KO"'>
+		  and tce.usr_ko_nm like concat('%', #{req_usr_nm}, '%')
+		</if>
+		<if test='SESS_LANG == "EN"'>
+		  and tce.usr_en_nm like concat('%', #{req_usr_nm}, '%')
+		</if>
+		<if test='SESS_LANG == "ZH"'>
+		  and tce.usr_zh_nm like concat('%', #{req_usr_nm}, '%')
+		</if>
+		</if>
+		<if test='sDate != null and sDate != "" and eDate != null and eDate != ""'>
+		<![CDATA[
+		and ((tcmr.req_da::timestamp >= #{sDate}::timestamp and tcmr.req_da::timestamp <= concat(#{eDate}, ' 23:59:59')::timestamp) or ((tcmr.req_da is null) and (substring(tcmr.upt_dt, 0, 9)::timestamp >= #{sDate}::timestamp and substring(tcmr.upt_dt, 0, 9)::timestamp <= concat(#{eDate}, ' 23:59:59')::timestamp)))
+		]]>
+		</if>
+		and tcm.usg_yn = 'Y'
+		and tcm.del_yn = 'N'
+		and tcmr.del_yn = 'N'
+		and exists (select 1 from tb_co_mtrl_site tcms 
+			where tcmr.mtrl_no = tcms.mtrl_no 
+			  and tcms.del_yn = 'N'
+			<if test='wkpl_id != null and wkpl_id != ""'>
+			  and tcms.wkpl_id = #{wkpl_id}
+			</if>
+			)
+		order by tcmr.msds_rev_no desc
+	</select>
+	
+	<select id="selectMsdsPopList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMsdsPopList */
+		select tcm.mtrl_no 
+		      ,case when #{SESS_LANG} = 'KO' then tcm.mtrl_ko_nm 
+		            when #{SESS_LANG} = 'EN' then tcm.mtrl_en_nm 
+		            else tcm.mtrl_zh_nm end as mtrl_nm
+		from tb_co_mtrl tcm
+		where 1=1
+		<if test='chkYnAll == "Y"'>
+		  and tcm.rglt_chk_yn = 'Y'
+		</if>
+		<if test='chkYnAll == "N"'>
+		  and tcm.rglt_chk_yn = 'N'
+		</if>
+		<if test='mtrl_no != null and mtrl_no != ""'>
+		  and tcm.mtrl_no like concat('%', #{mtrl_no}, '%')
+		</if>
+		<if test='mtrl_nm != null and mtrl_nm != ""'>
+		<if test='SESS_LANG == "KO"'>
+		  and tcm.mtrl_ko_nm like concat('%', #{mtrl_nm}, '%')
+		</if>
+		<if test='SESS_LANG == "EN"'>
+		  and tcm.mtrl_en_nm like concat('%', #{mtrl_nm}, '%')
+		</if>
+		<if test='SESS_LANG == "ZH"'>
+		  and tcm.mtrl_zh_nm like concat('%', #{mtrl_nm}, '%')
+		</if>
+		</if>
+		  and tcm.usg_yn = 'Y'
+		  and tcm.del_yn = 'N'
+	</select>
+	
+	<select id="selectMsdsPopScList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMsdsPopScList */
+		select vndr_no 
+		      ,vndr_nm 
+		      ,vndr_phon_no 
+		      ,vndr_addr 
+		      ,nat_cd
+		      ,vndr_rprs_nm 
+		      ,vndr_coreg_no 
+		      ,vndr_email
+		from tb_co_vndr tcv 
+		where 1=1
+		<if test='vndr_no != null and vndr_no != ""'>
+		  and vndr_no = #{vndr_no}
+		</if>
+		<if test='vndr_nm != null and vndr_nm != ""'>
+		  and vndr_nm like concat('%', #{vndr_nm}, '%')
+		</if>
+		<if test='vndr_type_cd != null and vndr_type_cd != ""'>
+		  and vndr_type_cd = #{vndr_type_cd}
+		</if>
+	</select>
+	
+	<select id="sltAlMtrlDt" parameterType="sqlMap" resultType="sqlMap">
+		/* sltAlMtrlDt */
+		select tcmr.mtrl_no 
+		from tb_ch_msds_rev tcmr
+		where 1=1
+		  and tcmr.del_yn = 'N'
+		  and tcmr.rev_prog_stt_cd != '50'
+		  and tcmr.mtrl_no = #{mtrl_no}
+	</select>
+	
+	<select id="selectMsdsRevDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMsdsRevDtl */
+		select distinct
+			   tcm.mtrl_no 
+		      ,case when #{SESS_LANG} = 'KO' then tcm.mtrl_ko_nm 
+		            when #{SESS_LANG} = 'EN' then tcm.mtrl_en_nm 
+		            else tcm.mtrl_zh_nm end as mtrl_nm
+		      ,tcmm.msds_ver as rev_bf_ver
+		      ,tcm.mtrl_clsf_cd
+		      ,tcmm.ko_atfl_no as rev_bf_ko_atfl_no
+		      ,tcmm.ko_atfl_no as rev_af_ko_atfl_no
+		      ,tcmm.en_atfl_no as rev_bf_en_atfl_no
+		      ,tcmm.ko_atfl_no as rev_af_ko_atfl_no
+		      ,(select 
+					atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = tcmm.ko_atfl_no limit 1) as rev_bf_ko_atfl_nm
+			  ,(select 
+					atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = tcmm.en_atfl_no limit 1) as rev_bf_en_atfl_nm
+			  ,(select 
+					atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = tcmm.ko_atfl_no limit 1) as rev_bf_ko_atfl_key
+			  ,(select 
+					atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = tcmm.en_atfl_no limit 1) as rev_bf_en_atfl_key
+		      ,case when length(tcmm.enact_da)=8 then to_char(tcmm.enact_da::timestamp, 'YYYY-MM-DD') else '' end as rev_bf_enact_da
+		      ,case when length(tcmm.rev_da)=8 then to_char(tcmm.rev_da::timestamp, 'YYYY-MM-DD') else '' end as rev_bf_last_rev_da
+		      ,tcm.imp_yn
+		      ,tcm.sbms_tgt_yn
+		from tb_co_mtrl tcm
+		join tb_ch_mtrl_msds tcmm 
+			on tcm.mtrl_no = tcmm.mtrl_no
+		where 1=1
+		  and tcm.rglt_chk_yn = 'Y'
+		  and tcmm.mtrl_no = #{mtrl_no}
+	</select>
+	
+	<select id="selectMsdsRevBfDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMsdsRevBfDtl */
+		select distinct 
+			   tcm.mtrl_no 
+			  ,case when #{SESS_LANG} = 'KO' then tcm.mtrl_ko_nm 
+		            when #{SESS_LANG} = 'EN' then tcm.mtrl_en_nm 
+		            else tcm.mtrl_zh_nm end as mtrl_nm 
+		      ,tcmr.rev_bf_ver 
+		      ,tcmr.rev_af_ver
+		      ,tcmr.rev_bf_ko_atfl_no
+		      ,tcmr.rev_af_ko_atfl_no
+		      ,tcmr.rev_bf_en_atfl_no
+		      ,tcmr.rev_af_en_atfl_no
+		      ,(select 
+					atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_bf_ko_atfl_no limit 1) as rev_bf_ko_atfl_nm
+			  ,(select 
+					atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_bf_en_atfl_no limit 1) as rev_bf_en_atfl_nm
+			  ,(select 
+					atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_bf_ko_atfl_no limit 1) as rev_bf_ko_atfl_key
+			  ,(select 
+					atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_bf_en_atfl_no limit 1) as rev_bf_en_atfl_key
+			  ,(select 
+					atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_af_ko_atfl_no limit 1) as rev_af_ko_atfl_nm
+			  ,(select 
+					atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_af_en_atfl_no limit 1) as rev_af_en_atfl_nm
+			  ,(select 
+					atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_af_ko_atfl_no limit 1) as rev_af_ko_atfl_key
+			  ,(select 
+					atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_af_en_atfl_no limit 1) as rev_af_en_atfl_key
+		      ,tcmr.msds_rev_no 
+		      ,case when tcmr.req_da is null then ''
+		            else substring(tcmr.req_da, 0, 5) || '-' || substring(tcmr.req_da, 5, 2) || '-' || substring(tcmr.req_da, 7, 2) 
+		            end as req_da
+		      ,tcm.mtrl_clsf_cd
+		      ,(
+		      	select case when #{SESS_LANG} = 'KO' then tcu.usr_ko_nm 
+						    when #{SESS_LANG} = 'EN' then tcu.usr_en_nm 
+						    else tcu.usr_zh_nm end as usr_nm 
+				from tb_co_user tcu 
+				where tcu.usr_id = tcmr.req_usr_id 
+		       ) as req_usr_nm 
+		      ,tcmr.rev_prog_stt_cd 
+		      ,(
+		      	select case when #{SESS_LANG} = 'KO' then tcu.usr_ko_nm 
+						    when #{SESS_LANG} = 'EN' then tcu.usr_en_nm 
+						    else tcu.usr_zh_nm end as usr_nm 
+				from tb_co_user tcu 
+				where tcu.usr_id = tcmr.rev_chk_usr_id 
+		       ) as rev_chk_usr_nm
+		       ,fn_get_time(tcmr.rev_chk_dt, #{SESS_TIMEZONE},'DA', '-') || ' ' || fn_get_time(tcmr.rev_chk_dt, #{SESS_TIMEZONE},'TS', ':') as rev_chk_dt
+		       ,tcmr.rev_chk_cntn
+		       ,(
+		      	select case when #{SESS_LANG} = 'KO' then tcu.usr_ko_nm 
+						    when #{SESS_LANG} = 'EN' then tcu.usr_en_nm 
+						    else tcu.usr_zh_nm end as usr_nm 
+				from tb_co_user tcu 
+				where tcu.usr_id = tcmr.rev_chk_rejc_usr_id 
+		       ) as rev_chk_rejc_usr_nm
+		       ,fn_get_time(tcmr.rev_chk_rejc_dt, #{SESS_TIMEZONE},'DA', '-') || ' ' || fn_get_time(tcmr.rev_chk_rejc_dt, #{SESS_TIMEZONE},'TS', ':') as rev_chk_rejc_dt
+		       ,tcmr.rev_chk_rejc_cntn
+		       ,tcmr.rev_wkpl_id
+		       ,fn_get_cd('CO00000006', tcmr.rev_wkpl_id, 'nm', #{SESS_LANG}) as rev_wkpl_nm 
+		       ,case when tcmr.rev_bf_enact_da is null or tcmr.rev_bf_enact_da = '' then ''
+		             else to_char(tcmr.rev_bf_enact_da::timestamp, 'YYYY-MM-DD') 
+		             end as rev_bf_enact_da
+		       ,case when tcmr.rev_bf_last_rev_da is null or tcmr.rev_bf_last_rev_da = '' then ''
+		             else to_char(tcmr.rev_bf_last_rev_da::timestamp, 'YYYY-MM-DD')
+		             end as rev_bf_last_rev_da
+		       ,case when tcmr.rev_af_enact_da is null or tcmr.rev_af_enact_da = '' then ''
+		             else to_char(tcmr.rev_af_enact_da::timestamp, 'YYYY-MM-DD') 
+		             end as rev_af_enact_da
+		       ,case when tcmr.rev_af_last_rev_da is null or tcmr.rev_af_last_rev_da = '' then ''
+		             else to_char(tcmr.rev_af_last_rev_da::timestamp, 'YYYY-MM-DD') 
+		             end as rev_af_last_rev_da
+		       ,tcm.imp_yn
+		       ,tcm.sbms_tgt_yn
+		from tb_co_mtrl tcm 
+		join tb_ch_msds_rev tcmr 
+		on tcm.mtrl_no = tcmr.mtrl_no 
+		where 1=1
+		  and tcm.usg_yn = 'Y'
+		  and tcm.del_yn = 'N'
+		  and tcmr.del_yn = 'N'
+		  and tcmr.msds_rev_no = #{msds_rev_no}
+		  and tcmr.chk_req_clsf_cd = '1'
+	</select>
+	
+	<select id="selectChkDeptYn" parameterType="sqlMap" resultType="string">
+		/* selectChkDeptYn */
+		select case when tcu.dept_cd != #{dept_cd} or tcmr.rev_prog_stt_cd not in ('30', '10') then 'READ'
+				    else 'UPDATE' end as result
+		from tb_ch_msds_rev tcmr 
+		join tb_co_user tcu 
+		on tcmr.req_usr_id = tcu.usr_id 
+		where tcmr.msds_rev_no = #{msds_rev_no}
+		  and tcmr.chk_req_clsf_cd = '1'
+	</select>
+	
+	<select id="selectRevChkDeptYn" parameterType="sqlMap" resultType="string">
+		/* selectRevChkDeptYn */
+		select msds_rev_no
+		from tb_ch_msds_rev tcmr
+		where 1=1
+		  and tcmr.rev_prog_stt_cd in ('20', '40')
+		  and tcmr.msds_rev_no = #{msds_rev_no}
+		  and tcmr.rev_wkpl_id in (
+									select cnct_1st_cd
+									from tb_co_biz_pc tcbp 
+									where usr_id = #{usr_id}
+									  and tcbp.biz_pc_grp_cd = 'BG00003'
+									  and tcbp.del_yn = 'N'
+									  and tcbp.usg_yn = 'Y'
+								  )
+		  and tcmr.del_yn = 'N'
+		  and tcmr.chk_req_clsf_cd = '2'
+	</select>
+	
+	<select id="selectAlertBfDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAlertBfDtl */
+		select tcmrg.sgw_cd
+		      ,fn_get_cd('CH00000009', tcmrg.sgw_cd, 'nm', #{SESS_LANG}) as sgw_nm 
+		      ,coalesce(tcmrg.hars_cntn,'') as hars_cntn
+		      ,coalesce(tcmrg.prv_cntn,'') as prv_cntn
+		      ,coalesce(tcmrg.act_cntn,'') as act_cntn 
+		      ,coalesce(tcmrg.str_cntn,'') as str_cntn
+		      ,coalesce(tcmrg.scr_cntn,'') as scr_cntn
+			  ,tcmrg.vndr_no 
+			  ,coalesce(tcmrg.vndr_nm,'') as vndr_nm
+			  ,case when tcmrg.vndr_kyin_yn = 'Y' then true 
+			        else false end as vndr_kyin_yn
+			  ,coalesce(tcmrg.vndr_phon_no,'') as vndr_phon_no
+			  ,coalesce(tcmrg.vndr_addr,'') as vndr_addr 
+			  ,tcmrg.nat_cd 
+			  ,fn_get_cd('CO00000003', tcmrg.nat_cd , 'nm', #{SESS_LANG}) as nat_nm
+			  ,coalesce(tcmrg.vndr_rprs_nm,'') as vndr_rprs_nm
+			  ,coalesce(tcmrg.vndr_coreg_no,'') as vndr_coreg_no
+		from tb_ch_msds_rev_gwsgn tcmrg 
+		where tcmrg.msds_rev_no = #{msds_rev_no}
+		  and del_yn = 'N'
+		  and tcmrg.chk_req_clsf_cd = '1'
+	</select>
+	
+	<select id="selectPicBfDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectPicDtl */
+		select tcmrgp.picg_cd 
+		from tb_ch_msds_rev_gwsgn_picg tcmrgp 
+		where tcmrgp.msds_rev_no = #{msds_rev_no}
+		  and tcmrgp.del_yn = 'N'
+		  and tcmrgp.chk_req_clsf_cd = '1'
+	</select>
+	
+	<select id="selectMsdsKey" parameterType="sqlMap" resultType="string">
+		/* selectMsdsKey */
+		select concat(to_char(now(), 'YYMMDD') , lpad(nextval('tb_ch_msds_rev_seq')::text, 6, '0')) as key
+	</select>
+	
+	<insert id="insertMsdsRev" parameterType="sqlMap">
+       insert into tb_ch_msds_rev(
+				msds_rev_no 
+			   ,chk_req_clsf_cd 
+			   ,mtrl_no 
+			   ,rev_wkpl_id 
+			   ,rev_bf_enact_da 
+			   ,rev_af_enact_da 
+			   ,rev_bf_last_rev_da 
+			   ,rev_af_last_rev_da 
+			   ,rev_bf_ver 
+			   ,rev_af_ver
+			   ,rev_bf_ko_atfl_no
+			   ,rev_af_ko_atfl_no
+			   ,rev_bf_en_atfl_no
+			   ,rev_af_en_atfl_no 
+			   ,req_usr_id 
+			   ,rev_prog_stt_cd 
+			   ,crt_usr_id 
+			   ,crt_dt 
+			   ,upt_usr_id 
+			   ,upt_dt 
+		) values (
+			    #{msds_rev_no}
+			   ,'1'
+			   ,#{mtrl_no}
+			   ,#{rev_wkpl_id}
+			   ,#{rev_bf_enact_da}
+			   ,#{rev_af_enact_da}
+			   ,#{rev_bf_last_rev_da}
+			   ,#{rev_af_last_rev_da}
+			   ,#{rev_bf_ver}
+			   ,trim(BOTH FROM #{rev_af_ver}::text)
+			   ,#{rev_bf_ko_atfl_no}::INTEGER
+			   ,#{rev_af_ko_atfl_no}::INTEGER
+			   ,#{rev_bf_en_atfl_no}::INTEGER
+			   ,#{rev_af_en_atfl_no}::INTEGER
+			   ,#{req_usr_id}
+			   ,'10'
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')	   
+		)
+    </insert>
+    
+    <insert id="insertMsdsRevAlert" parameterType="sqlMap">
+       insert into tb_ch_msds_rev_gwsgn(
+				msds_rev_no
+			   ,chk_req_clsf_cd 
+			   ,mtrl_no 
+			   ,sgw_cd 
+			   ,hars_cntn 
+			   ,prv_cntn 
+			   ,act_cntn 
+			   ,str_cntn 
+			   ,scr_cntn 
+			   ,vndr_kyin_yn 
+			   ,vndr_no 
+			   ,vndr_nm 
+			   ,vndr_type_cd 
+			   ,nat_cd 
+			   ,vndr_addr 
+			   ,vndr_phon_no 
+			   ,vndr_rprs_nm 
+			   ,vndr_coreg_no 
+			   ,crt_usr_id 
+			   ,crt_dt 
+			   ,upt_usr_id 
+			   ,upt_dt 
+		) values (
+				#{msds_rev_no}
+			   ,'1'
+			   ,#{mtrl_no}
+			   ,#{sgw_cd}
+			   ,trim(BOTH FROM #{hars_cntn}::text)
+			   ,trim(BOTH FROM #{prv_cntn}::text)
+			   ,trim(BOTH FROM #{act_cntn}::text)
+			   ,trim(BOTH FROM #{str_cntn}::text)
+			   ,trim(BOTH FROM #{scr_cntn}::text)
+			   ,#{vndr_kyin_yn}
+			   ,#{vndr_no}
+			   ,trim(BOTH FROM #{vndr_nm}::text)
+			   ,#{vndr_type_cd}
+			   ,#{nat_cd}
+			   ,trim(BOTH FROM #{vndr_addr}::text)
+			   ,trim(BOTH FROM #{vndr_phon_no}::text)
+			   ,trim(BOTH FROM #{vndr_rprs_nm}::text)
+			   ,trim(BOTH FROM #{vndr_coreg_no}::text)
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+		)
+    </insert>
+    
+    <insert id="insertMsdsRevPic" parameterType="sqlMap">
+       insert into tb_ch_msds_rev_gwsgn_picg(
+				msds_rev_no
+			   ,chk_req_clsf_cd 
+			   ,mtrl_no
+			   ,picg_cd
+			   ,crt_usr_id 
+			   ,crt_dt 
+			   ,upt_usr_id 
+			   ,upt_dt 
+		) values (
+				#{msds_rev_no}
+			   ,'1'
+			   ,#{mtrl_no}
+			   ,#{picg_cd}
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+		)
+    </insert>
+    
+    <update id="updateMsdsRev" parameterType="sqlMap">
+       update tb_ch_msds_rev 
+		   set mtrl_no = #{mtrl_no}
+		      ,rev_wkpl_id = #{rev_wkpl_id}
+		      ,rev_af_enact_da = #{rev_af_enact_da}
+		      ,rev_af_last_rev_da = #{rev_af_last_rev_da}
+		      ,rev_af_ver = trim(BOTH FROM #{rev_af_ver}::text)
+		      ,rev_af_ko_atfl_no = #{rev_af_ko_atfl_no}
+		      ,rev_af_en_atfl_no = #{rev_af_en_atfl_no}
+		      ,req_usr_id = #{req_usr_id}
+		      ,upt_usr_id = #{req_usr_id}
+			  ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')	
+		where msds_rev_no = #{msds_rev_no}
+		  and chk_req_clsf_cd = '1'
+    </update>
+    
+    <update id="updateMsdsSubmit" parameterType="sqlMap">
+       update tb_ch_mtrl_msds
+		   set submit_msds_no = #{submit_msds_no}
+		      ,submit_stt_cd = #{submit_stt_cd}
+		      ,submit_complete_cntn = #{submit_complete_cntn}
+		      ,submit_reject_cntn = #{submit_reject_cntn}
+		      ,submit_reg_usr_id = #{req_usr_id}
+		      ,upt_usr_id = #{req_usr_id}
+			  ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')	
+		where mtrl_no = #{mtrl_no}
+    </update>
+    
+    <update id="updateMsdsRevAlert" parameterType="sqlMap">
+       update tb_ch_msds_rev_gwsgn 
+		   set mtrl_no = #{mtrl_no}
+		      ,sgw_cd = #{sgw_cd}
+		      ,hars_cntn = trim(BOTH FROM #{hars_cntn}::text)
+		      ,prv_cntn = trim(BOTH FROM #{prv_cntn}::text)
+		      ,act_cntn = trim(BOTH FROM #{act_cntn}::text)
+		      ,str_cntn = trim(BOTH FROM #{str_cntn}::text)
+		      ,scr_cntn = trim(BOTH FROM #{scr_cntn}::text)
+		      ,vndr_kyin_yn = #{vndr_kyin_yn}
+		      ,vndr_no = #{vndr_no}
+		      ,vndr_nm = trim(BOTH FROM #{vndr_nm}::text)
+		      ,vndr_type_cd = #{vndr_type_cd}
+		      ,nat_cd = #{nat_cd}
+		      ,vndr_addr = trim(BOTH FROM #{vndr_addr}::text)
+		      ,vndr_phon_no = trim(BOTH FROM #{vndr_phon_no}::text)
+		      ,vndr_rprs_nm = trim(BOTH FROM #{vndr_rprs_nm}::text)
+		      ,vndr_coreg_no = trim(BOTH FROM #{vndr_coreg_no}::text)
+		      ,upt_usr_id = #{req_usr_id}
+		      ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+		where msds_rev_no = #{msds_rev_no}
+		  and chk_req_clsf_cd = '1'
+    </update>
+    
+    <update id="deleteMsdsRevPic" parameterType="sqlMap">
+       update tb_ch_msds_rev_gwsgn_picg 
+		   set del_yn = 'Y'
+		where msds_rev_no = #{msds_rev_no}
+		  and chk_req_clsf_cd = '1'
+    </update>
+    
+    <insert id="updateMsdsRevPic" parameterType="sqlMap">
+       insert into tb_ch_msds_rev_gwsgn_picg(
+				msds_rev_no
+			   ,chk_req_clsf_cd 
+			   ,mtrl_no
+			   ,picg_cd
+			   ,crt_usr_id 
+			   ,crt_dt 
+			   ,upt_usr_id 
+			   ,upt_dt 
+		) values (
+				#{msds_rev_no}
+			   ,'1'
+			   ,#{mtrl_no}
+			   ,#{picg_cd}
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+		) on conflict (msds_rev_no, mtrl_no, chk_req_clsf_cd, picg_cd)
+		do update set del_yn = 'N'
+			   ,upt_usr_id = #{req_usr_id}
+			   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_ch_msds_rev_gwsgn_picg.msds_rev_no = #{msds_rev_no}::text 
+		  and tb_ch_msds_rev_gwsgn_picg.picg_cd = #{picg_cd}
+		  and tb_ch_msds_rev_gwsgn_picg.chk_req_clsf_cd = '1'
+    </insert>
+	
+	<update id="updateMsdsRevStt" parameterType="sqlMap">
+       update tb_ch_msds_rev 
+		   set rev_prog_stt_cd = '20'
+		      ,req_da = to_char(now(), 'YYYYMMDD')	
+		      ,upt_usr_id = #{req_usr_id}
+			  ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')	
+		where msds_rev_no = #{msds_rev_no}::text
+    </update>
+    
+    <insert id="upsertMsdsRevReq" parameterType="sqlMap">
+       insert into tb_ch_msds_rev(
+				msds_rev_no 
+			   ,chk_req_clsf_cd 
+			   ,mtrl_no 
+			   ,rev_wkpl_id 
+			   ,rev_bf_enact_da 
+			   ,rev_af_enact_da 
+			   ,rev_bf_last_rev_da 
+			   ,rev_af_last_rev_da 
+			   ,rev_bf_ver 
+			   ,rev_af_ver 
+			   ,rev_bf_ko_atfl_no
+			   ,rev_bf_en_atfl_no
+			   ,rev_af_ko_atfl_no
+			   ,rev_af_en_atfl_no
+			   ,req_usr_id 
+			   ,req_da
+			   ,rev_prog_stt_cd 
+			   ,crt_usr_id 
+			   ,crt_dt 
+			   ,upt_usr_id 
+			   ,upt_dt 
+		) values (
+			    #{msds_rev_no}
+			   ,'2'
+			   ,#{mtrl_no}
+			   ,#{rev_wkpl_id}
+			   ,#{rev_bf_enact_da}
+			   ,#{rev_af_enact_da}
+			   ,#{rev_bf_last_rev_da}
+			   ,#{rev_af_last_rev_da}
+			   ,#{rev_bf_ver}
+			   ,trim(BOTH FROM #{rev_af_ver}::text)
+			   ,#{rev_bf_ko_atfl_no}
+			   ,#{rev_bf_en_atfl_no}
+			   ,#{rev_af_ko_atfl_no}
+			   ,#{rev_af_en_atfl_no}
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDD')
+			   ,'20'
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')	   
+		) on conflict (msds_rev_no, chk_req_clsf_cd, mtrl_no)
+		do update set del_yn = 'N'
+		       ,mtrl_no = #{mtrl_no}
+		       ,rev_wkpl_id = #{rev_wkpl_id}
+		       ,rev_af_enact_da = #{rev_af_enact_da}
+		       ,rev_af_last_rev_da = #{rev_af_last_rev_da}
+		       ,rev_af_ver = trim(BOTH FROM #{rev_af_ver}::text)
+		       ,rev_bf_ko_atfl_no = #{rev_bf_ko_atfl_no}
+			   ,rev_bf_en_atfl_no = #{rev_bf_en_atfl_no}
+			   ,rev_af_ko_atfl_no = #{rev_af_ko_atfl_no}
+			   ,rev_af_en_atfl_no = #{rev_af_en_atfl_no}
+		       ,req_usr_id = #{req_usr_id}
+		       ,rev_prog_stt_cd = '20'
+			   ,upt_usr_id = #{req_usr_id}
+			   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_ch_msds_rev.msds_rev_no = #{msds_rev_no}::text
+		  and tb_ch_msds_rev.chk_req_clsf_cd = '2'
+    </insert>
+    
+    <insert id="upsertMsdsRevReqAlert" parameterType="sqlMap">
+       insert into tb_ch_msds_rev_gwsgn(
+				msds_rev_no
+			   ,chk_req_clsf_cd 
+			   ,mtrl_no 
+			   ,sgw_cd 
+			   ,hars_cntn 
+			   ,prv_cntn 
+			   ,act_cntn 
+			   ,str_cntn 
+			   ,scr_cntn 
+			   ,vndr_kyin_yn 
+			   ,vndr_no 
+			   ,vndr_nm 
+			   ,vndr_type_cd 
+			   ,nat_cd 
+			   ,vndr_addr 
+			   ,vndr_phon_no 
+			   ,vndr_rprs_nm 
+			   ,vndr_coreg_no 
+			   ,crt_usr_id 
+			   ,crt_dt 
+			   ,upt_usr_id 
+			   ,upt_dt 
+		) values (
+				#{msds_rev_no}
+			   ,'2'
+			   ,#{mtrl_no}
+			   ,#{sgw_cd}
+			   ,trim(BOTH FROM #{hars_cntn}::text)
+			   ,trim(BOTH FROM #{prv_cntn}::text)
+			   ,trim(BOTH FROM #{act_cntn}::text)
+			   ,trim(BOTH FROM #{str_cntn}::text)
+			   ,trim(BOTH FROM #{scr_cntn}::text)
+			   ,#{vndr_kyin_yn}
+			   ,#{vndr_no}
+			   ,trim(BOTH FROM #{vndr_nm}::text)
+			   ,#{vndr_type_cd}
+			   ,#{nat_cd}
+			   ,trim(BOTH FROM #{vndr_addr}::text)
+			   ,trim(BOTH FROM #{vndr_phon_no}::text)
+			   ,trim(BOTH FROM #{vndr_rprs_nm}::text)
+			   ,trim(BOTH FROM #{vndr_coreg_no}::text)
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+		) on conflict (msds_rev_no, chk_req_clsf_cd, mtrl_no)
+		do update set del_yn = 'N'
+		       ,mtrl_no = #{mtrl_no}
+		       ,sgw_cd = #{sgw_cd}
+		       ,hars_cntn = trim(BOTH FROM #{hars_cntn}::text)
+		       ,prv_cntn = trim(BOTH FROM #{prv_cntn}::text)
+		       ,act_cntn = trim(BOTH FROM #{act_cntn}::text)
+		       ,str_cntn = trim(BOTH FROM #{str_cntn}::text)
+		       ,scr_cntn = trim(BOTH FROM #{scr_cntn}::text)
+		       ,vndr_kyin_yn = #{vndr_kyin_yn}
+		       ,vndr_no = #{vndr_no}
+		       ,vndr_nm = trim(BOTH FROM #{vndr_nm}::text)
+		       ,vndr_type_cd = #{vndr_type_cd}
+		       ,nat_cd = #{nat_cd}
+		       ,vndr_addr = trim(BOTH FROM #{vndr_addr}::text)
+		       ,vndr_phon_no = trim(BOTH FROM #{vndr_phon_no}::text)
+		       ,vndr_rprs_nm = trim(BOTH FROM #{vndr_rprs_nm}::text)
+		       ,vndr_coreg_no = trim(BOTH FROM #{vndr_coreg_no}::text)
+			   ,upt_usr_id = #{req_usr_id}
+			   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_ch_msds_rev_gwsgn.msds_rev_no = #{msds_rev_no}::text 
+		  and tb_ch_msds_rev_gwsgn.chk_req_clsf_cd = '2'
+    </insert>
+    
+    <insert id="upsertMsdsRevReqPic" parameterType="sqlMap">
+       insert into tb_ch_msds_rev_gwsgn_picg(
+				msds_rev_no
+			   ,chk_req_clsf_cd 
+			   ,mtrl_no
+			   ,picg_cd
+			   ,print_yn
+			   ,crt_usr_id 
+			   ,crt_dt 
+			   ,upt_usr_id 
+			   ,upt_dt 
+		) values (
+				#{msds_rev_no}
+			   ,'2'
+			   ,#{mtrl_no}
+			   ,#{picg_cd}
+			   ,'Y'
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+			   ,#{req_usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+		) on conflict (msds_rev_no, mtrl_no, chk_req_clsf_cd, picg_cd)
+		do update set del_yn = 'N'
+		       ,print_yn = 'Y'
+			   ,upt_usr_id = #{req_usr_id}
+			   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_ch_msds_rev_gwsgn_picg.msds_rev_no = #{msds_rev_no}::text 
+		  and tb_ch_msds_rev_gwsgn_picg.chk_req_clsf_cd = '2'
+		  and tb_ch_msds_rev_gwsgn_picg.picg_cd = #{picg_cd}
+    </insert>
+    
+    <update id="deleteMsdsRev" parameterType="sqlMap">
+       update tb_ch_msds_rev 
+		   set del_yn = 'Y'
+		where msds_rev_no = #{msds_rev_no}
+    </update>
+    
+    <update id="deleteMsdsRevAlert" parameterType="sqlMap">
+       update tb_ch_msds_rev_gwsgn
+		   set del_yn = 'Y'
+		where msds_rev_no = #{msds_rev_no}
+    </update>
+    
+    <select id="selectMsdsRevChkList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMsdsRevChkList */
+		select 
+			   tcmr.msds_rev_no
+		      ,tcm.mtrl_clsf_cd
+		      ,fn_get_cd('CH00000005', tcm.mtrl_clsf_cd, 'nm', #{SESS_LANG}) as mtrl_clsf_nm
+		      ,fn_get_cd('CH00000006', tcm.macl_cd, 'nm', #{SESS_LANG}) as macl_nm
+		      ,(
+				select array_to_string(array_agg(fn_get_cd('CO00000006', tcms2.wkpl_id, 'nm', #{SESS_LANG})), ', ') 
+				from tb_co_mtrl_site tcms2
+				where tcm.mtrl_no = tcms2.mtrl_no
+			   ) as wkpl_nm
+			  ,tcmr.mtrl_no 
+			  ,case when #{SESS_LANG} = 'KO' then tcm.mtrl_ko_nm 
+				    when #{SESS_LANG} = 'EN' then tcm.mtrl_en_nm 
+				    else tcm.mtrl_zh_nm end as mtrl_nm
+		      ,case when tcmr.req_da is null then ''
+		            else substring(tcmr.req_da, 0, 5) || '-' || substring(tcmr.req_da, 5, 2) || '-' || substring(tcmr.req_da, 7, 2) 
+		            end as req_da
+		      ,case when #{SESS_LANG} = 'KO' then tce.usr_ko_nm 
+				    when #{SESS_LANG} = 'EN' then tce.usr_en_nm 
+				    else tce.usr_zh_nm end as usr_nm
+		      ,fn_get_cd('CH00000010', tcmr.rev_prog_stt_cd, 'nm', #{SESS_LANG}) as rev_prog_stt_nm
+		      ,(
+		      	select case when #{SESS_LANG} = 'KO' then tcu.usr_ko_nm 
+						    when #{SESS_LANG} = 'EN' then tcu.usr_en_nm 
+						    else tcu.usr_zh_nm end as usr_nm 
+				from tb_co_user tcu 
+				where tcu.usr_id = tcmr.rev_chk_usr_id 
+		       ) as rev_chk_usr_nm
+		      ,fn_get_time(tcmr.rev_chk_dt, #{SESS_TIMEZONE},'DA', '-') as rev_chk_dt
+		      ,tcm.imp_yn
+		      ,tcm.sbms_tgt_yn
+		from tb_ch_msds_rev tcmr
+		left join tb_co_mtrl tcm
+		on tcmr.mtrl_no = tcm.mtrl_no
+		left outer join tb_co_user tce
+		on tcmr.req_usr_id = tce.usr_id 
+		where 1=1
+		  and tcmr.chk_req_clsf_cd = '2'
+		<if test='mtrl_clsf_cd != null and mtrl_clsf_cd != ""'>
+		  and tcm.mtrl_clsf_cd = #{mtrl_clsf_cd}
+		</if>
+		<if test='macl_cd != null and macl_cd != ""'>
+		  and tcm.macl_cd = #{macl_cd}
+		</if>
+		<if test='mtrl_no != null and mtrl_no != ""'>
+		  and tcm.mtrl_no like concat('%', #{mtrl_no}, '%')
+		</if>
+		<if test='mtrl_nm != null and mtrl_nm != ""'>
+		<if test='SESS_LANG == "KO"'>
+		  and tcm.mtrl_ko_nm like concat('%', #{mtrl_nm}, '%')
+		</if>
+		<if test='SESS_LANG == "EN"'>
+		  and tcm.mtrl_en_nm like concat('%', #{mtrl_nm}, '%')
+		</if>
+		<if test='SESS_LANG == "ZH"'>
+		  and tcm.mtrl_zh_nm like concat('%', #{mtrl_nm}, '%')
+		</if>
+		</if>
+		<if test='rev_prog_stt_cd != null and rev_prog_stt_cd != ""'>
+		  and tcmr.rev_prog_stt_cd = #{rev_prog_stt_cd}
+		</if>
+		<if test='req_usr_nm != null and req_usr_nm != ""'>
+		<if test='SESS_LANG == "KO"'>
+		  and tce.usr_ko_nm like concat('%', #{req_usr_nm}, '%')
+		</if>
+		<if test='SESS_LANG == "EN"'>
+		  and tce.usr_en_nm like concat('%', #{req_usr_nm}, '%')
+		</if>
+		<if test='SESS_LANG == "ZH"'>
+		  and tce.usr_zh_nm like concat('%', #{req_usr_nm}, '%')
+		</if>
+		</if>
+		<if test='sDate != null and sDate != "" and eDate != null and eDate != ""'>
+		<![CDATA[
+		and ((tcmr.req_da::timestamp >= #{sDate}::timestamp and tcmr.req_da::timestamp <= concat(#{eDate}, ' 23:59:59')::timestamp) or ((tcmr.req_da is null) and (substring(tcmr.upt_dt, 0, 9)::timestamp >= #{sDate}::timestamp and substring(tcmr.upt_dt, 0, 9)::timestamp <= concat(#{eDate}, ' 23:59:59')::timestamp)))
+		]]>
+		</if>
+		and tcm.usg_yn = 'Y'
+		and tcm.del_yn = 'N'
+		and tcmr.del_yn = 'N'
+		and exists (select 1 from tb_co_mtrl_site tcms 
+			where tcmr.mtrl_no = tcms.mtrl_no 
+			  and tcms.del_yn = 'N'
+			<if test='wkpl_id != null and wkpl_id != ""'>
+			  and tcms.wkpl_id = #{wkpl_id}
+			</if>
+			)
+		order by tcmr.msds_rev_no desc
+	</select>
+	
+	<select id="selectMsdsRevChkDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMsdsRevChkDtl */
+		select distinct 
+			   tcm.mtrl_no 
+			  ,case when #{SESS_LANG} = 'KO' then tcm.mtrl_ko_nm 
+		            when #{SESS_LANG} = 'EN' then tcm.mtrl_en_nm 
+		            else tcm.mtrl_zh_nm end as mtrl_nm 
+		      ,tcmr.rev_bf_ver 
+		      ,tcmr.rev_af_ver
+		      ,tcmr.rev_bf_ko_atfl_no
+		      ,tcmr.rev_af_ko_atfl_no
+		      ,tcmr.rev_bf_en_atfl_no
+		      ,tcmr.rev_af_en_atfl_no
+		      ,(select 
+					atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_bf_ko_atfl_no limit 1) as rev_bf_ko_atfl_nm
+			  ,(select 
+					atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_bf_en_atfl_no limit 1) as rev_bf_en_atfl_nm
+			  ,(select 
+					atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_bf_ko_atfl_no limit 1) as rev_bf_ko_atfl_key
+			  ,(select 
+					atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_bf_en_atfl_no limit 1) as rev_bf_en_atfl_key
+			  ,(select 
+					atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_af_ko_atfl_no limit 1) as rev_af_ko_atfl_nm
+			  ,(select 
+					atfl_nm as name
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_af_en_atfl_no limit 1) as rev_af_en_atfl_nm
+			  ,(select 
+					atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_af_ko_atfl_no limit 1) as rev_af_ko_atfl_key
+			  ,(select 
+					atfl_no || '-' || atfl_seq as key
+		        from tb_co_atfl
+				where atfl_no = tcmr.rev_af_en_atfl_no limit 1) as rev_af_en_atfl_key
+		      ,tcmr.msds_rev_no 
+		      ,case when tcmr.req_da  is null then ''
+		            else substring(tcmr.req_da , 0, 5) || '-' || substring(tcmr.req_da, 5, 2) || '-' || substring(tcmr.req_da, 7, 2) 
+		            end as req_da
+		      ,tcmr.req_usr_id
+		      ,tcm.mtrl_clsf_cd
+		      ,(
+		      	select case when #{SESS_LANG} = 'KO' then tcu.usr_ko_nm 
+						    when #{SESS_LANG} = 'EN' then tcu.usr_en_nm 
+						    else tcu.usr_zh_nm end as usr_nm 
+				from tb_co_user tcu 
+				where tcu.usr_id = tcmr.req_usr_id 
+		       ) as req_usr_nm 
+		      ,tcmr.rev_prog_stt_cd 
+		      ,(
+		      	select case when #{SESS_LANG} = 'KO' then tcu.usr_ko_nm 
+						    when #{SESS_LANG} = 'EN' then tcu.usr_en_nm 
+						    else tcu.usr_zh_nm end as usr_nm 
+				from tb_co_user tcu 
+				where tcu.usr_id = tcmr.rev_chk_usr_id 
+		       ) as rev_chk_usr_nm
+		       ,fn_get_time(tcmr.rev_chk_dt, #{SESS_TIMEZONE},'DA', '-') || ' ' || fn_get_time(tcmr.rev_chk_dt, #{SESS_TIMEZONE},'TS', ':') as rev_chk_dt
+		       ,tcmr.rev_chk_cntn
+		       ,(
+		      	select case when #{SESS_LANG} = 'KO' then tcu.usr_ko_nm 
+						    when #{SESS_LANG} = 'EN' then tcu.usr_en_nm 
+						    else tcu.usr_zh_nm end as usr_nm 
+				from tb_co_user tcu 
+				where tcu.usr_id = tcmr.rev_chk_rejc_usr_id 
+		       ) as rev_chk_rejc_usr_nm
+		       ,fn_get_time(tcmr.rev_chk_rejc_dt, #{SESS_TIMEZONE},'DA', '-') || ' ' || fn_get_time(tcmr.rev_chk_rejc_dt, #{SESS_TIMEZONE},'TS', ':') as rev_chk_rejc_dt
+		       ,tcmr.rev_chk_rejc_cntn
+		       ,tcmr.rev_wkpl_id
+		       ,fn_get_cd('CO00000006', tcmr.rev_wkpl_id, 'nm', #{SESS_LANG}) as rev_wkpl_nm 
+		       ,case when tcmr.rev_bf_enact_da is null or tcmr.rev_bf_enact_da = '' then ''
+		             else to_char(tcmr.rev_bf_enact_da::timestamp, 'YYYY-MM-DD') 
+		             end as rev_bf_enact_da
+		       ,case when tcmr.rev_bf_last_rev_da is null or tcmr.rev_bf_last_rev_da = '' then ''
+		             else to_char(tcmr.rev_bf_last_rev_da::timestamp, 'YYYY-MM-DD')
+		             end as rev_bf_last_rev_da
+		       ,case when tcmr.rev_af_enact_da is null or tcmr.rev_af_enact_da = '' then ''
+		             else to_char(tcmr.rev_af_enact_da::timestamp, 'YYYY-MM-DD') 
+		             end as rev_af_enact_da
+		       ,case when tcmr.rev_af_last_rev_da is null or tcmr.rev_af_last_rev_da = '' then ''
+		             else to_char(tcmr.rev_af_last_rev_da::timestamp, 'YYYY-MM-DD') 
+		             end as rev_af_last_rev_da
+		       ,tcm.imp_yn
+		       ,tcm.sbms_tgt_yn
+		from tb_co_mtrl tcm 
+		join tb_ch_msds_rev tcmr 
+		on tcm.mtrl_no = tcmr.mtrl_no 
+		where 1=1
+		  and tcm.usg_yn = 'Y'
+		  and tcm.del_yn = 'N'
+		  and tcmr.del_yn = 'N'
+		  and tcmr.msds_rev_no = #{msds_rev_no}
+		  and tcmr.chk_req_clsf_cd = '2'
+	</select>
+	
+	<select id="selectAlertChkDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAlertChkDtl */
+		select tcmrg.sgw_cd
+		      ,fn_get_cd('CH00000009', tcmrg.sgw_cd, 'nm', #{SESS_LANG}) as sgw_nm 
+		      ,tcmrg.hars_cntn 
+		      ,tcmrg.prv_cntn 
+		      ,tcmrg.act_cntn 
+		      ,tcmrg.str_cntn 
+		      ,tcmrg.scr_cntn 
+			  ,tcmrg.vndr_no 
+			  ,tcmrg.vndr_nm 
+			  ,case when tcmrg.vndr_kyin_yn = 'Y' then true 
+			        else false end as vndr_kyin_yn
+			  ,tcmrg.vndr_phon_no 
+			  ,tcmrg.vndr_addr 
+			  ,tcmrg.nat_cd 
+			  ,fn_get_cd('CO00000003', tcmrg.nat_cd , 'nm', #{SESS_LANG}) as nat_nm
+			  ,tcmrg.vndr_rprs_nm 
+			  ,tcmrg.vndr_coreg_no 
+		from tb_ch_msds_rev_gwsgn tcmrg 
+		where tcmrg.msds_rev_no = #{msds_rev_no}
+		  and del_yn = 'N'
+		  and tcmrg.chk_req_clsf_cd = '2'
+	</select>
+	
+	<select id="selectPicChkDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectPicChkDtl */
+		select tcmrgp.picg_cd, tcmrgp.print_yn
+		from tb_ch_msds_rev_gwsgn_picg tcmrgp 
+		where tcmrgp.msds_rev_no = #{msds_rev_no}
+		  and tcmrgp.del_yn = 'N'
+		  and tcmrgp.chk_req_clsf_cd = '2'
+	</select>
+	
+	<update id="updateMsdsChkRev" parameterType="sqlMap">
+       update tb_ch_msds_rev 
+		   set mtrl_no = #{mtrl_no}
+		      ,rev_wkpl_id = #{rev_wkpl_id}
+		      ,rev_af_enact_da = #{rev_af_enact_da}
+		      ,rev_af_last_rev_da = #{rev_af_last_rev_da}
+		      ,rev_af_ver = trim(BOTH FROM #{rev_af_ver}::text)
+		      ,rev_af_ko_atfl_no = #{rev_af_ko_atfl_no}
+		      ,rev_af_en_atfl_no = #{rev_af_en_atfl_no}
+		      ,req_usr_id = #{req_usr_id}
+		      ,upt_usr_id = #{usr_id}
+		      <if test='rev_chk_cntn != null and rev_chk_cntn != ""'>
+		      ,rev_chk_usr_id = #{usr_id}
+		      ,rev_chk_cntn = trim(BOTH FROM #{rev_chk_cntn}::text)
+		      </if>
+		      <if test='rev_chk_rejc_cntn != null and rev_chk_rejc_cntn != ""'>
+		      ,rev_chk_rejc_usr_id = #{usr_id}
+		      ,rev_chk_rejc_cntn = trim(BOTH FROM #{rev_chk_rejc_cntn}::text)
+		      </if>
+			  ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')	
+		where msds_rev_no = #{msds_rev_no}
+		  and chk_req_clsf_cd = '2'
+    </update>
+    
+    <update id="updateMsdsChkRevAlert" parameterType="sqlMap">
+       update tb_ch_msds_rev_gwsgn 
+		   set mtrl_no = #{mtrl_no}
+		      ,sgw_cd = #{sgw_cd}
+		      ,hars_cntn = trim(BOTH FROM #{hars_cntn}::text)
+		      ,prv_cntn = trim(BOTH FROM #{prv_cntn}::text)
+		      ,act_cntn = trim(BOTH FROM #{act_cntn}::text)
+		      ,str_cntn = trim(BOTH FROM #{str_cntn}::text)
+		      ,scr_cntn = trim(BOTH FROM #{scr_cntn}::text)
+		      ,vndr_kyin_yn = #{vndr_kyin_yn}
+		      ,vndr_no = #{vndr_no}
+		      ,vndr_nm = trim(BOTH FROM #{vndr_nm}::text)
+		      ,vndr_type_cd = #{vndr_type_cd}
+		      ,nat_cd = #{nat_cd}
+		      ,vndr_addr = trim(BOTH FROM #{vndr_addr}::text)
+		      ,vndr_phon_no = trim(BOTH FROM #{vndr_phon_no}::text)
+		      ,vndr_rprs_nm = trim(BOTH FROM #{vndr_rprs_nm}::text)
+		      ,vndr_coreg_no = trim(BOTH FROM #{vndr_coreg_no}::text)
+		      ,upt_usr_id = #{usr_id}
+		      ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+		where msds_rev_no = #{msds_rev_no}
+		  and chk_req_clsf_cd = '2'
+    </update>
+    
+    <insert id="updateMsdsChkRevPic" parameterType="sqlMap">
+       insert into tb_ch_msds_rev_gwsgn_picg(
+				msds_rev_no
+			   ,chk_req_clsf_cd 
+			   ,mtrl_no
+			   ,picg_cd
+			   ,print_yn
+			   ,crt_usr_id 
+			   ,crt_dt 
+			   ,upt_usr_id 
+			   ,upt_dt 
+		) values (
+				#{msds_rev_no}
+			   ,'2'
+			   ,#{mtrl_no}
+			   ,#{picg_cd}
+			   ,#{print_yn}
+			   ,#{usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+			   ,#{usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+		) on conflict (msds_rev_no, mtrl_no, chk_req_clsf_cd, picg_cd)
+		do update set del_yn = 'N'
+		       ,print_yn = #{print_yn}
+			   ,upt_usr_id = #{usr_id}
+			   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_ch_msds_rev_gwsgn_picg.msds_rev_no = #{msds_rev_no}::text 
+		  and tb_ch_msds_rev_gwsgn_picg.picg_cd = #{picg_cd}
+		  and tb_ch_msds_rev_gwsgn_picg.chk_req_clsf_cd = '2'
+    </insert>
+    
+    <update id="deleteMsdsChkRevPic" parameterType="sqlMap">
+       update tb_ch_msds_rev_gwsgn_picg 
+		   set del_yn = 'Y'
+		      ,print_yn = 'N'
+		where msds_rev_no = #{msds_rev_no}
+		  and chk_req_clsf_cd = '2'
+    </update>
+    
+    <update id="updateMsdsRevRjtStt" parameterType="sqlMap">
+       update tb_ch_msds_rev
+		   set rev_prog_stt_cd = '30'
+		   <if test='rev_chk_rejc_cntn != null and rev_chk_rejc_cntn != ""'>
+	      ,rev_chk_rejc_usr_id = #{usr_id}
+	      ,rev_chk_rejc_cntn = trim(BOTH FROM #{rev_chk_rejc_cntn}::text)
+	      ,rev_chk_rejc_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+	      </if>
+		where msds_rev_no = #{msds_rev_no}
+    </update>
+    
+    <update id="updateMsdsRevChkStt" parameterType="sqlMap">
+       update tb_ch_msds_rev
+		   set rev_prog_stt_cd = '40'
+		where msds_rev_no = #{msds_rev_no}
+    </update>
+    
+    <update id="updateMsdsFinishStt" parameterType="sqlMap">
+       update tb_ch_msds_rev
+		   set rev_prog_stt_cd = '50'
+		   <if test='rev_chk_cntn != null and rev_chk_cntn != ""'>
+	      ,rev_chk_usr_id = #{usr_id}
+	      ,rev_chk_cntn = trim(BOTH FROM #{rev_chk_cntn}::text)
+	      ,rev_chk_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+	      </if>
+		where msds_rev_no = #{msds_rev_no}
+    </update>
+    
+    <select id="selectVndrKey" parameterType="sqlMap" resultType="string">
+		/* selectVndrKey */
+		select concat('V' , lpad(nextval('tb_co_vndr_seq')::text, 9, '0')) as key
+	</select>
+	
+	<insert id="insertVndrMstData" parameterType="sqlMap">
+       insert into tb_co_vndr(
+					vndr_no 
+				   ,vndr_nm 
+				   ,vndr_clsf_cd 
+				   ,vndr_type_cd 
+				   ,nat_cd 
+				   ,vndr_addr
+				   ,vndr_phon_no 
+				   ,vndr_rprs_nm 
+				   ,vndr_crt_da 
+				   ,vndr_upt_da 
+				   ,vndr_coreg_no 
+				   ,crt_usr_id 
+				   ,crt_dt 
+				   ,upt_usr_id 
+				   ,upt_dt 
+		) values (
+					#{vndr_no}
+				   ,trim(BOTH FROM #{vndr_nm}::text)
+				   ,'2'
+				   ,#{vndr_type_cd}
+				   ,#{nat_cd}
+				   ,trim(BOTH FROM #{vndr_addr}::text)
+				   ,trim(BOTH FROM #{vndr_phon_no}::text)
+				   ,trim(BOTH FROM #{vndr_rprs_nm}::text)
+				   ,to_char(now(), 'YYYYMMDD')
+				   ,to_char(now(), 'YYYYMMDD')
+				   ,trim(BOTH FROM #{vndr_coreg_no}::text)
+				   ,#{usr_id}
+				   ,to_char(now(), 'YYYYMMDDHH24MISS')
+				   ,#{usr_id}
+				   ,to_char(now(), 'YYYYMMDDHH24MISS')
+		)
+    </insert>
+    
+    <insert id="insertMtrlVndrMstData" parameterType="sqlMap">
+       insert into tb_co_mtrl_vndr(
+					mtrl_no
+				   ,vndr_no
+				   ,crt_usr_id
+				   ,crt_dt
+				   ,upt_usr_id
+				   ,upt_dt
+				   ,cnfm_vndr_yn
+		) values (
+					#{mtrl_no}
+				   ,#{vndr_no}
+				   ,#{usr_id}
+				   ,to_char(now(), 'YYYYMMDDHH24MISS')
+				   ,#{usr_id}
+				   ,to_char(now(), 'YYYYMMDDHH24MISS')
+				   ,'Y'
+		)
+    </insert>
+    
+    <update id="updateMsdsMstData" parameterType="sqlMap">
+       update tb_ch_mtrl_msds 
+		   set msds_ver = #{rev_af_ver}
+		      ,enact_da = #{rev_af_enact_da}
+		      ,rev_da = #{rev_af_last_rev_da}
+		      ,reg_da = to_char(now(), 'YYYYMMDD')
+		      ,reg_usr_id = #{req_usr_id}
+		      ,ko_atfl_no = #{rev_af_ko_atfl_no}
+		      ,en_atfl_no = #{rev_af_en_atfl_no}
+		      ,upt_usr_id = #{usr_id}
+		      ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+		where mtrl_no = #{mtrl_no}
+    </update>
+    
+    <update id="updateMsdsAlertMstData" parameterType="sqlMap">
+       update tb_ch_mtrl_gwsgn 
+		   set sgw_cd = #{sgw_cd}
+		      ,hars_cntn = trim(BOTH FROM #{hars_cntn}::text)
+		      ,prv_cntn = trim(BOTH FROM #{prv_cntn}::text)
+		      ,act_cntn = trim(BOTH FROM #{act_cntn}::text)
+		      ,str_cntn = trim(BOTH FROM #{str_cntn}::text)
+		      ,scr_cntn = trim(BOTH FROM #{scr_cntn}::text)
+		      ,vndr_no = #{vndr_no}
+		      ,upt_usr_id = #{usr_id}
+		      ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+		where mtrl_no = #{mtrl_no}
+    </update>
+    
+    <update id="deleteMsdsMstPic" parameterType="sqlMap">
+       update tb_ch_mtrl_gwsgn_picg 
+		   set del_yn = 'Y'
+		      ,print_yn = 'N'
+		where mtrl_no = #{mtrl_no}
+    </update>
+    
+    <insert id="updateMsdsPicMstData" parameterType="sqlMap">
+       insert into tb_ch_mtrl_gwsgn_picg(
+			    mtrl_no
+			   ,picg_cd
+			   ,print_yn
+			   ,crt_usr_id 
+			   ,crt_dt 
+			   ,upt_usr_id 
+			   ,upt_dt 
+		) values (
+			    #{mtrl_no}
+			   ,#{picg_cd}
+			   ,#{print_yn}
+			   ,#{usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+			   ,#{usr_id}
+			   ,to_char(now(), 'YYYYMMDDHH24MISS')
+		) on conflict (mtrl_no, picg_cd)
+		do update set del_yn = 'N'
+		       ,print_yn = #{print_yn}
+			   ,upt_usr_id = #{usr_id}
+			   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_ch_mtrl_gwsgn_picg.picg_cd = #{picg_cd}
+		  and tb_ch_mtrl_gwsgn_picg.mtrl_no = #{mtrl_no}
+    </insert>
+    
+    <select id="selectMsdsLawCd" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMsdsLawCd */
+		select a.rglt_no as cd
+		      ,a.law_cd as up_cd
+			  ,a.rglt_nm as cd_nm
+		  from tb_ch_rglt a
+		 where a.del_yn = 'N'
+		   and a.usg_yn = 'Y'
+		 order by a.sort_seq
+	</select>
+    
+    <select id="selectMsdsChkUsrList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMsdsChkUsrList */
+		select usr_id 
+		from tb_co_biz_pc
+		where biz_pc_grp_cd = 'BG00003'
+		  and usg_yn = 'Y'
+		  and del_yn = 'N'
+		  and cnct_1st_cd = #{rev_wkpl_id}
+	</select>
+	
+	<select id="selectMtrlFileKey" parameterType="sqlMap" resultType="string">
+		/* "selectMtrlFileKey" */
+		select 
+			(
+				select tca.atfl_no || '-' || tca.atfl_seq
+				from tb_co_atfl tca
+				where tca.atfl_no = tcmm.ko_atfl_no
+				limit 1
+			)
+		from tb_ch_mtrl_msds tcmm 
+		where mtrl_no = #{mtrl_no}
+		  and tcmm.del_yn = 'N'
+	</select>
+    
+</mapper>

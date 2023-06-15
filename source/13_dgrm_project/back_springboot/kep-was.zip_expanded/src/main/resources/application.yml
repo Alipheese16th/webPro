@@ -1,0 +1,91 @@
+spring:
+  application:
+    name: kist-eu-portal
+  profiles:
+    active: local
+
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  #mapper-locations: classpath*:mybatis/mssql/**/*.xml
+  mapper-locations: classpath*:mybatis/postgresql/**/*.xml
+
+jasypt:
+  encryptor:
+    bean: encryptorBean
+
+##########################################
+## Local Profile
+##########################################
+---
+spring:
+  profiles: local
+  batch:
+    job:
+      enabled: false
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB # Max file size.
+      max-request-size: 100MB # Max request size.
+  datasource:
+    platform: mssql
+    driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    #url: jdbc:log4jdbc:sqlserver://192.168.0.180:1433;database=ehsdb;encrypt=true;trustServerCertificate=true
+    #url: jdbc:log4jdbc:postgresql://192.168.0.180:5432/postgres
+    #url: jdbc:log4jdbc:postgresql://localhost:5432/kisteuportal
+    #url: jdbc:log4jdbc:postgresql://43.201.218.189:15432/kisteuportal
+    url: jdbc:log4jdbc:postgresql://localhost:5432/kisteuportal
+    # url: jdbc:log4jdbc:postgresql://49.247.3.171:5432/panda
+    hikari:
+      #username: ehsuser
+      #password: 1q2w3e4r!
+      username: postgres
+      password: 1q2w3e4r!
+      #username: kistusr
+      #password: kistportal!
+      # username: pandason
+      # password: qkqhqkralfl
+      maximum-pool-size: 10
+  ozreport:
+    viewer: https://localhost:8088/api/oz80/ozhviewer
+    server: https://localhost:8088/api/oz80/server
+
+server:
+  port: 8081
+  servlet:
+    session:
+      timeout: 3600
+
+dgrm:
+  aws-s3-bucket: dehs-bucket # local에서는 s3사용 못함
+  sap-cnst: http://localhost:3000
+  front-url: http://localhost:3000
+  server-url: http://localhost:8088
+  oracle-url: jdbc:oracle:thin:@120.0.0.1:1543:XE
+  oracle-user: ehsuser
+  oracle-pw: 1q2w3e4r!
+  #open-api-key: bi7%2BcMviUbtVr2jU91TpRBd6yMVqMSG4yMmoavWLCh9Ww0MqHkR5vOpZ4Ko%2F50j0R%2BZZiXAozz3VrXyMISZIVA%3D%3D
+  open-api-key: 1111
+  app-temp-dir: /dehsTemp/
+  fileDir: C:\\workspaces\\test\\files
+  #fileDir: /Users/junholee/kist/files
+  fileDirDeleted: C:\\workspaces\\test\\files\\deleted
+  #fileDirDeleted: /Users/junholee/kist/deleted
+  fileUploadType: local
+
+logging:
+  file:
+    #path: /Users/junholee/kist/log/test
+    path: C:\\workspaces\\test\\log\\test
+  level:
+    root: debug
+    org.springframework: info
+    com.zaxxer.hikari: info
+    org.mybatis: info
+    jdbc.sqlonly: debug
+    jdbc.sqltiming: warn
+    jdbc.audit: warn
+    jdbc.resultset: warn
+    jdbc.resultsettable: warn
+    jdbc.connection: warn
+    org.quartz.core.QuartzSchedulerThread: info

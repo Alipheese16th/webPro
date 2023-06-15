@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.ch.rgltdb.mapper.sbstRgltMapper">
+
+	<select id="selectsbstRgltList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectsbstRgltList */
+		select aa.* from (
+			select a.sort_seq 
+			     , a.law_cd
+			     , a.rglt_no 
+			     , fn_get_cd('CH00000003', a.law_cd, 'NM', #{SESS_LANG}) as law_nm
+			     , a.rglt_nm 
+			     , b.rglt_crtr_rati::text
+                 , b.lgnoti_nm 
+                   || case when b.lgnoti_law_nm is not null then ', ' || b.lgnoti_law_nm else '' end 
+                   || case when b.lgnoti_da is not null then '(' || to_char(to_date(b.lgnoti_da,'yyyymmdd'),'yyyy-mm-dd')  || ')' else '' end as lgnoti_cntn
+			     , case when b.rglt_no is not null and b.rglt_crtr_rati is null then 'Y'
+                        when b.rglt_no is not null and b.rglt_crtr_rati is not null and b.rglt_crtr_rati <![CDATA[<=]]> trim(#{rglt_crtr_rati}::text)::numeric(18,3) then 'Y'
+                        else 'N'
+                   end as target_yn
+			  from tb_ch_rglt a
+			  left outer join tb_ch_rglt_sbst b on a.rglt_no =b.rglt_no and b.sbst_no = trim(#{sbst_no})
+			 where a.usg_yn = 'Y'
+			   and a.del_yn = 'N') aa
+		where 1=1
+        <if test='target_yn != null and target_yn != ""'>
+            and aa.target_yn = #{target_yn}
+        </if>
+        order by aa.sort_seq
+	</select>
+	
+</mapper>

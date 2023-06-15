@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.st.stndinfr.mapper.WkplChkListMgntMapper">
+
+	<!-- 사업장 공사점검 체크리스트 조회 -->
+	<select id="selectWkplChkList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectWkplChkList  */
+		select a.wkpl_id 
+		      ,a.wkpl_chec_cl_cd
+		      ,fn_get_cd('ST00000012', a.wkpl_chec_cl_cd, 'NM', #{SESS_LANG}) as wkpl_chec_cl_nm
+		      ,a.wkpl_chec_dtl_cl_cd
+		      ,fn_get_cd('ST00000013', a.wkpl_chec_dtl_cl_cd, 'NM', #{SESS_LANG}) as wkpl_chec_dtl_cl_nm
+		      ,a.wkpl_chec_sn
+		      ,a.wkpl_chec_in_cl_cd
+		      ,fn_get_cd('ST00000009', a.wkpl_chec_in_cl_cd, 'NM', #{SESS_LANG}) as wkpl_chec_in_cl_nm
+		      ,a.wkpl_chec_txt 
+		      ,a.mand_chec_yn
+		      ,a.usg_yn
+		      ,a.upt_usr_id
+		      ,(select case when #{SESS_LANG} = 'KO' then u.usr_ko_nm 
+				            when #{SESS_LANG} = 'EN' then u.usr_en_nm 
+				            else u.usr_zh_nm 
+				       end as usr_nm
+			      from tb_co_user u
+			     where u.usr_id = a.upt_usr_id
+			   ) as lsch_nm
+			  ,to_char(a.upt_dt, 'YYYY-MM-DD') as upt_dt
+		  from tb_sh_wkpl_chec a
+		 where a.wkpl_id = 'S00'
+		 <if test='wkpl_chec_cl_cd != null and wkpl_chec_cl_cd != ""'>
+		   and a.wkpl_chec_cl_cd = #{wkpl_chec_cl_cd}
+		 </if>
+		 <if test='wkpl_chec_dtl_cl_cd != null and wkpl_chec_dtl_cl_cd != ""'>
+		   and a.wkpl_chec_dtl_cl_cd = #{wkpl_chec_dtl_cl_cd}
+		 </if>
+		 <if test='usg_yn != null and usg_yn != ""'>
+		   and a.usg_yn = #{usg_yn}
+		 </if>
+		 order by a.wkpl_id, a.wkpl_chec_cl_cd, a.wkpl_chec_dtl_cl_cd, a.wkpl_chec_sn
+	</select>
+	
+	<!-- 사업장 공사점검 체크리스트 키 중복체크 -->
+	<select id="selectWkplChkKeyPass" parameterType="sqlMap" resultType="string">
+		/* selectWkplChkKeyPass */
+		select case when count(1) > 0 then 'N'
+		            else 'Y'
+		       end as pass_yn
+		  from tb_sh_wkpl_chec 
+		 where wkpl_id = #{wkpl_id}
+		   and wkpl_chec_cl_cd = #{wkpl_chec_cl_cd}
+		   and wkpl_chec_dtl_cl_cd = #{wkpl_chec_dtl_cl_cd}
+		   and replace(wkpl_chec_txt, ' ', '') = replace(#{wkpl_chec_txt}, ' ', '')
+	</select>
+	
+	<!-- 사업장 공사점검 체크리스트 등록 -->
+	<insert id="insertWkplChkList" parameterType="sqlMap">
+        /* insertWkplChkList */
+        with upsert as (
+		update tb_sh_wkpl_chec
+		   set wkpl_chec_in_cl_cd   = #{wkpl_chec_in_cl_cd}
+		      ,wkpl_chec_txt    		= #{wkpl_chec_txt}
+		      ,mand_chec_yn            	= #{mand_chec_yn}
+		      ,usg_yn					= #{usg_yn}
+		      ,upt_usr_id       			= #{username}
+		      ,upt_dt            		= current_timestamp
+		 where wkpl_id = #{wkpl_id}
+		   and wkpl_chec_cl_cd = #{wkpl_chec_cl_cd}
+		   and wkpl_chec_dtl_cl_cd = #{wkpl_chec_dtl_cl_cd}
+		   and wkpl_chec_sn = #{wkpl_chec_sn}::numeric RETURNING *
+		)
+        insert into tb_sh_wkpl_chec (
+        	   wkpl_id
+        	  ,wkpl_chec_cl_cd
+        	  ,wkpl_chec_dtl_cl_cd
+        	  ,wkpl_chec_sn
+			  ,wkpl_chec_in_cl_cd
+			  ,wkpl_chec_txt
+			  ,mand_chec_yn
+			  ,usg_yn
+			  ,crt_usr_id
+			  ,crt_dt
+			  ,upt_usr_id
+			  ,upt_dt
+		)
+		select #{wkpl_id}
+	 		  ,#{wkpl_chec_cl_cd}
+	 		  ,#{wkpl_chec_dtl_cl_cd}
+			  ,(select coalesce(max(wkpl_chec_sn ::integer),0) + 1 as key
+		          from tb_sh_wkpl_chec
+		         where wkpl_id = #{wkpl_id}
+		           and wkpl_chec_cl_cd = #{wkpl_chec_cl_cd}
+		           and wkpl_chec_dtl_cl_cd = #{wkpl_chec_dtl_cl_cd}
+		       )
+			  ,#{wkpl_chec_in_cl_cd}
+			  ,#{wkpl_chec_txt}
+			  ,#{mand_chec_yn}
+   	 		  ,#{usg_yn}
+			  ,#{username}
+			  ,current_timestamp
+			  ,#{username}
+			  ,current_timestamp
+	     where not exists (select * from upsert)
+    </insert>
+    
+    <!-- 사업장 공사점검 체크리스트 삭제 -->
+    <delete id="deleteWkplChkList" parameterType="sqlMap">
+        /* deleteWkplChkList */
+        delete 
+          from tb_sh_wkpl_chec
+		 where wkpl_id = #{wkpl_id}
+		   and wkpl_chec_cl_cd = #{wkpl_chec_cl_cd}
+		   and wkpl_chec_dtl_cl_cd = #{wkpl_chec_dtl_cl_cd}
+		   and wkpl_chec_sn = #{wkpl_chec_sn}::numeric
+    </delete>
+    
+</mapper>

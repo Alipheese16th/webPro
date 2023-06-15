@@ -1,0 +1,20 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /data/was-app/codedeploy/
+hooks:
+  ApplicationStop:
+    - location: scripts/tomcat_stop.sh
+      timeout: 60
+      runas: root
+  BeforeInstall:
+  AfterInstall:
+    - location: scripts/deploy.sh
+      timeout: 300
+      runas: root
+
+  ApplicationStart:
+    - location: scripts/tomcat_start.sh
+      timeout: 60
+      runas: root

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.common.chems.mapper.HisMapper">
+
+	<resultMap id='loginMap' type='com.kist.portal.common.chems.dto.LoginLogDto'>
+			<result property="userId" column="usr_id" />
+			<result property="userName" column="usr_nm" />
+			<result property="loginDate" column="login_dt" />
+			<result property="loginTime" column="login_tm" />
+			<result property="ipAddress" column="ip_addr" />
+			<result property="roleName" column="role_nm" />
+	</resultMap>
+
+	<select id="selectLoginHisList" parameterType="com.kist.portal.common.chems.dto.LoginLogDto" resultMap="loginMap">
+		/* selectLoginHisList */
+		select tcell.usr_id 
+		      ,case when #{session.languageCode} = 'KO' then tce.usr_ko_nm 
+		       when #{session.languageCode} = 'EN' then tce.usr_en_nm 
+		       else tce.usr_zh_nm
+		       end as usr_nm
+		      ,fn_get_time(tcell.login_dt, #{session.timeZone},'DA', '-') as login_dt
+		      ,fn_get_time(tcell.login_dt, #{session.timeZone},'TS', ':') as login_tm
+		      ,REGEXP_REPLACE(tcell.ip_addr, '([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})', '\1.\2.***.\4') as ip_addr
+		      ,(select array_to_string(array_agg(mlang_cntn), ', ') 
+		      	from tb_co_mlang tcm 
+		      	join tb_co_user_role tcur 
+		      	on tcm.role_no = tcur.role_no 
+		      	and tcm.lang_cd = #{session.languageCode}
+		      	and tcur.usg_yn = 'Y'
+		      	and tcur.del_yn = 'N'
+		      	and tcm.usg_yn = 'Y'
+		      	and tcm.del_yn = 'N'
+		      	where tcur.usr_id = tcell.usr_id 
+		      ) as role_nm
+		from tb_co_user_login_log tcell 
+		join tb_co_user tce on tcell.usr_id = tce.usr_id 
+		where 1=1
+			<if test='startDate != null and startDate != "" and endDate != null and endDate != ""'>
+			<![CDATA[
+			and fn_get_time(tcell.login_dt, #{session.timeZone},'DA')::timestamp >= #{startDate}::timestamp and fn_get_time(tcell.login_dt, #{session.timeZone},'DA')::timestamp <= concat(#{endDate}, ' 23:59:59')::timestamp
+			]]>
+			</if>
+			<if test='userName != null and userName != ""'>
+			<if test='SESS_LANG == "KO"'>
+            and tce.usr_ko_nm like concat('%', #{userName}, '%')
+        	</if>
+        	<if test='SESS_LANG == "EN"'>
+            and tce.usr_en_nm like concat('%', #{userName}, '%')
+        	</if>
+        	<if test='SESS_LANG == "ZH"'>
+            and tce.usr_zh_nm like concat('%', #{userName}, '%')
+        	</if>
+        	</if>
+        order by login_dt desc, login_tm desc
+	</select>
+	
+	<select id="selectApiHisList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectApiHisList */
+		select tcael.usr_id
+		      ,case when #{session.languageCode} = 'KO' then tce.usr_ko_nm 
+				       when #{session.languageCode} = 'EN' then tce.usr_en_nm 
+				       else tce.usr_zh_nm 
+				       end as usr_nm
+		      ,tcael.api_no
+		      ,tcael.api_exe_url
+		      ,fn_get_time(tcael.exe_dt, #{SESS_TIMEZONE},'DA', '-') as exe_dt
+		      ,fn_get_time(tcael.exe_dt, #{SESS_TIMEZONE},'TS', ':') as exe_tm
+		      ,REGEXP_REPLACE(tcael.ip_addr, '([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})', '\1.\2.***.\4') as ip_addr
+		      ,(select array_to_string(array_agg(mlang_cntn), ', ') 
+		      	from tb_co_mlang tcm 
+		      	join tb_co_user_role tcur 
+		      	on tcm.role_no = tcur.role_no 
+			      	and tcm.lang_cd = #{session.languageCode}
+			      	and tcur.usg_yn = 'Y'
+			      	and tcur.del_yn = 'N'
+			      	and tcm.usg_yn = 'Y'
+			      	and tcm.del_yn = 'N'
+		      	where tcur.usr_id = tcael.usr_id
+		       ) as role_nm
+		from tb_co_api_exe_log tcael 
+		join tb_co_user tce on tcael.usr_id = tce.usr_id
+		where 1=1
+		<if test='sDate != null and sDate != "" and eDate != null and eDate != ""'>
+			<![CDATA[
+			and fn_get_time(tcael.exe_dt, #{SESS_TIMEZONE},'DA', '-')::timestamp >= #{sDate}::timestamp and fn_get_time(tcael.exe_dt, #{SESS_TIMEZONE},'DA', '-')::timestamp <= concat(#{eDate}, ' 23:59:59')::timestamp
+			]]>
+		</if>
+		<if test='username != null and username != ""'>
+			<if test='SESS_LANG == "KO"'>
+	           and tce.usr_ko_nm like concat('%', #{username}, '%')
+	       	</if>
+	       	<if test='SESS_LANG == "EN"'>
+	           and tce.usr_en_nm like concat('%', #{username}, '%')
+	       	</if>
+	       	<if test='SESS_LANG == "ZH"'>
+	           and tce.usr_zh_nm like concat('%', #{username}, '%')
+	       	</if>
+       	</if>
+       	<if test='api_url != null and api_url != ""'>
+       	   and api_exe_url like concat('%', #{api_url}, '%')
+       	</if>
+       	order by exe_dt desc, exe_tm desc
+	</select>
+	
+	<select id="selectBatHisList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectBatHisList */
+		select tcbel.bat_exe_log_no
+		      ,tcbel.bat_cd 
+		      ,tcm.mlang_cntn as bat_cd_nm
+		      ,fn_get_cd('CO00000011', tcbel.bat_cd, 'nm', #{session.languageCode}) as bat_nm
+		      ,fn_get_time(tcbel.bat_st_dt, #{SESS_TIMEZONE},'DA', '-') || ' ' || fn_get_time(tcbel.bat_st_dt, #{SESS_TIMEZONE},'TS', ':') as bat_st_dt
+		      ,fn_get_time(tcbel.bat_ed_dt, #{SESS_TIMEZONE},'DA', '-') || ' ' || fn_get_time(tcbel.bat_ed_dt, #{SESS_TIMEZONE},'TS', ':') as bat_ed_dt
+		      ,tcbel.bat_rslt_cd
+		from tb_co_bat_exe_log tcbel 
+		join tb_co_mlang tcm on tcbel.bat_cd = tcm.cd and tcm.lang_cd = #{session.languageCode}
+		where 1=1
+		<if test='sDate != null and sDate != "" and eDate != null and eDate != ""'>
+			<![CDATA[
+			and fn_get_time(tcbel.bat_exe_da, #{SESS_TIMEZONE},'DA', '-')::timestamp >= #{sDate}::timestamp and fn_get_time(tcbel.bat_exe_da, #{SESS_TIMEZONE},'DA', '-')::timestamp <= concat(#{eDate}, ' 23:59:59')::timestamp
+			]]>
+		</if>
+		<if test='bat_cd != null and bat_cd != "" and bat_cd != "ALL"'>
+			and tcbel.bat_cd = #{bat_cd}
+		</if>
+		<if test='bat_rslt_cd != null and bat_rslt_cd != ""'>
+			and tcbel.bat_rslt_cd = #{bat_rslt_cd}
+		</if>
+		order by bat_st_dt desc, bat_ed_dt desc
+	</select>
+	
+	<select id="selectDetailBatHis" parameterType="sqlMap" resultType="string">
+		/* selectDetailBatHis */
+		select tcbel.bat_rslt_cntn
+		from tb_co_bat_exe_log tcbel 
+		where tcbel.bat_exe_log_no = #{id}::integer
+	</select>
+	
+	<select id="selectBatchList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectBatchList */
+		select coalesce(tccr.up_cd_grp_no,'') as up_cd_grp_no
+		      ,coalesce(tccr.up_cd,'') as up_cd
+		      ,coalesce(tcmr.mlang_cntn,'') as up_cd_nm
+		      ,coalesce(tcmr.mlang_abbr,'') as up_cd_ab
+		      ,tcc.cd_grp_no
+		      ,tcc.cd
+		      ,tcm.mlang_cntn as cd_nm
+		      ,tcm.mlang_abbr as cd_ab
+		      ,coalesce(tcc.buf_1st_cntn, '') as buf_1st_cntn
+		      ,coalesce(tcc.buf_2nd_cntn, '') as buf_2nd_cntn
+		      ,coalesce(tcc.buf_3rd_cntn, '') as buf_3rd_cntn
+		      ,coalesce(tcc.buf_4th_cntn, '') as buf_4th_cntn
+		      ,coalesce(tcc.buf_5th_cntn, '') as buf_5th_cntn
+		      ,tcc.sort_seq
+		      ,'실행' as bat_button
+		  from tb_co_cd tcc 
+		  join tb_co_cd_grp tccg on tccg.cd_grp_no = tcc.cd_grp_no 
+		  join tb_co_mlang tcm on tcm.cd_grp_no = tcc.cd_grp_no and tcm.cd = tcc.cd and tcm.lang_cd = #{session.languageCode}
+		  left outer join tb_co_cd_rel tccr on tcc.cd_grp_no = tccr.cd_grp_no and tcc.cd = tccr.cd and tccr.up_cd_grp_no = (select distinct up_cd_grp_no  from tb_co_cd_rel where cd_grp_no  = 'CO00000011') 
+		  left outer join tb_co_mlang tcmr on tcmr.cd_grp_no = tccr.up_cd_grp_no and tcmr.cd = tccr.up_cd and tcmr.lang_cd = #{session.languageCode}
+		 where tcc.cd_grp_no = 'CO00000011'
+		 <if test='cd != null and cd != ""'>
+		   and tcc.cd = #{cd}
+		 </if>
+		   and tcc.usg_yn = 'Y'
+		   and tcc.del_yn = 'N'
+           and tcm.usg_yn = 'Y'
+           and tcm.del_yn = 'N'
+		 order by tcc.sort_seq
+	</select>
+	
+</mapper>

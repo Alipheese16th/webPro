@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.sh.hmex.mapper.HmexAbfrMapper">
+
+	<!-- 유소견자 사후관리 조회  -->
+	<select id="selectAbfrList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAbfrList - 유소견자 사후관리 조회 */
+		select a.*
+			  ,(select array_to_string(array_agg(fn_get_cd('SH00000037', hmex_cl_cd, 'nm', #{SESS_LANG})), ', ') 
+			  	  from tb_sh_hmex_rslt
+			  	 where hmex_year = a.hmex_year
+			  	   and hmex_tgt_usr_id = a.hmex_tgt_usr_id
+			   ) as hmex_cl_nm
+			  ,(select substring(max(hmex_cnsl_schd_dt), 0, 5) || '-' || substring(max(hmex_cnsl_schd_dt), 5, 2) || '-' || substring(max(hmex_cnsl_schd_dt), 7, 2) 
+				  from tb_sh_hmex_abfr
+				 where hmex_year = a.hmex_year
+				   and hmex_tgt_usr_id = a.hmex_tgt_usr_id
+			   ) as hmex_cnsl_schd_dt
+			  ,(select case when count(*) > 0 then 'Y' else 'N' end 
+				  from tb_sh_hmex_abfr
+				 where hmex_year = a.hmex_year
+				   and hmex_tgt_usr_id = a.hmex_tgt_usr_id
+			   ) as hmex_cnsl_yn 
+		  from (		
+			    select t1.hmex_year
+					  ,t1.hmex_tgt_usr_id
+					  ,fn_get_cd('ST00000002', t1.wkpl_id, 'nm', #{SESS_LANG}) as wkpl_nm
+					  ,fn_get_cmpy(t1.wkpl_id, 'NM', #{SESS_LANG}) as cmpy_nm
+					  ,t1.org_nm
+					  ,substring(t1.hmex_trgp_nm, 1, 1) || '*' || substring(t1.hmex_trgp_nm, 3) as hmex_trgp_nm
+				  from tb_sh_hmex_rslt t1
+			      left outer join tb_sh_hmex_trgp t2 on t1.hmex_year = t2.hmex_year
+			     where t1.hmex_tgt_usr_id = t2.hmex_tgt_usr_id 
+				   and t2.hmex_sn = (
+				   					 select min(hmex_sn)
+				   					   from tb_sh_hmex_trgp
+				   					  where hmex_year = t1.hmex_year
+				   					    and hmex_tgt_usr_id = t1.hmex_tgt_usr_id
+				   					)
+				   and (t1.abfd_xtra_cnsl_yn = 'Y' or t1.ovr_opin_yn = 'Y')		<!-- 2022-11-22 유소견추가상담여부 컬럼 추가  -->
+				<if test='hmex_year != null and hmex_year != ""'>
+				   and t1.hmex_year = #{hmex_year}
+				</if>
+				<if test='wkpl_id != null and wkpl_id != ""'>
+				   and t1.wkpl_id = #{wkpl_id}
+				</if>
+				<if test='hmex_cl_cd != null and hmex_cl_cd != ""'>
+				   and t1.hmex_cl_cd = #{hmex_cl_cd}
+				</if>
+				<if test='org_nm != null and org_nm != ""'>
+				   and t1.org_nm like '%' || #{org_nm} || '%'
+				</if>
+				<if test='hmex_trgp_nm != null and hmex_trgp_nm != ""'>
+				   and t1.hmex_trgp_nm like '%' || #{hmex_trgp_nm} || '%'
+				</if>
+				<if test='cmpy_cd != null and cmpy_cd != ""'>
+				   and exists (select 1
+				      			 from tb_sh_wkpl w
+				      		    where w.wkpl_id = t1.wkpl_id 
+				      			  and w.cmpy_cd = #{cmpy_cd}
+				   			  )
+				</if>
+				<if test='hmex_ovr_opin_jgmt_cd != null and hmex_ovr_opin_jgmt_cd != ""'>	<!-- 2022-11-22 판정1 조회조건 추가  -->
+				   and hmex_ovr_opin_jgmt_cd1 = ANY (regexp_split_to_array(#{hmex_ovr_opin_jgmt_cd}, ','))	
+				</if>
+				<if test='hmex_cnsl_yn != null and hmex_cnsl_yn != "" and hmex_cnsl_yn == "Y"'>		<!-- 2022-11-22 상담 조회조건 추가  -->
+			       and exists (select 1  
+								 from tb_sh_hmex_abfr
+						 		where hmex_year = t1.hmex_year
+						  	  	  and hmex_tgt_usr_id = t1.hmex_tgt_usr_id 
+						  	  ) 
+				</if>
+				<if test='hmex_cnsl_yn != null and hmex_cnsl_yn != "" and hmex_cnsl_yn == "N"'>
+ 				   and not exists (select 1  
+								 	 from tb_sh_hmex_abfr
+					 				where hmex_year = t1.hmex_year
+					  	  	  	 	  and hmex_tgt_usr_id = t1.hmex_tgt_usr_id 
+					  		  )
+				</if>
+			   ) a
+		 group by a.hmex_year
+				 ,a.hmex_tgt_usr_id
+				 ,a.wkpl_nm
+				 ,a.cmpy_nm
+				 ,a.org_nm
+				 ,a.hmex_trgp_nm
+		 order by a.hmex_year desc
+				 ,a.wkpl_nm
+				 ,a.cmpy_nm
+				 ,a.org_nm
+				 ,a.hmex_trgp_nm
+	</select>
+	
+	<select id="selectAbfrDtlList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAbfrDtlList */
+		select 
+			t1.hmex_year
+			,t1.wkpl_id
+			,t1.hmex_tgt_usr_id
+			,substring(t1.hmex_cnsl_dt, 0, 5) || '-' || substring(t1.hmex_cnsl_dt, 5, 2) || '-' || substring(t1.hmex_cnsl_dt, 7, 2) as hmex_cnsl_dt
+			,substring(t1.hmex_cnsl_schd_dt, 0, 5) || '-' || substring(t1.hmex_cnsl_schd_dt, 5, 2) || '-' || substring(t1.hmex_cnsl_schd_dt, 7, 2) as hmex_cnsl_schd_dt
+			,t1.drug_care_yn
+			,t1.hmex_cnsl_txt
+			,(select count(*) from tb_co_atfl where atfl_no = t1.cnsl_atfl_no) as cnsl_atfl_cnt
+			,t1.cnsl_atfl_no
+		from tb_sh_hmex_abfr t1
+		where t1.hmex_year = #{hmex_year} and t1.hmex_tgt_usr_id = #{hmex_tgt_usr_id}
+		order by t1.hmex_cnsl_dt desc 
+	</select>
+	
+	<insert id="insertAbfr" parameterType="sqlMap">
+      	/* insertAbfr */
+		insert into tb_sh_hmex_abfr (
+			hmex_year
+			,wkpl_id
+			,hmex_tgt_usr_id
+			,hmex_cnsl_dt
+			,hmex_cnsl_schd_dt
+			,drug_care_yn
+			,hmex_cnsl_txt
+			,cnsl_atfl_no
+			,crt_usr_id
+			,upt_usr_id
+		) values (
+			#{hmex_year}
+		    ,#{wkpl_id}
+			,#{hmex_tgt_usr_id}
+			,replace(#{hmex_cnsl_dt}, '-', '')
+			,replace(#{hmex_cnsl_schd_dt}, '-', '')
+			,#{drug_care_yn}
+			,#{hmex_cnsl_txt}
+			,#{cnsl_atfl_no}::INTEGER
+			,#{SESS_USR_ID}
+			,#{SESS_USR_ID}
+		) on conflict on constraint tb_sh_hmex_abfr_pk
+		do nothing
+    </insert>
+    
+    <update id="updateAbfr" parameterType="sqlMap">
+      	/* updateAbfr */
+		update tb_sh_hmex_abfr set
+			hmex_cnsl_schd_dt	= replace(#{hmex_cnsl_schd_dt}, '-', '')
+			,drug_care_yn		= #{drug_care_yn}
+		    ,hmex_cnsl_txt		= #{hmex_cnsl_txt}
+		    ,cnsl_atfl_no	= #{cnsl_atfl_no}::INTEGER
+			,crt_usr_id			= #{SESS_USR_ID}
+			,upt_usr_id			= #{SESS_USR_ID}
+		where hmex_year = #{hmex_year}  and hmex_tgt_usr_id = #{hmex_tgt_usr_id} and hmex_cnsl_dt = replace(#{hmex_cnsl_dt}, '-', '')
+    </update>
+    
+    <delete id="deleteAbfr" parameterType="sqlMap">
+        /* deleteAbfr */
+        delete from tb_sh_hmex_abfr
+        where hmex_year || '-' || hmex_tgt_usr_id || '-' || hmex_cnsl_dt = #{abfr_id}
+    </delete>
+</mapper>

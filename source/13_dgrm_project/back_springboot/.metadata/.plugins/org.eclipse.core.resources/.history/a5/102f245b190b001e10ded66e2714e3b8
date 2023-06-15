@@ -1,0 +1,30 @@
+package com.kist.portal.test.user.mapper;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.kist.portal.test.user.dto.TestUserDto;
+
+
+@Mapper
+public interface TestUserMapper {
+	
+	public List<TestUserDto> selectTestUserList(TestUserDto param);
+	
+	public String selectTestUserkey();
+	
+	public int insertTestUserM(Map<String, String> param);
+	
+	public int insertTestUserL(Map<String, String> param);
+	
+	public int updateTestUserM(Map<String, String> param);
+	
+	public int updateTestUserL(Map<String, String> param);
+	
+	public int deleteTestUserM(Map<String, String> param);
+	
+	public int deleteTestUserL(Map<String, String> param);
+	
+}

@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.sh.riskeval.mapper.RiskEvalMapper">
+
+	<select id="selectRiskEvalBasicList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectRiskEvalBasicList */
+		select
+		    a.dgsn_apal_id
+		    ,(select z.cmpy_cd from tb_sh_wkpl z
+			     where z.wkpl_id = a.wkpl_id) as cmpy_cd
+			,(select fn_get_cd('CO00000009', z.cmpy_cd, 'NM', #{SESS_LANG}) from tb_sh_wkpl z
+			     where z.wkpl_id = a.wkpl_id) as cmpy_nm
+		    ,a.wkpl_id
+		    ,fn_get_cd('ST00000002', a.wkpl_id, 'nm', #{SESS_LANG}) as wkpl_nm
+		    ,a.dgsn_apal_type_cd
+		    ,fn_get_cd('SH00000078', a.dgsn_apal_type_cd, 'nm', #{SESS_LANG}) as dgsn_apal_type_nm
+		    ,a.dgsn_spot_apal_type_cd
+		    ,fn_get_cd('SH00000079', a.dgsn_spot_apal_type_cd, 'nm', #{SESS_LANG}) as dgsn_spot_apal_type_nm
+		    ,a.dgsn_apal_supe_usr_id
+		    ,fn_get_user(a.dgsn_apal_supe_usr_id, 'nm', #{SESS_LANG}) as dgsn_apal_supe_usr_nm
+		    ,b.dept_cd as dgsn_org_cd
+		    ,fn_get_dept(b.dept_cd, 'nm', #{SESS_LANG}) as dgsn_org_nm
+		    ,substring(a.dgsn_apal_bgn_dt, 0, 5) || '-' || substring(a.dgsn_apal_bgn_dt, 5, 2) || '-' || substring(a.dgsn_apal_bgn_dt, 7, 2) as dgsn_apal_bgn_dt
+		    ,a.lrcl_dngp_id
+		    ,(select dngp_nm from tb_sh_risk_dngp where dngp_id = a.lrcl_dngp_id) as lrcl_dngp_nm
+      		,a.mdcl_dngp_id
+      		,(select dngp_nm from tb_sh_risk_dngp where dngp_id = a.mdcl_dngp_id) as mdcl_dngp_nm
+		    ,a.dgsn_apal_sgn_atfl_no
+		    ,(select count(*) from tb_sh_risk_dgsn_apal_dtl where dgsn_apal_id = a.dgsn_apal_id and dgsn_apal_scr >= 8) as high_risk_cnt
+		    ,a.dgsn_apal_drup_stp_cd 
+		    ,a.dgsn_apal_prst_cd 
+		    ,fn_get_cd('SH00000077', a.dgsn_apal_prst_cd, 'nm', #{SESS_LANG}) as dgsn_apal_prst_nm
+		    ,case when a.crt_usr_id = #{login_id} then 'U'
+		     else 'R' end as mode
+		from tb_sh_risk_dgsn_apal a, tb_co_user b
+		 where a.dgsn_apal_supe_usr_id = b.usr_id
+		 	and a.del_yn = 'N'
+		 <if test='sDate != null and sDate != "" and eDate != null and eDate != ""'>
+			and a.dgsn_apal_bgn_dt between replace(#{sDate},'-','') and replace(#{eDate},'-','')
+		 </if>
+		 <if test='wkpl_id != null and wkpl_id != ""'>
+			and a.wkpl_id = #{wkpl_id}
+		 </if>
+		 <if test='cmpy_cd != null and cmpy_cd != ""'>
+		    and exists (select 1
+		      			  from tb_sh_wkpl w
+		      			 where w.wkpl_id = a.wkpl_id 
+		      			   and w.cmpy_cd = #{cmpy_cd}
+		   			   )
+		 </if>
+		 <if test='dgsn_org_cd != null and dgsn_org_cd != ""'>
+			and b.dept_cd = #{dgsn_org_cd}
+		 </if>
+		 <if test='dgsn_apal_supe_usr_id != null and dgsn_apal_supe_usr_id != ""'>
+			and a.dgsn_apal_supe_usr_id = #{dgsn_apal_supe_usr_id}
+		 </if>
+		 <if test='dgsn_apal_type_cd != null and dgsn_apal_type_cd != ""'>
+			and a.dgsn_apal_type_cd = #{dgsn_apal_type_cd}
+		 </if>
+		 <if test='dgsn_spot_apal_type_cd != null and dgsn_spot_apal_type_cd != ""'>
+			and a.dgsn_spot_apal_type_cd = #{dgsn_spot_apal_type_cd}
+		 </if>
+		 <if test='lrcl_dngp_id != null and lrcl_dngp_id != ""'>
+			and a.lrcl_dngp_id = #{lrcl_dngp_id}
+		 </if>
+		 <if test='mdcl_dngp_id != null and mdcl_dngp_id != ""'>
+			and a.mdcl_dngp_id = #{mdcl_dngp_id}
+		 </if>
+		 <if test='dgsn_apal_prst_cd != null and dgsn_apal_prst_cd != ""'>
+			and a.dgsn_apal_prst_cd = #{dgsn_apal_prst_cd}
+		 </if>
+		 order by dgsn_apal_id desc	    
+	</select>
+	
+	<select id="selectRiskEvalBasic" parameterType="sqlMap" resultType="sqlMap">
+		/* selectRiskEvalBasic */
+		select
+		    a.dgsn_apal_id
+		    ,(select z.cmpy_cd from tb_sh_wkpl z
+			     where z.wkpl_id = a.wkpl_id) as cmpy_cd
+			,(select fn_get_cd('CO00000009', z.cmpy_cd, 'NM', #{SESS_LANG}) from tb_sh_wkpl z
+			     where z.wkpl_id = a.wkpl_id) as cmpy_nm
+		    ,a.wkpl_id
+		    ,fn_get_cd('ST00000002', a.wkpl_id, 'nm', #{SESS_LANG}) as wkpl_nm
+		    ,a.dgsn_apal_type_cd
+		    ,fn_get_cd('SH00000078', a.dgsn_apal_type_cd, 'nm', #{SESS_LANG}) as dgsn_apal_type_nm
+		    ,a.dgsn_spot_apal_type_cd
+		    ,fn_get_cd('SH00000079', a.dgsn_spot_apal_type_cd, 'nm', #{SESS_LANG}) as dgsn_spot_apal_type_nm
+		    ,a.dgsn_apal_supe_usr_id
+		    ,fn_get_dept((select dept_cd from tb_co_user where usr_id = a.dgsn_apal_supe_usr_id), 'nm',  #{SESS_LANG})
+		     || ' ' || fn_get_user(a.dgsn_apal_supe_usr_id, 'nm',  #{SESS_LANG}) as dgsn_apal_supe_usr_nm
+		    ,substring(a.dgsn_apal_bgn_dt, 0, 5) || '-' || substring(a.dgsn_apal_bgn_dt, 5, 2) || '-' || substring(a.dgsn_apal_bgn_dt, 7, 2) as dgsn_apal_bgn_dt
+		    ,a.lrcl_dngp_id
+		    ,(select dngp_nm from tb_sh_risk_dngp where dngp_id = a.lrcl_dngp_id) as lrcl_dngp_nm
+      		,a.mdcl_dngp_id
+      		,(select dngp_nm from tb_sh_risk_dngp where dngp_id = a.mdcl_dngp_id) as mdcl_dngp_nm
+		    ,a.dgsn_apal_sgn_atfl_no
+		    ,a.dgsn_apal_drup_stp_cd 
+		    ,a.dgsn_apal_prst_cd
+		    ,a.crt_usr_id
+		    ,case when a.crt_usr_id = #{login_id} then 'U'
+		     else 'R' end as mode
+		from tb_sh_risk_dgsn_apal a
+		where 1 = 1
+		<if test='dgsn_apal_id != null and dgsn_apal_id != ""'>
+			and a.dgsn_apal_id = #{dgsn_apal_id}
+		</if>
+		<if test='dgsn_apal_dtl_id != null and dgsn_apal_dtl_id != ""'>
+			and a.dgsn_apal_id = (select dgsn_apal_id from tb_sh_risk_dgsn_apal_dtl where dgsn_apal_dtl_id = #{dgsn_apal_dtl_id})
+		</if>
+	</select>
+	
+	<insert id="insertRiskEvalBasic" parameterType="sqlMap">
+		<selectKey keyProperty="dgsn_apal_id" resultType="String" order="BEFORE">
+        	select #{wkpl_id} || '-' || (select dept_cd from tb_co_user where usr_id = #{dgsn_apal_supe_usr_id}) 
+        		|| '-' || to_char(now(), 'YYMM') 
+        		|| to_char(coalesce(MAX(substring(dgsn_apal_id, length(dgsn_apal_id) - 1)), '00')::INTEGER + 1, 'FM00') as dgsn_apal_id
+			from tb_sh_risk_dgsn_apal 
+			where dgsn_apal_id like #{wkpl_id} || '-' || (select dept_cd from tb_co_user where usr_id = #{dgsn_apal_supe_usr_id}) 
+				|| '-' || to_char(now(), 'YYMM') || '%'
+    	</selectKey>
+    		
+      	/* insertRiskEvalBasic */
+      	insert into tb_sh_risk_dgsn_apal(
+      		dgsn_apal_id
+      		,wkpl_id
+      		,dgsn_apal_type_cd
+      		,dgsn_spot_apal_type_cd
+      		,dgsn_apal_supe_usr_id
+      		,dgsn_apal_bgn_dt
+      		,lrcl_dngp_id
+      		,mdcl_dngp_id
+      		,dgsn_apal_sgn_atfl_no
+      		,dgsn_apal_drup_stp_cd
+      		,dgsn_apal_prst_cd
+      		,crt_usr_id
+      		,upt_usr_id
+      	) values (
+      		#{dgsn_apal_id}
+      		,#{wkpl_id}
+      		,#{dgsn_apal_type_cd}
+      		,#{dgsn_spot_apal_type_cd}
+      		,#{dgsn_apal_supe_usr_id}
+      		,replace(#{dgsn_apal_bgn_dt},'-','')
+      		,#{lrcl_dngp_id}
+      		,#{mdcl_dngp_id}
+      		,#{dgsn_apal_sgn_atfl_no}::INTEGER
+      		,'0'
+      		,'E01'
+      		,#{SESS_USR_ID}
+      		,#{SESS_USR_ID}
+      	)
+    </insert>
+    
+    <update id="updateRiskEvalBasic" parameterType="sqlMap">
+        /* updateRiskEvalBasic */
+        update tb_sh_risk_dgsn_apal set
+        	wkpl_id = #{wkpl_id}
+			,dgsn_apal_type_cd = #{dgsn_apal_type_cd}
+			,dgsn_spot_apal_type_cd = #{dgsn_spot_apal_type_cd}
+			,dgsn_apal_supe_usr_id = #{dgsn_apal_supe_usr_id}
+			,dgsn_apal_bgn_dt = replace(#{dgsn_apal_bgn_dt},'-','')
+			,lrcl_dngp_id = #{lrcl_dngp_id}
+			,mdcl_dngp_id = #{mdcl_dngp_id}
+       		<if test='dgsn_apal_sgn_atfl_no != null and dgsn_apal_sgn_atfl_no != "null" and dgsn_apal_sgn_atfl_no != ""'>
+				,dgsn_apal_sgn_atfl_no = #{dgsn_apal_sgn_atfl_no}::INTEGER
+       		</if>
+			,upt_usr_id = #{SESS_USR_ID}
+			,upt_dt = statement_timestamp()
+		where dgsn_apal_id = #{dgsn_apal_id}
+    </update>
+    
+    <update id="updateRiskEvalBasicFile" parameterType="sqlMap">
+        /* updateRiskEvalBasicFile */
+        update tb_sh_risk_dgsn_apal set
+			dgsn_apal_sgn_atfl_no = #{dgsn_apal_sgn_atfl_no}::INTEGER,
+			upt_usr_id = #{SESS_USR_ID}
+			,upt_dt = statement_timestamp()
+		where dgsn_apal_id = #{dgsn_apal_id}
+    </update>
+    
+    <update id="updateRiskEvalBasicStep" parameterType="sqlMap">
+        /* updateRiskEvalBasicStep */
+        update tb_sh_risk_dgsn_apal set
+       		<if test='dgsn_apal_drup_stp_cd != null and dgsn_apal_drup_stp_cd != ""'>
+       			dgsn_apal_drup_stp_cd = #{dgsn_apal_drup_stp_cd},
+       		</if>
+			dgsn_apal_prst_cd = #{dgsn_apal_prst_cd}
+			,upt_usr_id = #{SESS_USR_ID}
+			,upt_dt = statement_timestamp()
+		where dgsn_apal_id = #{dgsn_apal_id}
+    </update>
+    
+    <update id="updateRiskEvalBasicAppr" parameterType="sqlMap">
+        /* updateRiskEvalBasicAppr */
+        update tb_sh_risk_dgsn_apal set
+       		<if test='dgsn_apal_aprv_no != null and dgsn_apal_aprv_no != ""'>
+				dgsn_apal_aprv_no = #{dgsn_apal_aprv_no},
+       		</if>
+       		<if test='tsnd_aprv_no != null and tsnd_aprv_no != ""'>
+				tsnd_aprv_no = #{tsnd_aprv_no},
+       		</if>
+       		<if test='dgsn_apal_drup_stp_cd != null and dgsn_apal_drup_stp_cd != ""'>
+				dgsn_apal_drup_stp_cd = #{dgsn_apal_drup_stp_cd},
+       		</if>
+			upt_usr_id = #{SESS_USR_ID}
+			,upt_dt = statement_timestamp()
+		where dgsn_apal_id = #{dgsn_apal_id}
+    </update>
+    
+    <select id="selectRiskEvalBasicAppr" parameterType="sqlMap" resultType="sqlMap">
+		/* selectRiskEvalBasicAppr */
+		select dgsn_apal_aprv_no
+		      ,dgsn_apal_prst_cd
+		  from tb_sh_risk_dgsn_apal 
+		 where dgsn_apal_aprv_no = #{dgsn_apal_aprv_no}
+	</select>
+	
+	<update id="updateRiskEvalBasicAprvAf" parameterType="sqlMap">
+        /* updateRiskEvalBasicAprvAf */
+        update tb_sh_risk_dgsn_apal set 
+        	dgsn_apal_prst_cd = #{dgsn_apal_prst_cd}
+        	,dgsn_apal_drup_stp_cd = #{dgsn_apal_drup_stp_cd}
+		    ,upt_dt = statement_timestamp()
+		 where dgsn_apal_aprv_no = #{dgsn_apal_aprv_no}
+    </update>
+    
+    <update id ="deleteRiskEvalBasic" parameterType="sqlMap">
+    	/* deleteRiskEvalBasic */
+        update tb_sh_risk_dgsn_apal set	
+        	del_yn = 'Y'
+			,upt_usr_id  = #{SESS_USR_ID}
+		    ,upt_dt = statement_timestamp()
+		 where dgsn_apal_id = #{dgsn_apal_id}
+    </update>
+    
+    <select id="selectRiskEvalDtlList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectRiskEvalDtlList */
+		select
+		    a.dgsn_apal_dtl_id
+			,sd.dngp_nm as smcl_dngp_nm
+			,a.dgsn_apal_id
+			,a.smcl_dngp_id as smcl_dngp_cd
+			,a.dgsn_apal_dtl_oprn_txt
+			,a.dgsn_apal_tgt_eqp_nm
+			,a.dgsn_apal_tgt_mtra_nm
+			,a.risk_cat_cd
+			,fn_get_cd('SH00000080', a.risk_cat_cd, 'nm', #{SESS_LANG}) as risk_cat_nm
+			,a.hmfl_risk_fact_cd
+			,b.nm as hmfl_risk_fact_nm
+			,a.risk_occr_rslt_txt
+			,a.cur_sfhe_actn_txt
+			,coalesce(a.risk_occr_psbl_scr, 0) as risk_occr_psbl_scr
+			,coalesce(a.risk_occr_main_scr, 0) as risk_occr_main_scr
+			,coalesce(a.dgsn_apal_scr, 0) as dgsn_apal_scr
+			,a.dgsn_dec_meas_txt
+			,coalesce(a.btt_af_risk_occr_psbl_scr, 0) as btt_af_risk_occr_psbl_scr
+			,coalesce(a.btt_af_risk_occr_main_scr, 0) as btt_af_risk_occr_main_scr
+			,coalesce(a.btt_af_dgsn_apal_scr, 0) as btt_af_dgsn_apal_scr
+			,a.dgsn_btt_rspn_usr_id
+			,fn_get_dept((select dept_cd from tb_co_user where usr_id = a.dgsn_btt_rspn_usr_id), 'nm', #{SESS_LANG})
+		     || ' ' || fn_get_user(a.dgsn_btt_rspn_usr_id, 'nm', #{SESS_LANG}) as dgsn_btt_rspn_usr_nm
+			,substring(a.dgsn_btt_cmpy_schd_dt, 0, 5) || '-' || substring(a.dgsn_btt_cmpy_schd_dt, 5, 2) || '-' || substring(a.dgsn_btt_cmpy_schd_dt, 7, 2) as dgsn_btt_cmpy_schd_dt
+			,a.dgsn_btt_txt
+			,a.dgsn_btt_bf_img_atfl_no
+			,a.dgsn_btt_af_img_atfl_no
+			,a.dgsn_btt_prst_cd
+			,a.dgsn_btt_aprv_no
+			,a.sort_sn
+		from tb_sh_risk_dgsn_apal_dtl a
+		left outer join tb_sh_risk_dngp sd on a.smcl_dngp_id = sd.dngp_id
+			,(with recursive nm_list as(
+			    select dgsn_apal_id, dgsn_apal_dtl_id, hmfl_risk_fact_cd, 1 as num, fn_get_cd('SH00000081', split_part(hmfl_risk_fact_cd, ',',1), 'nm', #{SESS_LANG}) as nm, del_yn
+			    from tb_sh_risk_dgsn_apal_dtl
+			    where del_yn = 'N'
+			    <if test='dgsn_apal_id != null and dgsn_apal_id != ""'>
+					and dgsn_apal_id = #{dgsn_apal_id}
+				</if>
+				<if test='dgsn_apal_dtl_id != null and dgsn_apal_dtl_id != ""'>
+					and dgsn_apal_dtl_id = #{dgsn_apal_dtl_id}
+				</if>
+			    union all
+			    select dgsn_apal_id, dgsn_apal_dtl_id, hmfl_risk_fact_cd, num + 1 as num, nm || ' | ' || fn_get_cd('SH00000081', split_part(hmfl_risk_fact_cd, ',', num + 1), 'nm', #{SESS_LANG}) as nm, del_yn 
+			    from nm_list
+			    where del_yn = 'N'
+			    <if test='dgsn_apal_id != null and dgsn_apal_id != ""'>
+					and dgsn_apal_id = #{dgsn_apal_id}
+				</if>
+				<if test='dgsn_apal_dtl_id != null and dgsn_apal_dtl_id != ""'>
+					and dgsn_apal_dtl_id = #{dgsn_apal_dtl_id}
+				</if>
+			    	and num <![CDATA[<]]> ARRAY_LENGTH(STRING_TO_ARRAY(hmfl_risk_fact_cd, ','), 1)
+				)
+				select  aa.dgsn_apal_dtl_id, aa.nm from nm_list aa,
+				(select dgsn_apal_dtl_id, max(num) as num from nm_list
+				group by dgsn_apal_dtl_id) bb
+				where aa.dgsn_apal_dtl_id = bb.dgsn_apal_dtl_id
+					and aa.num = bb.num
+			) b
+		where a.dgsn_apal_dtl_id = b.dgsn_apal_dtl_id
+			and a.del_yn = 'N'
+		<if test='dgsn_apal_id != null and dgsn_apal_id != ""'>
+			and a.dgsn_apal_id = #{dgsn_apal_id}
+		</if>
+		<if test='dgsn_apal_dtl_id != null and dgsn_apal_dtl_id != ""'>
+			and a.dgsn_apal_dtl_id = #{dgsn_apal_dtl_id}
+		</if>
+		order by a.sort_sn asc
+	</select>
+    
+    <insert id="insertRiskEvalTgtdtlwk" parameterType="sqlMap">
+		<selectKey keyProperty="dgsn_apal_dtl_id" resultType="String" order="BEFORE">
+        	select to_char(now(), '"DTL"-YYMMDD') || to_char(substring(coalesce(MAX(dgsn_apal_dtl_id), to_char(now(), '"DTL"-YYMMDD0000')), 11, 4)::INTEGER + 1, 'FM0000') dgsn_apal_dtl_id
+			from tb_sh_risk_dgsn_apal_dtl 
+			where dgsn_apal_dtl_id like to_char(now(), '"DTL"-YYMMDD') || '%'
+    	</selectKey>
+    		
+      	/* insertRiskEvalTgtdtlwk */
+      	insert into tb_sh_risk_dgsn_apal_dtl(
+      		dgsn_apal_dtl_id
+      		,dgsn_apal_id
+      		,dgsn_apal_dtl_oprn_txt
+      		,dgsn_apal_tgt_eqp_nm
+      		,dgsn_apal_tgt_mtra_nm
+      		,risk_cat_cd
+      		,hmfl_risk_fact_cd
+      		,dgsn_btt_prst_cd
+      		,sort_sn
+      		,crt_usr_id
+      		,upt_usr_id
+      		,smcl_dngp_id
+      	) values (
+      		#{dgsn_apal_dtl_id}
+      		,#{dgsn_apal_id}
+      		,#{dgsn_apal_dtl_oprn_txt}
+      		,#{dgsn_apal_tgt_eqp_nm}
+      		,#{dgsn_apal_tgt_mtra_nm}
+      		,#{risk_cat_cd}
+      		,#{hmfl_risk_fact_cd}
+      		,'EA01'
+      		,#{sort_sn}::INTEGER
+      		,#{SESS_USR_ID}
+      		,#{SESS_USR_ID}
+      		,#{smcl_dngp_cd}
+      	)
+    </insert>
+    
+    <update id="updateRiskEvalTgtdtlwk" parameterType="sqlMap">
+        /* updateRiskEvalTgtdtlwk */
+        update tb_sh_risk_dgsn_apal_dtl set
+        	smcl_dngp_id = #{smcl_dngp_cd}
+      		,dgsn_apal_dtl_oprn_txt = #{dgsn_apal_dtl_oprn_txt}
+      		,dgsn_apal_tgt_eqp_nm = #{dgsn_apal_tgt_eqp_nm}
+      		,dgsn_apal_tgt_mtra_nm = #{dgsn_apal_tgt_mtra_nm}
+      		,risk_cat_cd = #{risk_cat_cd}
+      		,hmfl_risk_fact_cd = #{hmfl_risk_fact_cd}
+      		,sort_sn = #{sort_sn}::INTEGER
+			,upt_usr_id = #{SESS_USR_ID}
+			,upt_dt = statement_timestamp()
+		where dgsn_apal_dtl_id = #{dgsn_apal_dtl_id}
+    </update>
+    
+    <update id ="deleteRiskEvalDtl" parameterType="sqlMap">
+    	/* deleteRiskEvalDtl */
+        update tb_sh_risk_dgsn_apal_dtl set	
+        	del_yn = 'Y'
+			,upt_usr_id  = #{SESS_USR_ID}
+		    ,upt_dt = statement_timestamp()
+		 where dgsn_apal_dtl_id = #{dgsn_apal_dtl_id}
+    </update>
+    
+    <update id="updateRiskEvalHarmdngft" parameterType="sqlMap">
+        /* updateRiskEvalHarmdngft */
+        update tb_sh_risk_dgsn_apal_dtl set
+        	risk_occr_rslt_txt = #{risk_occr_rslt_txt}
+			,upt_usr_id = #{SESS_USR_ID}
+			,upt_dt = statement_timestamp()
+		where dgsn_apal_dtl_id = #{dgsn_apal_dtl_id}
+    </update>
+    
+    <update id="updateRiskEvalRiskestmt" parameterType="sqlMap">
+        /* updateRiskEvalRiskestmt */
+        update tb_sh_risk_dgsn_apal_dtl set
+        	cur_sfhe_actn_txt = #{cur_sfhe_actn_txt}
+			,risk_occr_psbl_scr = #{risk_occr_psbl_scr}::INTEGER
+			,risk_occr_main_scr = #{risk_occr_main_scr}::INTEGER
+			,dgsn_apal_scr = #{dgsn_apal_scr}::INTEGER
+			,upt_usr_id = #{SESS_USR_ID}
+			,upt_dt = statement_timestamp()
+		where dgsn_apal_dtl_id = #{dgsn_apal_dtl_id}
+    </update>
+    
+    <update id="updateRiskEvalRiskrdtplan" parameterType="sqlMap">
+        /* updateRiskEvalRiskrdtplan */
+        update tb_sh_risk_dgsn_apal_dtl set
+        	dgsn_dec_meas_txt = #{dgsn_dec_meas_txt}
+			,btt_af_risk_occr_psbl_scr = #{btt_af_risk_occr_psbl_scr}::INTEGER
+			,btt_af_risk_occr_main_scr = #{btt_af_risk_occr_main_scr}::INTEGER
+			,btt_af_dgsn_apal_scr = #{btt_af_dgsn_apal_scr}::INTEGER
+			,dgsn_btt_rspn_usr_id = #{dgsn_btt_rspn_usr_id}
+			,dgsn_btt_cmpy_schd_dt = replace(#{dgsn_btt_cmpy_schd_dt},'-','')
+			,upt_usr_id = #{SESS_USR_ID}
+			,upt_dt = statement_timestamp()
+		where dgsn_apal_dtl_id = #{dgsn_apal_dtl_id}
+    </update>
+    
+	<insert id="insertRiskEvalBasicCopy" parameterType="sqlMap" useGeneratedKeys="true" keyColumn="dgsn_apal_id" keyProperty="dgsn_apal_id">
+		<selectKey keyProperty="dgsn_apal_id" resultType="String" order="BEFORE">
+        	select #{wkpl_id} || '-' || (select dept_cd from tb_co_user where usr_id = #{SESS_USR_ID}) 
+        		|| '-' || to_char(now(), 'YYMM') 
+        		|| to_char(coalesce(MAX(substring(dgsn_apal_id, length(dgsn_apal_id) - 1)), '00')::INTEGER + 1, 'FM00') as dgsn_apal_id
+			from tb_sh_risk_dgsn_apal 
+			where dgsn_apal_id like #{wkpl_id} || '-' || (select dept_cd from tb_co_user where usr_id = #{SESS_USR_ID}) 
+				|| '-' || to_char(now(), 'YYMM') || '%'
+    	</selectKey>
+    		
+      	/* insertRiskEvalBasicCopy */
+      	insert into tb_sh_risk_dgsn_apal(
+      		dgsn_apal_id
+      		,wkpl_id
+      		,dgsn_apal_type_cd
+      		,dgsn_spot_apal_type_cd
+      		,dgsn_apal_supe_usr_id
+      		,dgsn_apal_bgn_dt
+      		,lrcl_dngp_id
+      		,mdcl_dngp_id
+      		,dgsn_apal_drup_stp_cd
+      		,dgsn_apal_prst_cd
+      		,crt_usr_id
+      		,upt_usr_id
+      	) select
+		      #{dgsn_apal_id}
+			  ,wkpl_id
+			  ,dgsn_apal_type_cd
+		      ,dgsn_spot_apal_type_cd
+		 	  ,dgsn_apal_supe_usr_id
+			  ,replace(dgsn_apal_bgn_dt,'-','') as dgsn_apal_bgn_dt
+			  ,lrcl_dngp_id
+			  ,mdcl_dngp_id
+		 	  ,'1' as dgsn_apal_drup_stp_cd
+		 	  ,'E01' as dgsn_apal_prst_cd
+			  ,#{SESS_USR_ID} as crt_usr_id
+			  ,#{SESS_USR_ID} as upt_usr_id
+		  from
+			  tb_sh_risk_dgsn_apal
+		  where
+			  dgsn_apal_id = #{original_dgsn_apal_id}
+    </insert>
+    
+    <insert id="insertRiskEvalTgtdtlwkCopy" parameterType="sqlMap">    		
+      	/* insertRiskEvalTgtdtlwkCopy */
+      	insert into tb_sh_risk_dgsn_apal_dtl(
+      		dgsn_apal_dtl_id
+      		,dgsn_apal_id
+      		,dgsn_apal_dtl_oprn_txt
+      		,dgsn_apal_tgt_eqp_nm
+      		,dgsn_apal_tgt_mtra_nm
+      		,risk_cat_cd
+      		,hmfl_risk_fact_cd
+      		,dgsn_btt_prst_cd
+      		,sort_sn
+      		,crt_usr_id
+      		,upt_usr_id
+      		,smcl_dngp_id
+      	) select
+		      substring(dgsn_apal_dtl_id,0,5) || (substring(dgsn_apal_dtl_id, 5)::BIGint + row_number() over() - 1)
+			  ,#{dgsn_apal_id} as dgsn_apal_id
+			  ,dgsn_apal_dtl_oprn_txt
+			  ,dgsn_apal_tgt_eqp_nm
+			  ,dgsn_apal_tgt_mtra_nm
+			  ,risk_cat_cd
+			  ,hmfl_risk_fact_cd
+			  ,'EA01'
+			  ,sort_sn
+			  ,#{SESS_USR_ID} as crt_usr_id
+			  ,#{SESS_USR_ID} as upt_usr_id
+			  ,smcl_dngp_id
+			from
+				(select
+				    (select to_char(now(), '"DTL"-YYMMDD') || to_char(substring(coalesce(MAX(dgsn_apal_dtl_id), to_char(now(), '"DTL"-YYMMDD0000')), 11, 4)::INTEGER + 1, 'FM0000') dgsn_apal_dtl_id from tb_sh_risk_dgsn_apal_dtl  where dgsn_apal_dtl_id like to_char(now(), '"DTL"-YYMMDD') || '%') as dgsn_apal_dtl_id 
+					,dgsn_apal_dtl_oprn_txt
+					,dgsn_apal_tgt_eqp_nm
+					,dgsn_apal_tgt_mtra_nm
+					,risk_cat_cd
+					,hmfl_risk_fact_cd
+					,'EA01'
+					,sort_sn
+					,smcl_dngp_id
+				  from
+					  tb_sh_risk_dgsn_apal_dtl
+				  where
+					  dgsn_apal_id = #{original_dgsn_apal_id}
+				  and del_yn = 'N'
+				) a
+    </insert>
+</mapper>

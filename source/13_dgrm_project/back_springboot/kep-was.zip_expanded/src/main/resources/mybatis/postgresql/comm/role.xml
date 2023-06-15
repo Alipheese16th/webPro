@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.common.chems.mapper.RoleMapper">
+
+	<!-- 
+		RoleDto 반환모델을 위한 resultMap
+		author miri
+		version 2023-05-31
+	 -->
+	<resultMap id="roleMap" type="com.kist.portal.common.chems.dto.RoleDto">
+    	<!-- ==== [start 권한테이블] -->
+		<result property="roleNo" column="role_no" />
+		<result property="roleTypeCode" column="role_type_cd" />
+		<result property="roleTypeCodeName" column="role_type_nm" />
+		<result property="businessCode" column="biz_cd" />
+		<result property="businessCodeName" column="biz_cd_nm" />
+		<result property="sortSeq" column="sort_seq" />
+		<result property="roleExplain" column="role_expl" />
+		<result property="roleExplainName" column="role_expl_nm" />
+		<result property="usageYn" column="usg_yn" />
+		<result property="deleteYn" column="del_yn" />
+		<result property="userId" column="crt_usr_id" />
+		<result property="createDateTime" column="crt_dt" />
+		<result property="updateUserId" column="upt_usr_id" />
+		<result property="updateDateTime" column="upt_dt" />
+		<result property="updateTime" column="upt_tm" />
+    	<!-- ==== [end 권한테이블] -->
+
+    	<!-- ==== [start 사용자 서브테이블] -->
+		<result property="userCount" column="user_cnt" />
+		<result property="jkwName" column="jkw_nm" />
+		<result property="departmentCode" column="dept_cd" />
+		<result property="userEmail" column="usr_email" />
+		<result property="userId" column="usr_id" />
+		<result property="userName" column="usr_nm" />
+		<result property="deptName" column="dept_nm" />
+		<result property="userIdsString" column="usr_ids" />
+    	<!-- ==== [end 사용자 서브테이블] -->
+
+    	<!-- ==== [start 메뉴 서브테이블] -->
+		<result property="menuNo" column="menu_no" />
+		<result property="upMenuNo" column="up_menu_no" />
+		<result property="menuName" column="menu_nm" />
+		<result property="menuLevel" column="menu_lv" />
+		<result property="roleCheck" column="rolechk" />
+    	<!-- ==== [end 메뉴 서브테이블] -->
+
+    	<!-- ==== [start API 서브테이블] -->
+		<result property="apiNo" column="api_no" />
+		<result property="getMethodYn" column="gemthd_yn" />
+		<result property="postMethodYn" column="pomthd_yn" />
+		<result property="putMethodYn" column="pumthd_yn" />
+		<result property="deleteMethodYn" column="demthd_yn" />
+    	<!-- ==== [end API 서브테이블] -->
+
+		<!-- <collection property="userIds" column="usr_ids" ofType="string" javaType="list" /> -->
+	</resultMap>
+	
+	<!-- 
+		권한 관리 리스트 조회
+	 -->
+	<select id="selectRoleList" parameterType="com.kist.portal.common.chems.dto.RoleDto" resultMap="roleMap">
+		/* role.selectRoleList */
+		select tcr.role_no				/* 권한번호 */
+			  ,tcr.role_type_cd			/* 권한유형코드 */
+			  ,fn_get_cd('CO00000010',tcr.role_type_cd,'NM',#{session.languageCode}) as role_type_nm	/* 권한유형명 */
+			  ,tcr.biz_cd				/* 업무코드 */
+			  ,fn_get_cd('CO00000001',tcr.biz_cd,'NM',#{session.languageCode}) as biz_cd_nm 			/* 업무명 */
+			  ,tcr.sort_seq				/* 정렬순번 */
+			  ,tcr.role_expl			/* 권한설명 */
+			  ,tcr.usg_yn				/* 사용여부 */
+			  ,tcr.del_yn				/* 삭제여부 */
+			  ,tcr.crt_usr_id			/* 생성사원번호 */
+			  ,tcr.crt_dt				/* 생성일시 */
+			  ,tcr.upt_usr_id			/* 수정사원번호 */
+			  ,case when #{session.languageCode} = 'KO' then (select tce.usr_ko_nm
+			  										 from tb_co_user tce
+			  										where tce.usr_id = tcr.crt_usr_id) 
+			  	    when #{session.languageCode} = 'EN' then (select tce.usr_en_nm
+			  	    								 from tb_co_user tce
+			  	    								where tce.usr_id = tcr.crt_usr_id) 
+			  	    else  (select tce.usr_zh_nm
+			  	    		 from tb_co_user tce
+			  	    		where tce.usr_id = tcr.crt_usr_id) 
+			    end as usr_nm															/* 등록자 */
+			  ,fn_get_time(tcr.upt_dt, #{session.timeZoneCode},'DA', '-') as upt_dt			/* 수정일 */
+			  ,fn_get_time(tcr.upt_dt, #{session.timeZoneCode},'TS', ':') as upt_tm			/* 수정시각 */
+			  ,count(tcur.usr_id) as user_cnt											/* 사용자수 */
+			  ,STRING_AGG(cast(tcur.usr_id as varchar), ',') as usr_ids				/* 모든 사용자 id[] */
+			  ,(select distinct tcm.mlang_no
+			  	  from tb_co_mlang tcm
+			  	 where tcm.role_no = tcr.role_no
+			  	   and tcm.lang_cd = #{session.languageCode}
+			  	   and tcm.del_yn = 'N') as mlang_no			/* 다국어번호 */
+		  from tb_co_role tcr									/* 권한 테이블 */
+		  left outer join tb_co_user_role tcur					/* 사용자 - 권한 매핑 테이블 */
+		    on tcur.role_no = tcr.role_no 
+				and tcur.del_yn = 'N'
+		 where 1 = 1
+		   and tcr.del_yn = 'N'
+		<if test='businessCode != null and businessCode != ""'>
+		   and tcr.biz_cd = #{businessCode}
+		</if>
+		<if test='roleTypeCode != null and roleTypeCode != ""'>
+		   and tcr.role_type_cd = #{roleTypeCode}
+		</if>
+		<if test='roleExplain != null and roleExplain != ""'>
+		   and tcr.role_expl like concat('%', trim(#{roleExplain}), '%')
+		</if>	
+		 group by tcr.role_no 
+		 order by tcr.sort_seq asc
+	</select>
+	
+	<!-- 
+		권한의 새로운 키 채번
+	 -->
+	<select id="selectRolekey" resultType="string">
+		/* role.selectRolekey */
+		select concat('R',coalesce(lpad((max(substring(role_no, 2, 5)::integer) + 1)::text, 4, '0'),'0001')) as key
+		from tb_co_role 
+		where role_no != 'RZZZZ'
+	</select>
+	
+	<!-- 
+		권한 등록
+	 -->
+	<insert id="insertRoleList" parameterType="com.kist.portal.common.chems.dto.RoleDto">
+		/* role.insertRoleList */
+		insert into tb_co_role (
+			role_no,		/* 권한아이디 */
+			role_type_cd,	/* 권한유형코드 */
+			biz_cd, 		/* 업무코드 */
+			sort_seq, 		/* 정렬순번 */
+			role_expl, 		/* 권한설명 */
+			crt_usr_id,		/* 생성사원번호 */
+			crt_dt, 		/* 생성일시 */
+			upt_usr_id, 	/* 수정사원번호 */
+			upt_dt			/* 수정일시 */
+		)values(
+			#{roleNo}, 
+			#{roleTypeCode},
+			#{businessCode}, 
+			CAST (#{sortSeq} AS INTEGER),
+			trim(#{roleExplain}), 
+			#{session.userId}, 
+			to_char(now(), 'yyyymmddhh24miss'), 
+			#{session.userId}, 
+			to_char(now(), 'yyyymmddhh24miss')
+		)
+	</insert>
+	
+	<!-- 
+		권한 수정
+	 -->
+	<update id="updateRoleList" parameterType="com.kist.portal.common.chems.dto.RoleDto" >
+        /* role.updateRoleList */
+        update tb_co_role set
+        	biz_cd = #{businessCode}						/* 업무코드 */
+        	,role_type_cd = #{roleTypeCode}					/* 권한유형코드 */
+        	,role_expl = trim(#{roleExplain})				/* 권한설명 */
+        	,usg_yn = #{usageYn}							/* 사용여부 */
+        	,sort_seq = CAST (#{sortSeq} AS INTEGER)		/* 정렬순번 */
+        	,upt_usr_id = #{session.userId}					/* 수정사원번호 */
+			,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')	/* 수정일시 */
+        where role_no = #{roleNo}
+    </update>
+    
+	<!-- 
+		권한 삭제 처리
+	 -->
+    <update id="deleteRoleList" parameterType="com.kist.portal.common.chems.dto.RoleDto" >
+        /* deleteRoleList */
+        update tb_co_role set
+        	del_yn = 'Y'
+        	,usg_yn = 'N'
+        	,upt_usr_id = #{session.userId}
+        	,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+        where role_no = #{roleNo}
+    </update>
+    
+	<!-- 
+	 	사용자 ~ 권한 매핑 리스트 조회
+	 -->
+    <select id="selectUserRoleList" parameterType="com.kist.portal.common.chems.dto.RoleDto" resultMap="roleMap">
+		/* role.selectUserRoleList */
+		select 
+			tcur.usr_id as usr_id
+			,tcur.role_no
+			,tcr.role_type_cd 
+			,fn_get_cd('CO00000010',tcr.role_type_cd,'NM',#{session.languageCode}) as role_type_nm
+			,tcr.role_expl
+			,(select tcm.mlang_cntn from tb_co_mlang tcm where tcm.role_no = tcur.role_no and tcm.lang_cd = #{session.languageCode} and tcm.del_yn = 'N') as role_expl_nm
+			,case when #{session.languageCode} = 'KO' then tcu.usr_ko_nm 
+				  when #{session.languageCode} = 'EN' then tcu.usr_en_nm 
+				  else tcu.usr_zh_nm 
+			end as usr_nm
+			,case when #{session.languageCode} = 'KO' then tcu.jkw_ko_nm 
+				  else tcu.jkw_en_nm 
+			end as jkw_nm
+			,tcu.dept_cd 
+			,(select case when #{session.languageCode} = 'KO' then tcd. dept_ko_nm
+					 	  else tcd.dept_en_nm
+					  end as dept_nm
+			  from tb_co_dept tcd	where tcd.dept_cd = tcu.dept_cd ) as dept_nm
+			,case when length(SUBSTR(tcu.usr_email, 0, POSITION('@' in tcu.usr_email))) > 4 then rpad(SUBSTR(tcu.usr_email, 0, 5), length(SUBSTR(tcu.usr_email, 0, POSITION('@' in tcu.usr_email))), '*') || SUBSTR(tcu.usr_email, POSITION('@' in tcu.usr_email))
+																							else rpad(SUBSTR(tcu.usr_email, 0, length(SUBSTR(tcu.usr_email, 0, POSITION('@' in tcu.usr_email)))), length(SUBSTR(tcu.usr_email, 0, POSITION('@' in tcu.usr_email))), '*') || SUBSTR(tcu.usr_email, POSITION('@' in tcu.usr_email))
+			 end as usr_email 
+			,case when  tcur.usg_yn  = 'Y' and tcr.usg_yn  = 'Y' and tcu.usg_yn  = 'Y' then 'Y'
+				  else 'N'
+			end as usg_yn
+			,tcur.crt_usr_id
+			,tcur.crt_dt
+			,tcur.upt_usr_id
+			,tcur.upt_dt
+		from tb_co_user_role tcur
+		left outer join tb_co_role tcr
+		on tcur.role_no  = tcr.role_no 
+		left outer join tb_co_user tcu
+		on tcur.usr_id  = tcu.usr_id 
+		left outer join tb_co_dept tcd
+		on tcu.dept_cd = tcd.dept_cd
+		where 1=1 
+			and tcur.del_yn  = 'N'
+			and tcr.del_yn  = 'N'
+			and tcu.del_yn  = 'N'
+		<if test='roleExplain != null and roleExplain != ""'>
+			and tcr.role_expl like concat('%', trim(#{roleExplain}), '%')
+		</if>	
+		<if test='roleTypeCode != null and roleTypeCode != ""'>
+			and tcr.role_type_cd = #{roleTypeCode}
+		</if>
+		<if test='userId != null and userId != ""'>
+			and tcur.usr_id like concat('%', trim(#{userId}), '%')
+		</if>	
+		<if test='userName != null and userName != ""'>
+			and (tcu.usr_ko_nm like concat('%', trim(#{userName}), '%') or tcu.usr_en_nm like concat('%', trim(#{userName}), '%') or tcu.usr_zh_nm like concat('%', trim(#{userName}), '%') )
+		</if>	
+		<if test='deptName != null and deptName != ""'>
+			and (tcd.dept_ko_nm like concat('%', trim(#{deptName}), '%') or tcd.dept_en_nm like concat('%', trim(#{deptName}), '%'))
+		</if>
+		group by tcur.usr_id ,tcur.role_no,tcr.role_type_cd,tcr.role_expl, tcu.usr_ko_nm , tcu.usr_en_nm, tcu.usr_zh_nm ,tcu.usr_email ,tcu.usr_cpho_no ,tcu.jkw_ko_nm ,tcu.jkw_en_nm ,tcu.dept_cd ,tcr.usg_yn, tcu.usg_yn, tcr.sort_seq
+		order by tcr.sort_seq asc, tcur.usr_id asc
+	</select>
+	
+	<!-- 
+	   권한 ~ 메뉴 매핑 리스트 조회
+	 -->
+	<select id="selectRoleListMeunRole" parameterType="com.kist.portal.common.chems.dto.RoleDto" resultMap="roleMap">
+		/* role.selectRoleListMeunRole */
+		select 
+			tcr.role_no
+			,tcr.role_type_cd
+			,fn_get_cd('CO00000010',tcr.role_type_cd,'NM',#{session.languageCode}) as role_type_nm
+			,tcr.sort_seq
+			,tcr.role_expl
+			,(select tcm.mlang_cntn from tb_co_mlang tcm where tcm.role_no = tcr.role_no and tcm.lang_cd = #{session.languageCode} and tcm.del_yn = 'N') as role_expl_nm
+			,tcr.usg_yn
+			,tcr.del_yn
+		from tb_co_role tcr
+		where
+			1 = 1
+		and tcr.del_yn = 'N'
+		and tcr.usg_yn = 'Y'
+		group by tcr.role_no 
+		order by tcr.sort_seq asc
+	</select>
+	
+	<!-- 
+	   한 권한에게 매핑된 메뉴 리스트 조회
+	 -->
+	<select id="selectMenuListMeunRole" parameterType="com.kist.portal.common.chems.dto.RoleDto" resultMap="roleMap">
+		/* role.selectMenuListMeunRole */
+		select
+			tcm.menu_no
+			,tcm.up_menu_no
+			,(select tcmg.mlang_cntn from tb_co_mlang tcmg where tcmg.menu_no = tcm.menu_no and tcmg.lang_cd = #{session.languageCode} and tcmg.del_yn = 'N') as menu_nm
+			,case when coalesce( trim(tcm.up_menu_no),'') = ''then '1' 
+				  else '2'
+			end as menu_lv
+			,case when tcm.menu_no in (select
+											tcm2.menu_no
+										from
+											tb_co_menu tcm2
+										join tb_co_menu_role tcmr on
+											tcm2.menu_no = tcmr.menu_no
+										where
+											tcmr.usg_yn = 'Y'
+											and tcmr.del_yn = 'N'
+											and tcm2.usg_yn = 'Y'
+											and tcm2.del_yn = 'N'
+											and tcmr.role_no  = #{roleNo}
+										) then 1
+					else 0
+			end as rolechk
+		from
+			tb_co_menu tcm
+		where 1=1
+			and tcm.usg_yn  = 'Y'
+			and tcm.del_yn = 'N'
+		order by tcm.menu_no asc , tcm.sort_seq asc
+	</select>
+	
+	<!-- 
+		한 권한에게 매핑된 메뉴 저장
+		(체크박스 활성화된 경우)
+	 -->
+	<insert id="insertMeunRoleList" parameterType="com.kist.portal.common.chems.dto.RoleDto" >
+		/* role.insertMeunRoleList */
+       insert into tb_co_menu_role (		/* 메뉴 ~ 권한 매핑테이블 */
+        	 menu_no		/* 메뉴번호 */
+        	,role_no 		/* 권한번호 */
+        	,usg_yn 		/* 수정여부 */
+        	,del_yn 		/* 삭제여부 */
+        	,crt_usr_id 	/* 생성사원번호 */
+        	,crt_dt 		/* 생성일시 */
+        	,upt_usr_id 	/* 수정사원번호 */
+        	,upt_dt 		/* 수정일시 */
+		) values (
+			 #{menuNo}
+			,#{roleNo}
+			,'Y'
+			,'N'
+			,#{session.userId}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{session.userId}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+		) on conflict (menu_no, role_no)
+		do update
+			set usg_yn = 'Y'
+			,del_yn = 'N'
+			,upt_usr_id = #{session.userId}
+			,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_co_menu_role.menu_no = #{menuNo} 
+		  and tb_co_menu_role.role_no = #{roleNo}
+    </insert>
+    
+	<!-- 
+		한 권한에게 매핑된 메뉴 저장
+		(체크박스 비활성화된 경우)
+	 -->
+    <insert id="updateMeunRoleList" parameterType="com.kist.portal.common.chems.dto.RoleDto" >
+     /* role.updateMeunRoleList */
+       insert into tb_co_menu_role (		/* 메뉴 ~ 권한 매핑테이블 */
+        	menu_no			/* 메뉴번호 */
+        	,role_no 		/* 권한번호 */
+        	,usg_yn 		/* 수정여부 */
+        	,del_yn 		/* 삭제여부 */
+        	,crt_usr_id 	/* 생성사원번호 */
+        	,crt_dt 		/* 생성일시 */
+        	,upt_usr_id 	/* 수정사원번호 */
+        	,upt_dt 		/* 수정일시 */
+		) values (
+			 #{menuNo}
+			,#{roleNo}
+			,'N'
+			,'N'
+			,#{session.userId}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{session.userId}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+		) on conflict (menu_no, role_no)
+		do update set usg_yn = 'N'
+			   ,upt_usr_id = #{session.userId}
+			   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_co_menu_role.menu_no = #{menuNo} 
+		  and tb_co_menu_role.role_no = #{roleNo}
+    </insert>
+    
+    <update id="deleteMeunRoleList" parameterType="sqlMap">
+        /* deleteMeunRoleList */
+        update tb_co_menu_role
+		set del_yn = 'Y'
+			, usg_yn = 'N'
+        where role_no = #{role_no}
+    </update>
+    
+	<!-- 
+	   권한 ~ API 매핑정보 리스트 조회
+	 -->
+    <select id="selectApiListApiRole" parameterType="com.kist.portal.common.comm.dto.ApiDto" resultMap="com.kist.portal.common.chems.mapper.ApiMapper.apiMap">
+		/* role.selectApiListApiRole */
+		select
+			tca.api_no 
+			,tca.biz_cd 
+			,tca.dtl_biz_cd 
+			,fn_get_cd('CO00000001',tca.biz_cd,'NM',#{session.languageCode}) as biz_cd_nm
+			,fn_get_cd('CO00000008',tca.dtl_biz_cd,'NM',#{session.languageCode}) as dtl_biz_cd_nm
+			,tca.api_expl 
+			,tca.api_url 
+			,case when tca.api_no in (select
+											tca2.api_no
+										from
+											tb_co_api tca2
+										join tb_co_api_role tcar on
+											tca2.api_no = tcar.api_no
+										where
+											tcar.gemthd_yn = 'Y'
+											and tcar.usg_yn = 'Y'
+											and tcar.del_yn = 'N'
+											and tca2.usg_yn = 'Y'
+											and tca2.del_yn = 'N'
+											and tcar.role_no  = #{roleNo}
+										) then 1
+					else 0
+			end as gemthd_yn
+			,case when tca.api_no in (select
+											tca2.api_no
+										from
+											tb_co_api tca2
+										join tb_co_api_role tcar on
+											tca2.api_no = tcar.api_no
+										where
+											tcar.pomthd_yn = 'Y'
+											and tcar.usg_yn = 'Y'
+											and tcar.del_yn = 'N'
+											and tca2.usg_yn = 'Y'
+											and tca2.del_yn = 'N'
+											and tcar.role_no  = #{roleNo}
+										) then 1
+					else 0
+			end as pomthd_yn
+			,case when tca.api_no in (select
+											tca2.api_no
+										from
+											tb_co_api tca2
+										join tb_co_api_role tcar on
+											tca2.api_no = tcar.api_no
+										where
+											tcar.pumthd_yn = 'Y'
+											and tcar.usg_yn = 'Y'
+											and tcar.del_yn = 'N'
+											and tca2.usg_yn = 'Y'
+											and tca2.del_yn = 'N'
+											and tcar.role_no  = #{roleNo}
+										) then 1
+					else 0
+			end as pumthd_yn
+			,case when tca.api_no in (select
+											tca2.api_no
+										from
+											tb_co_api tca2
+										join tb_co_api_role tcar on
+											tca2.api_no = tcar.api_no
+										where
+											tcar.demthd_yn = 'Y'
+											and tcar.usg_yn = 'Y'
+											and tcar.del_yn = 'N'
+											and tca2.usg_yn = 'Y'
+											and tca2.del_yn = 'N'
+											and tcar.role_no  = #{roleNo}
+										) then 1
+					else 0
+			end as demthd_yn
+		from
+			tb_co_api tca 
+		where 1=1
+			and tca.usg_yn  = 'Y'
+			and tca.del_yn = 'N'
+			<if test='businessCode != null and businessCode != ""'>
+				and tca.biz_cd  = #{businessCode}
+			</if>
+			<if test='detailBusinessCode != null and detailBusinessCode != ""'>
+				and tca.dtl_biz_cd = #{detailBusinessCode}
+			</if>
+			<if test='apiExplain != null and apiExplain != ""'>
+				and tca.api_expl like concat('%', trim(#{apiExplain}), '%')
+			</if>
+			<if test='apiUrl != null and apiUrl != ""'>
+				and tca.api_url like concat('%', trim(#{apiUrl}), '%')
+			</if>
+		order by tca.api_no asc 
+	</select>
+	
+	<!-- 
+		권한 ~ API 매핑정보 저장
+	 -->
+	<insert id="insertApiRoleList" parameterType="com.kist.portal.common.chems.dto.RoleDto" >
+		/* role.insertApiRoleList */
+       insert into tb_co_api_role (			/* 권한 - API 매핑 테이블 */
+        	 api_no			/* api 번호 */
+        	,role_no 		/* 권한 번호 */
+        	,gemthd_yn		/* get메서드여부 */
+        	,pomthd_yn		/* post메서드여부 */
+        	,pumthd_yn		/* put메서드여부 */
+        	,demthd_yn		/* delete메서드여부 */
+        	,crt_usr_id 	/* 생성사원번호 */
+        	,crt_dt 		/* 생성일시 */
+        	,upt_usr_id 	/* 수정사원번호 */
+        	,upt_dt 		/* 수정일시 */
+		) values (
+			 #{apiNo}
+			,#{roleNo}
+			,case when #{getMethodYn} = '1' then 'Y' else 'N' end 
+			,case when #{postMethodYn} = '1' then 'Y' else 'N' end 
+			,case when #{putMethodYn} = '1' then 'Y' else 'N' end 
+			,case when #{deleteMethodYn} = '1' then 'Y' else 'N' end 
+			,#{session.userId}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{session.userId}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+		) on conflict (api_no, role_no)
+		do update set gemthd_yn = case when #{getMethodYn} = '1' then 'Y' else 'N' end 
+		       ,pomthd_yn = case when #{postMethodYn} = '1' then 'Y' else 'N' end 
+		       ,pumthd_yn = case when #{putMethodYn} = '1' then 'Y' else 'N' end 
+		       ,demthd_yn = case when #{deleteMethodYn} = '1' then 'Y' else 'N' end 
+			   ,usg_yn = 'Y'
+			   ,del_yn = 'N'
+			   ,upt_usr_id = #{session.userId}
+			   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_co_api_role.api_no = #{apiNo} 
+		  and tb_co_api_role.role_no = #{roleNo}
+    </insert>
+    
+	<!--
+		권한 ~ 사용자 매핑 정보 추가
+		특정 권한에 매핑할 사용자 정보를 추가한다.
+	-->
+	<insert id="createRoleUser" parameterType="com.kist.portal.common.chems.dto.RoleDto">
+		/* role.createRoleUser */
+		insert into
+		tb_co_user_role			/* 사용자 ~ 권한 매핑 테이블 */
+		(
+			usr_id				/* 사용자 아이디 */
+			, role_no			/* 권한 아이디 */
+			, usg_yn			/* 사용여부 */
+			, del_yn			/* 삭제여부 */
+			, crt_usr_id		/* 생성자 아이디 */
+			, crt_dt			/* 생성일 */
+			, upt_usr_id		/* 변경자 아이디 */
+			, upt_dt			/* 변경일 */
+		)
+		values (
+			#{userId}
+			, #{roleNo}
+			, 'Y'
+			, 'N'
+			, #{session.userId}
+			, to_char(now(), 'YYYYMMDDHH24MISS')
+			, #{session.userId}
+			, to_char(now(), 'YYYYMMDDHH24MISS')
+		) on conflict (usr_id, role_no)
+		do update set
+			usg_yn = 'Y'
+			,del_yn = 'N'
+			,upt_usr_id = #{session.userId}
+			,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_co_user_role.usr_id = #{userId} 
+		  and tb_co_user_role.role_no = #{roleNo}
+		;
+	</insert>
+
+	<!-- 
+		권한 ~ 사용자 매핑 정보 삭제.
+	 -->
+	<update id="removeRoleUser" parameterType="com.kist.portal.common.chems.dto.RoleDto">
+		/* role.removeRoleUser */
+		update tb_co_user_role		/* 사용자 ~ 권한 매핑 테이블 */
+			set del_yn = 'Y'
+			, usg_yn = 'N'
+		where
+			role_no = #{roleNo}			/* 특정 권한에 물린... */
+			and usr_id in 					/* ... 해당 사용자 정보를 권한-사용자 매핑 테이블에서 제거 */
+			<foreach item="userIdsItem" collection="userIds" open="(" separator="," close=")">
+				#{userIdsItem}
+			</foreach>
+	</update>
+
+	<!-- 
+		특정 권한에게 매핑된 사용자 id[] 반환
+	 -->
+	<select id="selectUserIdsByRoleNo" parameterType="java.lang.String" resultType="java.lang.String">
+		/* role.selectUserIdsByRoleNo */
+		select
+			usr_id					/* 사용자 id */
+		from
+			tb_co_user_role			/* 사용자 ~ 권한 매핑 테이블 */
+		where
+			role_no = #{roleNo}		/* 특정 권한 id */
+			and del_yn = 'N'
+		;
+	</select>
+
+	<!-- 
+		해당 권한을 가진 사용자 수 카운트 모두 합하여 반환
+	-->
+	<select id="countUserOfRole" parameterType="java.lang.String" resultType="int">
+		/* role.countUserOfRole */
+		select 
+			count(tcur.role_no)
+		from tb_co_user_role tcur	/* 사용자 - 권한 매핑 테이블 */
+		where
+			tcur.del_yn = 'N'
+			and tcur.role_no in
+			<foreach item="roleNosItem" collection="roleNos" open="(" separator="," close=")">
+				#{roleNosItem}
+			</foreach>
+		;
+	</select>
+
+    
+</mapper>

@@ -1,0 +1,64 @@
+package com.kist.portal.test.user.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+import com.kist.portal.test.user.dto.TestUserDto;
+import com.kist.portal.test.user.mapper.TestUserMapper;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class TestUserServiceImpl implements TestUserService {
+	
+	/** 사용자 테이블 매퍼 */
+	@NonNull
+	private final TestUserMapper testUserMapper;
+	
+	@Override
+	public List<TestUserDto> selectTestUserAllList() {
+		return testUserMapper.selectTestUserAllList();
+	}
+
+	@Override
+	public List<TestUserDto> selectTestUserList(TestUserDto param) {
+		return testUserMapper.selectTestUserList(param);
+	}
+
+	@Override
+	public String selectTestUserkey() {
+		return testUserMapper.selectTestUserkey();
+	}
+
+	@Override
+	public int insertTestUser(Map<String, String> param) {
+		
+		int result = 0;
+		int mr = testUserMapper.insertTestUserM(param);
+		int lr = testUserMapper.insertTestUserL(param);
+		
+		return result + mr + lr;
+	}
+
+	@Override
+	public int updateTestUser(Map<String, String> param) {
+		
+		int result = 0;
+		int mr = testUserMapper.updateTestUserM(param);
+		int lr = testUserMapper.updateTestUserL(param);
+		
+		return result + mr + lr;
+	}
+
+	@Override
+	public int deleteTestUser(Map<String, String> param) {
+		int result = 0;
+		int mr = testUserMapper.deleteTestUserM(param);
+		int lr = testUserMapper.deleteTestUserL(param);
+		
+		return result + mr + lr;
+	}
+
+}

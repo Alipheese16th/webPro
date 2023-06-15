@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.ch.rgltdb.mapper.RgltMapper">
+
+	<select id="selectRgltList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectRgltList */
+		select a.rglt_no 
+		      ,(select m.mlang_cntn
+				  from tb_co_mlang m
+				      ,tb_co_cd c
+				 where c.cd = a.nat_cd 
+				   and m.cd  = c.cd 
+				   and m.cd_grp_no  = c.cd_grp_no 
+				   and c.cd_grp_no = 'CO00000003'
+				   and m.lang_cd = #{SESS_LANG}
+			   ) as nat_nm
+			  ,a.nat_cd			  
+			  ,(select m.mlang_cntn
+				  from tb_co_mlang m
+				      ,tb_co_cd c
+				 where c.cd = a.rglt_type_cd 
+				   and m.cd  = c.cd 
+				   and m.cd_grp_no  = c.cd_grp_no 
+				   and c.cd_grp_no = 'CH00000001'
+				   and m.lang_cd = #{SESS_LANG}
+			   ) as rglt_type_nm
+			  ,a.rglt_type_cd 
+			  ,(select m.mlang_cntn
+				  from tb_co_mlang m
+				      ,tb_co_cd c
+				 where c.cd = a.rglt_chk_doma_cd 
+				   and m.cd  = c.cd 
+				   and m.cd_grp_no  = c.cd_grp_no 
+				   and c.cd_grp_no = 'CH00000002'
+				   and m.lang_cd = #{SESS_LANG}
+			   ) as rglt_chk_doma_nm
+			  ,a.rglt_chk_doma_cd 
+			  ,a.law_cd 
+			  ,(select m.mlang_cntn
+				  from tb_co_mlang m
+				      ,tb_co_cd c
+				 where c.cd = a.law_cd 
+				   and m.cd  = c.cd 
+				   and m.cd_grp_no  = c.cd_grp_no 
+				   and c.cd_grp_no = 'CH00000003'
+				   and m.lang_cd = #{SESS_LANG}
+			   ) as law_nm
+			  ,a.rglt_nm 
+			  ,a.rglt_abbr 
+			  ,a.sort_seq 
+			  ,a.usg_yn 
+			  ,a.del_yn 
+			  ,(select count(1) as cnt
+			      from tb_ch_rglt_sbst b
+			     where b.rglt_no = a.rglt_no
+			       and b.del_yn = 'N'
+			   ) as rglt_sbst_cnt
+			  ,a.crt_usr_id 
+			  ,(select case when #{SESS_LANG} = 'KO' then u.usr_ko_nm 
+				            when #{SESS_LANG} = 'EN' then u.usr_en_nm 
+				            else u.usr_zh_nm 
+				       end as usr_nm
+			      from tb_co_user u
+			     where u.usr_id = a.crt_usr_id
+			   ) as crt_usr_nm
+			  ,a.crt_dt 
+			  ,a.upt_usr_id 
+			  ,(select case when #{SESS_LANG} = 'KO' then u.usr_ko_nm 
+				            when #{SESS_LANG} = 'EN' then u.usr_en_nm 
+				            else u.usr_zh_nm 
+				       end as usr_nm
+			      from tb_co_user u
+			     where u.usr_id = a.upt_usr_id
+			   ) as upt_usr_nm
+			  ,fn_get_time(a.upt_dt, #{SESS_TIME_ZONE},'DT', '-') as upt_dt
+		  from tb_ch_rglt a
+		 where a.del_yn = 'N'
+		 <if test='lawcd != null and lawcd != ""'>
+		   and a.law_cd = #{lawcd}
+		 </if>
+		 <if test='rgltnm != null and rgltnm != ""'>
+		   and a.rglt_nm like concat('%', rtrim(ltrim(#{rgltnm})), '%')
+		 </if>
+		 <if test='useyn != null and useyn != ""'>
+		   and a.usg_yn = #{useyn}
+		 </if>
+		 order by a.sort_seq
+	</select>
+	
+	<select id="selectRgltDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectRgltDtl */
+		select rglt_no 
+		      ,rglt_chk_doma_cd 
+		      ,nat_cd
+		      ,rglt_type_cd
+		      ,law_cd 
+		      ,rglt_nm 
+		      ,rglt_abbr 
+		      ,sort_seq 
+		      ,usg_yn 
+		      ,del_yn
+		      ,crt_usr_id
+		      ,crt_dt
+		      ,upt_usr_id
+		      ,upt_dt
+		  from tb_ch_rglt
+		 where rglt_no = #{rgltNo}
+		   and del_yn = 'N'
+	</select>
+	
+	<select id="selectRgltDtlKey" parameterType="sqlMap" resultType="sqlMap">
+		/* selectRgltDtlKey */
+		select concat('RGLT', lpad((max(substring(rglt_no, 5, 6)::integer) + 1)::text, 6, '0')) as rglt_no
+	      from tb_ch_rglt
+	</select>
+	
+	<insert id="insertRgltDtl" parameterType="sqlMap">
+        /* insertRgltDtl */
+        insert into tb_ch_rglt (
+        	 rglt_no
+        	,nat_cd
+			,rglt_type_cd
+			,rglt_chk_doma_cd
+			,law_cd
+			,rglt_nm
+			,rglt_abbr
+			,sort_seq
+			,usg_yn
+			,del_yn
+			,crt_usr_id
+			,crt_dt
+			,upt_usr_id
+			,upt_dt
+		) values (
+			 #{rglt_no}
+			,#{nat_cd}
+			,#{rglt_type_cd}
+			,#{rglt_chk_doma_cd}
+			,#{law_cd}
+			,#{rglt_nm}
+			,#{rglt_abbr}
+			,#{sort_seq}::integer
+			,#{usg_yn}
+			,'N'
+			,#{username}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{username}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+		)
+    </insert>
+    
+    <update id="updateRgltDtl" parameterType="sqlMap">
+        /* updateRgltDtl */
+        update tb_ch_rglt
+		   set rglt_chk_doma_cd = #{rglt_chk_doma_cd}
+		      ,law_cd = #{law_cd}
+		      ,nat_cd = #{nat_cd}
+		      ,rglt_type_cd = #{rglt_type_cd}
+		      ,rglt_nm = #{rglt_nm}
+		      ,rglt_abbr = #{rglt_abbr}
+		      ,sort_seq = #{sort_seq}::integer
+		      ,usg_yn = #{usg_yn}
+		      ,upt_usr_id = #{username}
+		      ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+		 where rglt_no = #{rglt_no}
+    </update>
+    
+    <update id="deleteRgltDtl" parameterType="sqlMap">
+        /* deleteRgltDtl */
+        update tb_ch_rglt
+		   set del_yn = 'Y'
+		      ,upt_usr_id = #{username}
+		      ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+		 where rglt_no = #{rglt_no}
+    </update>
+    
+    <insert id="insertRgltDtlHst" parameterType="sqlMap">
+        /* insertRgltDtlHst */
+        insert into tb_ch_rglt_hst (
+        	 chg_type_cd
+        	,chg_dt
+        	,chg_usr_id
+        	,ver_seq
+        	,rglt_no
+        	,nat_cd
+			,rglt_type_cd
+			,rglt_chk_doma_cd
+			,law_cd
+			,rglt_nm
+			,rglt_abbr
+			,sort_seq
+			,usg_yn
+			,del_yn
+			,crt_usr_id
+			,crt_dt
+			,upt_usr_id
+			,upt_dt
+		) values (
+	 		 #{chg_type_cd}
+	 		,to_char(now(), 'YYYYMMDDHH24MISS')
+	 		,#{username}
+			,(select coalesce(max(ver_seq::integer),0) + 1 as key
+			    from tb_ch_rglt_hst
+			   where rglt_no = #{rglt_no}
+			 )
+			,#{rglt_no}
+			,#{nat_cd}
+			,#{rglt_type_cd}
+			,#{rglt_chk_doma_cd}
+			,#{law_cd}
+			,#{rglt_nm}
+			,#{rglt_abbr}
+			,#{sort_seq}::integer
+			,#{usg_yn}
+			,#{del_yn}
+			,#{crt_usr_id}
+			,#{crt_dt}
+			,#{upt_usr_id}
+			,#{upt_dt}
+		)
+    </insert>
+	
+	<select id="selectRgltHstList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectRgltHstList */
+		select a.chg_type_cd 
+		      ,(select m.mlang_cntn
+				  from tb_co_mlang m
+				      ,tb_co_cd c
+				 where c.cd = a.chg_type_cd 
+				   and m.cd  = c.cd 
+				   and m.cd_grp_no  = c.cd_grp_no 
+				   and c.cd_grp_no = 'CO00000015'
+				   and m.lang_cd = #{SESS_LANG}
+			   ) as chg_type_nm
+		      ,a.rglt_no 	  
+			  ,(select m.mlang_cntn
+				  from tb_co_mlang m
+				      ,tb_co_cd c
+				 where c.cd = a.rglt_type_cd 
+				   and m.cd  = c.cd 
+				   and m.cd_grp_no  = c.cd_grp_no 
+				   and c.cd_grp_no = 'CH00000001'
+				   and m.lang_cd = #{SESS_LANG}
+			   ) as rglt_type_nm
+			  ,a.rglt_type_cd 
+			  ,(select m.mlang_cntn
+				  from tb_co_mlang m
+				      ,tb_co_cd c
+				 where c.cd = a.rglt_chk_doma_cd 
+				   and m.cd  = c.cd 
+				   and m.cd_grp_no  = c.cd_grp_no 
+				   and c.cd_grp_no = 'CH00000002'
+				   and m.lang_cd = #{SESS_LANG}
+			   ) as rglt_chk_doma_nm
+			  ,a.rglt_chk_doma_cd 
+			  ,a.law_cd 
+			  ,(select m.mlang_cntn
+				  from tb_co_mlang m
+				      ,tb_co_cd c
+				 where c.cd = a.law_cd 
+				   and m.cd  = c.cd 
+				   and m.cd_grp_no  = c.cd_grp_no 
+				   and c.cd_grp_no = 'CH00000003'
+				   and m.lang_cd = #{SESS_LANG}
+			   ) as law_nm
+			  ,a.rglt_nm 
+			  ,a.rglt_abbr 
+			  ,a.sort_seq 
+			  ,a.usg_yn 
+			  ,a.del_yn 
+			  ,a.crt_usr_id 
+			  ,(select case when #{SESS_LANG} = 'KO' then u.usr_ko_nm 
+				            when #{SESS_LANG} = 'EN' then u.usr_en_nm 
+				            else u.usr_zh_nm 
+				       end as usr_nm
+			      from tb_co_user u
+			     where u.usr_id = a.crt_usr_id
+			   ) as crt_usr_nm
+			  ,a.crt_dt 
+			  ,a.upt_usr_id 
+			  ,(select case when #{SESS_LANG} = 'KO' then u.usr_ko_nm 
+				            when #{SESS_LANG} = 'EN' then u.usr_en_nm 
+				            else u.usr_zh_nm 
+				       end as usr_nm
+			      from tb_co_user u
+			     where u.usr_id = a.upt_usr_id
+			   ) as upt_usr_nm
+			  ,fn_get_time(a.upt_dt, #{SESS_TIME_ZONE},'DT', '-') as upt_dt
+		  from tb_ch_rglt_hst a
+		 where 1=1
+		 <if test='lawcd != null and lawcd != ""'>
+		   and a.law_cd = #{lawcd}
+		 </if>
+		 <if test='rgltnm != null and rgltnm != ""'>
+		   and a.rglt_nm like concat('%', rtrim(ltrim(#{rgltnm})), '%')
+		 </if>
+		 <if test='userno != null and userno != ""'>
+		   and a.chg_usr_id = #{userno}
+		 </if>
+		 <if test='sDate != null and sDate != "" and eDate != null and eDate != ""'>
+		   and a.chg_dt between replace(#{sDate},'-','') || '000000' and replace(#{eDate},'-','') || '235959'
+		 </if>
+		 <if test='chgtypecd != null and chgtypecd != ""'>
+		   and a.chg_type_cd = #{chgtypecd}
+		 </if>
+		 order by a.rglt_no, a.ver_seq, a.sort_seq
+	</select>
+</mapper>
