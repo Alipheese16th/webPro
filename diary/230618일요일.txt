@@ -1,0 +1,65 @@
+
+
+`	grave accent, backtick	백틱	🧾
+억음부호입니다. 애초에 한국어 사용자는 한국어 표기시 사용할 일이 없는 기호입니다만
+보통 특정 발음기호를 가진 알파벳을 나타낼때 씁니다.
+자바스크립트에서도 쓰는데 ES6부터 템플릿 리터럴을 사용할수 있습니다.
+` ${변수명}  문자열 ` 이런식으로 편하게 문자열 안에 변수를 넣기 가능
+
+~	tilde	틸드, 물결표	🧾
+!	exclamation mark, exclpamation point	느낌표	🧾
+@	at, at sign	골뱅이	🧾
+이메일주소에서 많이 사용되는 기호입니다.
+
+#	number sign	샵	🧾 crosshatch sharp
+$	dollar, dollar sign	달러	🧾
+미국 달라 통화 기호 입니다.
+
+%	percent sign	퍼센트, 나머지연산	🧾
+백분율을 나타내는 기호입니다
+
+^	caret	캐럿, 제곱	🧾 circumflex
+위첨자를 쓰기 힘든 환경에서 지수를 뜻하는 기호로 쓰이기도 합니다
+
+&	ampersand	앰퍼샌드, 앤드	🧾
+
+*	asterisk	애스터리스크, 별표, 곱하기	🧾
+주로 곱셈연산이나 와일드카드 문자로 사용됩니다.
+
+()	parenthesis	소괄호	🧾 
+-	hyphen minus	하이픈, 빼기	🧾  minus sign
+_	underscore	언더스코어, 언더바, 밑줄	🧾 underline
+=	equals sign	이퀄, 는, 등호	🧾
+등호입니다
+
++	plus sign	플러스, 더하기	🧾
+덧셈연산이나 양수를 나타내는 기호입니다
+
+[]	bracket	브라켓, 대괄호	🧾 braket
+{}	brace 	중괄호	🧾 brace
+\	backslash	백슬래시, 역슬래시, 원화	🧾
+한글 윈도우에서는 \ 백슬래시가 원화 기호로 나타나기도 하는데 일본어판에서는 엔화로 나옵니다. 한글 폰트 자체가 그렇게 되어있기때문에 그런것이라
+한글폰트를 영문폰트로 바꾸면 원화기호가 없기때문에 오리지날 백슬래시가 잘 나옵니다
+;	semicolon	세미콜론	🧾
+:	colon	콜론	🧾
+‘	apostrophe	아포스트로피, 싱글 쿼테이션, 작은 따옴표	🧾
+“	quotation	쿼테이션, 큰 따옴표	🧾 double quotation mark
+,	comma	콤마	🧾
+.	dot, period, full stop	마침표	🧾
+<>	angle bracket	대소구분	🧾
+/	slash	슬래시, 나누기	🧾
+?	question mark	물음표	🧾
+| vertical bar
+프로그래밍언어에서는 논리 연산자 등으로 주로 쓰이며 || 기호는 조건문의 or 연산에 쓴다
+
+
+
+
+
+
+
+
+
+
+
+
