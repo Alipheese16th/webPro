@@ -1,0 +1,72 @@
+
+테이블 각자 알아서 만들기
+테이블이 3개가 되든 1개가 되든 상관없다
+
+업체목록이라는 메인 페이지가있고 
+클릭하면 국가목록이 나오고 
+국가목록을 클릭하면 도시목록이 나온다 
+
+업체 - 국가 - 도시
+
+상위목록이 아예 없으면 추가가 안된다
+
+#참고사이트
+시스템 관리 - 코드관리 - 업무구분 공통 - 국가가 있고 타임존이 있다
+시스템 관리 - 권한관리 
+
+
+# 국가목록에서 
+국가명 select 박스에서 고르면 뒤의 국가코드가 추가된다
+
+# 도시목록에서
+타임존과 gmt가 연동되게
+
+# 삭제할때
+상위를 삭제하면 하위는 다삭제
+
+업체코드 -국가코드 - 도시코드
+
+# select박스는 어디어디?
+1. 업체는 전부 직접입력
+2. 국가명을 고르면 국가코드는 자동입력
+3. 타임존을 고르면 GMT는 자동입력 (GMT는 코드관리의 buffer2를 이용)
+
+
+작업은 일단 한 사이클 흘러가게 하고 마지막에 버퍼값 가져오게 하는게 맞다
+
+
+# 테이블 정의
+## 업체테이블 test_co_company
+업체코드 company_code (varchar, 20, pk)
+업체명 company_name (varchar, 100, not null, unique)
+정렬순서 sort_order (int4, notnull)
+
+## 국가테이블 test_co_country
+업체코드 company_code (varchar, 20, pk)
+국가코드 country_code (varchar, 20, pk)
+국가명 country_name (varchar, 100, not null)
+정렬순서 sort_order (int4, notnull)
+
+## 도시테이블 test_co_city
+업체코드 company_code (varchar, 20, pk)
+국가코드 country_code (varchar, 20, pk)
+도시코드 city_code (varchar, 20, pk)
+도시명 city_name (varchar, 100, not null)
+타임존 timezone (varchar, 20, notnull)
+GMT gmt (varchar, 100, notnull)
+정렬순서 sort_order (int4, notnull)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
