@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.common.sbbs.mapper.SbbsMapper">
+
+	<select id="selectList" parameterType="com.kist.portal.common.sbbs.dto.SbbsDto$param" resultType="com.kist.portal.common.sbbs.dto.SbbsDto$response">
+        select  boardId           /* 게시판아이디 */
+                , title           /* 제목 */
+                , content         /* 내용 */
+                , "createDate"    /* 등록일시 postgresql에서 Function명 중복으로 ""처리함. */
+                , "createUser"    /* 등록자 postgresql에서 Function명 중복으로 ""처리함. */
+        from    sample_board      /* 게시판테이블 */
+        where   title like '%'||#{title}||'%'
+        order by
+                "createDate" desc /* 등록일 내림차순 */
+                , title asc       /* 제목 오름차순 */
+    </select>
+
+    <select id="info" parameterType="java.lang.String"
+        resultType="com.kist.portal.common.sbbs.dto.SbbsDto$info">
+        select  boardId                   /* 게시판아이디 */
+                , title                   /* 제목 */
+                , content                 /* 내용 */
+                , "createDate"            /* 등록일시 postgresql에서 Function명 중복으로 ""처리함. */
+                , "createUser"            /* 등록자 postgresql에서 Function명 중복으로 ""처리함. */
+        from    sample_board              /* 게시판테이블 */
+        where   boardId = #{boardId}      /* 게시판 아이디 */
+    </select>
+
+    <insert id="insertBoard" parameterType="com.kist.portal.common.sbbs.dto.SbbsDto$insertParam">
+        insert into sample_board  (
+          boardId         /* 게시판아이디 (BBS + YYYYMMDD + 0000(seq)) */
+          , title         /* 제목 */
+          , content       /* 내용 */
+          , "createDate"  /* 등록일 */
+        )
+        values(
+          #{boardId}      /* 게시판 아이디 */
+          , #{title}      /* 제목 */
+          , #{content}    /* 내용 */
+          , current_date  /* 현재날짜 */
+        )
+    </insert>
+
+    <insert id="boardSelectKeyInsert" parameterType="com.kist.portal.common.sbbs.dto.SbbsDto$insertParam"
+        useGeneratedKeys="true" keyProperty="boardId" keyColumn="boardId">
+        <selectKey resultType="String" keyProperty="boardId" order="BEFORE">
+            /* 게시판 아이디 생성 (BBS + YYYYMMDD + 0000(seq)) */
+            select  'BBS'||TO_CHAR( NOW(), 'YYYYMMDD')||LPAD((substring(coalesce(max("boardid"), '000000000000000')::varchar, 12, 4)::numeric + 1)::text, 4, '0')
+            from    sample_board
+            where   substring("boardid"::varchar, 4, 8) = TO_CHAR(now(), 'YYYYMMDD')
+        </selectKey>
+        insert into sample_board (
+          boardId         /* 게시판아이디 (BBS + YYYYMMDD + 0000(seq)) */
+          , title         /* 제목 */
+          , content       /* 내용 */
+          , "createDate"  /* 등록일 */
+        )
+        values(
+          #{boardId}      /* 게시판 아이디 */
+          , #{title}      /* 제목 */
+          , #{content}    /* 내용 */
+          , current_date  /* 현재날짜 */
+        )
+    </insert>
+
+    <update id="updateBoard" parameterType="com.kist.portal.common.sbbs.dto.SbbsDto$updateParam">
+      update  sample_board
+          set title = #{title},       /* 제목 */
+              content = #{content}    /* 내용 */
+      where   boardId = #{boardId}    /* 게시판아이디 */
+    </update>
+
+    <delete id="deleteBoard" parameterType="java.lang.String">
+      delete  from sample_board
+        where boardId = #{boardId}    /* 게시판아이디 */
+    </delete>
+	
+</mapper>

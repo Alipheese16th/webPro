@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.sh.trnmgnt.mapper.TrnMgntMapper">
+
+	<!-- 교육 관리 조회 -->
+	<select id="selectTrnList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectTrnList  */
+		select a.trn_id
+		      ,a.wkpl_id
+		      ,fn_get_cd('ST00000002', a.wkpl_id, 'NM', #{SESS_LANG}) as wkpl_nm
+		      ,fn_get_cmpy(a.wkpl_id, 'NM', #{SESS_LANG}) as cmpy_nm
+		      ,a.trn_cl_cd
+		      ,fn_get_cd('SH00000011', a.trn_cl_cd, 'NM', #{SESS_LANG}) as trn_cl_nm
+		      ,a.trn_nm
+		      ,to_char(to_timestamp(a.trn_bgn_dt, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD') || ' ' || substring(a.trn_bgn_hm,0,3) || ':' || substring(a.trn_bgn_hm,3,2) || ' ~ ' || to_char(to_timestamp(a.trn_end_dt, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD') || ' ' || substring(a.trn_end_hm,0,3) || ':' || substring(a.trn_end_hm,3,2) as trn_dt
+		      ,a.trn_prst_cd
+		      ,a.trn_fcst_prsn_cnt || '/' || a.trn_tgt_prsn_cnt as prsn_cnt
+		      ,case when a.trn_fcst_prsn_cnt > 0 and a.trn_tgt_prsn_cnt > 0 then round((a.trn_fcst_prsn_cnt / a.trn_tgt_prsn_cnt) * 100,2) else 0 end || '%' as cnt_per
+		      ,a.upt_usr_id
+		      ,(select case when #{SESS_LANG} = 'KO' then u.usr_ko_nm 
+				            when #{SESS_LANG} = 'EN' then u.usr_en_nm 
+				            else u.usr_zh_nm 
+				       end as usr_nm
+			      from tb_co_user u
+			     where u.usr_id = a.upt_usr_id
+			   ) as lsch_nm
+		      ,(select u.dept_cd
+			      from tb_co_user u
+			     where u.usr_id = a.upt_usr_id
+			   ) as dept_cd
+			  ,to_char(a.upt_dt, 'YYYY-MM-DD') as lsch_dt
+		  from tb_sh_trn a
+		 where (a.del_yn = 'N' or a.del_yn is null or a.del_yn = '')
+		 <if test='cmpy_cd != null and cmpy_cd != ""'>
+		   and exists (select 1
+		      			 from tb_sh_wkpl w
+		      			where w.wkpl_id = a.wkpl_id 
+		      			  and w.cmpy_cd = #{cmpy_cd}
+		   			  )
+		 </if>
+		 <if test='wkpl_id != null and wkpl_id != ""'>
+		   and a.wkpl_id = #{wkpl_id}
+		 </if>
+		 <if test='trn_cl_cd != null and trn_cl_cd != ""'>
+		   and a.trn_cl_cd = #{trn_cl_cd}
+		 </if>
+		 <if test='sDate != null and sDate != "" and eDate != null and eDate != ""'>
+		 <![CDATA[
+		   and ((a.trn_bgn_dt >= replace(#{sDate},'-','') and a.trn_bgn_dt <= replace(#{eDate},'-','')) or (a.trn_end_dt >= replace(#{sDate},'-','') and a.trn_end_dt <= replace(#{eDate},'-','')))
+		 ]]>
+		 </if>
+	</select>
+	
+	<!-- 교육 관리 상세 조회 -->
+	<select id="selectTrnDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectTrnDtl */
+		select a.trn_id
+		      ,a.wkpl_id
+		      ,fn_get_cd('ST00000002', a.wkpl_id, 'NM', #{SESS_LANG}) as wkpl_nm
+		      ,a.trn_cl_cd
+		      ,fn_get_cd('SH00000011', a.trn_cl_cd, 'NM', #{SESS_LANG}) as trn_cl_nm
+		      ,a.trn_nm
+		      ,to_char(to_timestamp(a.trn_bgn_dt, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD') || ' ' || substring(a.trn_bgn_hm,0,3) || ':' || substring(a.trn_bgn_hm,3,2) || ' ~ ' || to_char(to_timestamp(a.trn_end_dt, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD') || ' ' || substring(a.trn_end_hm,0,3) || ':' || substring(a.trn_end_hm,3,2) as trn_dt
+		      ,to_char(to_timestamp(a.trn_bgn_dt, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD') as trn_bgn_dt
+		      ,to_char(to_timestamp(a.trn_end_dt, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD') as trn_end_dt
+		      ,substring(a.trn_bgn_hm,0,3) || ':' || substring(a.trn_bgn_hm,3,2) as trn_bgn_hm
+		      ,substring(a.trn_end_hm,0,3) || ':' || substring(a.trn_end_hm,3,2) as trn_end_hm
+		      ,substring(a.trn_bgn_hm,0,3) as trn_bgn_hm_h
+		      ,substring(a.trn_bgn_hm,3,2) as trn_bgn_hm_s
+		      ,substring(a.trn_end_hm,0,3) as trn_end_hm_h
+		      ,substring(a.trn_end_hm,3,2) as trn_end_hm_s
+		      ,a.trn_time_txt
+		      ,replace(trn_note_txt, chr(10), '&lt;br&gt;' || chr(10)) as trn_note_txt
+		      ,a.trn_prst_cd
+		      ,a.trn_aprv_no
+		      ,a.trn_fcst_prsn_cnt
+		      ,a.trn_tgt_prsn_cnt
+		      ,a.trn_techer_nm
+		      ,a.crt_usr_id
+		      ,a.upt_usr_id
+		      ,to_char(a.upt_dt, 'YYYY-MM-DD') as lsch_dt
+		      ,a.trn_atfl_no
+		      ,(select case when #{SESS_LANG} = 'KO' then u.usr_ko_nm 
+				            when #{SESS_LANG} = 'EN' then u.usr_en_nm 
+				            else u.usr_zh_nm 
+				       end as usr_nm
+			      from tb_co_user u
+			     where u.usr_id = a.upt_usr_id
+			   ) as lsch_nm
+		  from tb_sh_trn a
+		 where a.trn_id = #{trn_id}
+	</select>
+	
+	<!-- 교육 관리 대상자 정보 조회 -->
+	<select id="selectTrnUserList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectTrnUserList */
+		select a.chk_gb
+		      ,a.trn_id
+		      ,a.trn_tgt_usr_id
+		      ,a.trn_tgt_usr_nm as full_trn_tgt_usr_nm
+              ,substring(a.trn_tgt_usr_nm, 1, 1) || '*' || substring(a.trn_tgt_usr_nm, 3) as trn_tgt_usr_nm
+		      ,case when a.unit_nm is null then '' else a.unit_nm end unit_nm
+		      ,case when a.div_nm is null then '' else a.div_nm end div_nm
+		      ,case when a.team_nm is null then '' else a.team_nm end team_nm
+		      ,a.wkpl_id
+		      ,a.trn_fcst_cl_cd
+		      ,a.trn_fcst_cl_nm
+		      ,a.trn_fcst_yn
+		  from (select 'Y' as chk_gb
+				      ,a.trn_id
+				      ,a.trn_tgt_usr_id 
+				      ,a.trn_tgt_usr_nm
+				      ,(select case when #{SESS_LANG} = 'KO' then d.dept_ko_nm 
+						            else d.dept_en_nm 
+						       end as dept_en_nm
+				          from tb_co_dept d
+				              ,tb_co_user u
+				         where d.dept_cd = u.org_1st_cd
+				           and a.trn_tgt_usr_id = u.usr_id
+				       ) as unit_nm
+				      ,(select case when #{SESS_LANG} = 'KO' then d.dept_ko_nm 
+						            else d.dept_en_nm 
+						       end as dept_en_nm
+				          from tb_co_dept d
+				              ,tb_co_user u
+				         where d.dept_cd = u.org_2nd_cd
+				           and a.trn_tgt_usr_id = u.usr_id
+				       ) as div_nm
+				      ,(select case when #{SESS_LANG} = 'KO' then d.dept_ko_nm 
+						            else d.dept_en_nm 
+						       end as dept_en_nm
+				          from tb_co_dept d
+				              ,tb_co_user u
+				         where d.dept_cd = u.org_3rd_cd
+				           and a.trn_tgt_usr_id = u.usr_id
+				       ) as team_nm
+				      ,a.wkpl_id
+				      ,a.trn_fcst_cl_cd
+				      ,fn_get_cd('SH00000019', a.trn_fcst_cl_cd, 'NM', #{SESS_LANG}) as trn_fcst_cl_nm
+				      ,a.trn_fcst_yn
+				  from tb_sh_trn_trgp a
+				 where a.trn_id = #{trn_id}
+				 <if test='trn_fcst_yn_chk != null and trn_fcst_yn_chk != ""'>
+				   and a.trn_fcst_yn = 'N'
+				 </if>
+			   ) a
+	</select>
+	
+	<!-- 교육관리 키 채번 -->
+	<select id="selectTrnKey" parameterType="sqlMap" resultType="string">
+		/* selectTrnKey */
+		select 'TRN_' || to_char(now(), 'YYYYMMDD') || '_' || LPAD((coalesce(max(substring(trn_id,14) ::integer),0) + 1)::text, 4, '0') as key
+		  from tb_sh_trn
+	</select>
+	
+	<!-- 교육관리 대상자 키 채번 -->
+	<select id="selectTrnUserKey" parameterType="sqlMap" resultType="string">
+		/* selectTrnUserKey */
+		select 'Z' || to_char(now(), 'YYMMDD') || LPAD((coalesce(max(substring(trn_tgt_usr_id,8) ::integer),0) + 1)::text, 5, '0') as key     
+		 from tb_sh_trn_trgp     
+		where substring(trn_tgt_usr_id,1,1) = 'Z'
+		  and substring(trn_tgt_usr_id,2,6) = to_char(now(), 'YYMMDD')
+	</select>
+	
+	<!-- 교육 권한 체크 -->
+	<select id="selectTrnAuthChk" parameterType="sqlMap" resultType="sqlMap">
+		/* selectTrnAuthChk */
+		select a.dept_yn
+		      ,case when a.dept_yn = 'Y' then 'Y' else 'N' end as auth_chk
+		  from (select (select case when count(1) > 0 then 'Y' else 'N' end dept_yn
+				          from tb_co_user u
+				         where u.usr_id = #{sess_usr_id}
+				           and u.dept_cd = (select r.dept_cd 
+				                              from tb_co_user r
+				                             where r.usr_id = a.upt_usr_id 
+				                           )
+				       ) as dept_yn
+				  from tb_sh_trn a
+				 where a.trn_id = #{trn_id}
+			   ) a
+	</select>
+	
+	<!-- 교육관리 저장 -->
+	<insert id="insertTrnDtl" parameterType="sqlMap">
+        /* insertTrnDtl */
+        with upsert as (
+		update tb_sh_trn
+		   set trn_cl_cd   = #{trn_cl_cd}
+		      ,trn_nm	       = #{trn_nm}
+		      ,trn_bgn_dt      = #{trn_bgn_dt}
+		      ,trn_bgn_hm      = #{trn_bgn_hm}
+		      ,trn_end_dt      = #{trn_end_dt}
+		      ,trn_end_hm      = #{trn_end_hm}
+		      ,trn_time_txt    = #{trn_time_txt}
+		      ,trn_note_txt    = #{trn_note_txt}
+		      ,trn_techer_nm   = #{trn_techer_nm}
+		      ,trn_fcst_prsn_cnt = #{trn_fcst_prsn_cnt}::numeric
+		      ,trn_tgt_prsn_cnt = #{trn_tgt_prsn_cnt}::numeric
+		      ,trn_prst_cd = #{trn_prst_cd}
+		      ,trn_atfl_no = case when #{trn_atfl_no}::text  = '' then null 
+						   			   else #{trn_atfl_no}::INTEGER 
+				    	 		   end
+		      ,upt_usr_id         = #{username}
+		      ,upt_dt        = current_timestamp
+		 where trn_id = #{trn_id} RETURNING *
+		)
+        insert into tb_sh_trn (
+        	   trn_id
+			  ,wkpl_id
+			  ,trn_cl_cd
+			  ,trn_nm
+			  ,trn_bgn_dt
+			  ,trn_bgn_hm
+			  ,trn_end_dt
+			  ,trn_end_hm
+			  ,trn_time_txt
+			  ,trn_note_txt
+			  ,trn_fcst_prsn_cnt
+			  ,trn_tgt_prsn_cnt
+			  ,trn_techer_nm
+			  ,trn_prst_cd
+			  ,trn_atfl_no
+			  ,del_yn
+			  ,crt_usr_id
+			  ,crt_dt
+			  ,upt_usr_id
+			  ,upt_dt
+		)
+		select #{trn_id}
+			  ,#{wkpl_id}
+			  ,#{trn_cl_cd}
+   	 		  ,#{trn_nm}
+   	 		  ,#{trn_bgn_dt}
+   	 		  ,#{trn_bgn_hm}
+   	 		  ,#{trn_end_dt}
+   	 		  ,#{trn_end_hm}
+   	 		  ,#{trn_time_txt}
+   	 		  ,#{trn_note_txt}
+   	 		  ,#{trn_fcst_prsn_cnt}::numeric
+   	 		  ,#{trn_tgt_prsn_cnt}::numeric
+   	 		  ,#{trn_techer_nm}
+   	 		  ,#{trn_prst_cd}
+   	 		  ,case when #{trn_atfl_no}::text  = '' then null 
+	   			    else #{trn_atfl_no}::INTEGER 
+   	 		   end
+   	 		  ,'N'
+			  ,#{username}
+			  ,current_timestamp
+			  ,#{username}
+			  ,current_timestamp
+	     where not exists (select * from upsert)
+    </insert>
+    
+    <!-- 교육관리 대상자 저장 -->
+	<insert id="insertTrnUserDtl" parameterType="sqlMap">
+        /* insertTrnUserDtl */
+        with upsert as (
+		update tb_sh_trn_trgp
+		   set trn_fcst_cl_cd  = #{trn_fcst_cl_cd}
+		      ,trn_fcst_yn	       = #{trn_fcst_yn}
+		      ,trn_tgt_usr_nm      = #{trn_tgt_usr_nm}
+		      ,upt_usr_id             = #{username}
+		      ,upt_dt            = current_timestamp
+		 where trn_id = #{trn_id}
+		   and trn_tgt_usr_id = #{trn_tgt_usr_id} RETURNING *
+		)
+        insert into tb_sh_trn_trgp (
+        	   trn_id
+			  ,wkpl_id
+			  ,trn_tgt_usr_id
+			  ,trn_tgt_usr_nm
+			  ,trn_fcst_cl_cd
+			  ,trn_fcst_yn
+			  ,crt_usr_id
+			  ,crt_dt
+			  ,upt_usr_id
+			  ,upt_dt
+		)
+		select #{trn_id}
+			  ,#{wkpl_id}
+			  ,#{trn_tgt_usr_id}
+			  ,#{trn_tgt_usr_nm}
+   	 		  ,#{trn_fcst_cl_cd}
+   	 		  ,#{trn_fcst_yn}
+			  ,#{username}
+			  ,current_timestamp
+			  ,#{username}
+			  ,current_timestamp
+	     where not exists (select * from upsert)
+    </insert>
+    
+    <!-- 교육관리 삭제 -->
+    <update id="updateTrnDtlDel" parameterType="sqlMap">
+        /* updateTrnDtlDel */
+        update tb_sh_trn
+		   set del_yn   = 'Y'
+		      ,upt_usr_id  = #{username}
+		      ,upt_dt = current_timestamp
+		 where trn_id = #{trn_id}
+    </update>
+    
+    <!-- 교육관리 대상자 수정 -->
+	<update id="updateTrnDtlCnt" parameterType="sqlMap">
+        /* updateTrnDtlCnt */
+        update tb_sh_trn a
+		   set trn_tgt_prsn_cnt = (select count(1) as cnt from tb_sh_trn_trgp where trn_id = #{trn_id})::numeric
+		      ,trn_fcst_prsn_cnt = (select count(1) as cnt from tb_sh_trn_trgp where trn_id = #{trn_id} and trn_fcst_yn = 'Y')::numeric
+		 where a.trn_id = #{trn_id}
+		   and (select count(1)
+   				 from tb_sh_trn_trgp b
+   				where b.trn_id = #{trn_id}
+   				  and a.trn_id = b.trn_id
+              ) > 0
+    </update>
+    
+    <!-- 교육관리 대상자 삭제 -->
+    <delete id="deleteTrnUserDtl" parameterType="sqlMap">
+        /* deleteTrnUserDtl */
+        delete 
+          from tb_sh_trn_trgp
+		 where trn_id = #{trn_id}
+		   and trn_tgt_usr_id = #{trn_tgt_usr_id}
+    </delete>
+    
+    <!-- 교육관리 결재상신 -->
+    <update id="updateTrnAppr" parameterType="sqlMap">
+        /* updateTrnAppr */
+        update tb_sh_trn
+		   set trn_aprv_no = #{trn_aprv_no}
+		      ,upt_usr_id 	       = #{username}
+		      ,upt_dt        = current_timestamp
+		 where trn_id = #{trn_id}
+    </update>
+    
+    <!-- 교육관리 결재상신 후처리 -->
+    <update id="updateTrnApprAf" parameterType="sqlMap">
+        /* updateTrnApprAf */
+        update tb_sh_trn
+		   set trn_prst_cd = #{trn_prst_cd}
+		      ,upt_dt        = current_timestamp
+		 where trn_id = #{trn_id}
+    </update>
+    
+    <!-- 교육 관리 결재 정보 조회 -->
+	<select id="selectTrnAprvInfo" parameterType="sqlMap" resultType="sqlMap">
+		/* selectTrnAprvInfo */
+		select a.trn_id
+		      ,a.trn_aprv_no
+		      ,a.trn_prst_cd
+		  from tb_sh_trn a
+		 where a.trn_aprv_no = #{trn_aprv_no}
+	</select>
+	
+	<!-- 교육 관리 메일 대상자 정보 조회 -->
+	<select id="selectTrnMailUserInfo" parameterType="sqlMap" resultType="sqlMap">
+		/* selectTrnMailUserInfo */
+		select b.org_1st_cd 
+		      ,b.org_2nd_cd 
+		      ,b.org_3rd_cd 
+		      ,count(1) as cnt
+		      ,count(case when a.trn_fcst_yn = 'Y' then 1 end) as cnt_y
+      		  ,count(case when a.trn_fcst_yn = 'N' then 1 end) as cnt_n
+		  from tb_sh_trn_trgp a
+		      ,tb_co_user b
+		 where a.trn_tgt_usr_id = b.usr_id 
+		   and a.trn_id = #{trn_id}
+		 group by b.org_1st_cd, b.org_2nd_cd, b.org_3rd_cd
+	</select>
+</mapper>

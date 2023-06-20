@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.common.comm.mapper.CommMapper">
+
+	<select id="selectCdList" parameterType="sqlMap" resultType="sqlMap">
+		select coalesce(tccr.up_cd_grp_no,'') as up_cd_grp_no
+		      ,coalesce(tccr.up_cd,'') as up_cd
+		      ,coalesce(tcmr.mlang_cntn,'') as up_cd_nm
+		      ,coalesce(tcmr.mlang_abbr,'') as up_cd_ab
+		      ,tcc.cd_grp_no
+		      ,tcc.cd
+		      ,tcm.mlang_cntn as cd_nm
+		      ,tcm.mlang_abbr as cd_ab
+		      ,coalesce(tcc.buf_1st_cntn, '') as buf_1st_cntn
+		      ,coalesce(tcc.buf_2nd_cntn, '') as buf_2nd_cntn
+		      ,coalesce(tcc.buf_3rd_cntn, '') as buf_3rd_cntn
+		      ,coalesce(tcc.buf_4th_cntn, '') as buf_4th_cntn
+		      ,coalesce(tcc.buf_5th_cntn, '') as buf_5th_cntn
+		      ,tcc.sort_seq
+		  from tb_co_cd tcc 
+		  join tb_co_cd_grp tccg on tccg.cd_grp_no = tcc.cd_grp_no 
+		  join tb_co_mlang tcm on tcm.cd_grp_no = tcc.cd_grp_no and tcm.cd = tcc.cd and tcm.lang_cd = #{SESS_LANG}
+		  left outer join tb_co_cd_rel tccr on tcc.cd_grp_no = tccr.cd_grp_no and tcc.cd = tccr.cd and tccr.up_cd_grp_no = (select distinct up_cd_grp_no  from tb_co_cd_rel where cd_grp_no  = #{cd_grp_no}) 
+		  left outer join tb_co_mlang tcmr on tcmr.cd_grp_no = tccr.up_cd_grp_no and tcmr.cd = tccr.up_cd and tcmr.lang_cd = #{SESS_LANG}
+		 where tcc.cd_grp_no = #{cd_grp_no} 
+		 and tcc.usg_yn = 'Y'
+		 and tcc.del_yn = 'N'
+         and tcm.usg_yn = 'Y'
+         and tcm.del_yn = 'N'
+		order by tcc.sort_seq
+	</select>
+	
+	<select id="selectCdGrpAllList" parameterType="sqlMap" resultType="sqlMap">
+		select
+			tccg.cd_grp_no as cd
+			,tccg.cd_grp_nm  as cd_nm
+		from
+			tb_co_cd_grp tccg
+	</select>
+	
+	<select id="selectCdAllList" parameterType="sqlMap" resultType="sqlMap">
+		select
+			tcc.cd_grp_no as up_cd ,
+			tccg.cd_grp_nm as up_cd_nm ,
+			tcc.cd ,
+			tcm.mlang_cntn as cd_nm ,
+			tcm.mlang_abbr as cd_ab ,
+			coalesce(tcc.buf_1st_cntn, '') as buf_1st_cntn ,
+		    coalesce(tcc.buf_2nd_cntn, '') as buf_2nd_cntn ,
+		    coalesce(tcc.buf_3rd_cntn, '') as buf_3rd_cntn ,
+		    coalesce(tcc.buf_4th_cntn, '') as buf_4th_cntn ,
+		    coalesce(tcc.buf_5th_cntn, '') as buf_5th_cntn ,
+			tcc.sort_seq
+		from
+			tb_co_cd tcc
+		join tb_co_cd_grp tccg on
+			tccg.cd_grp_no = tcc.cd_grp_no
+		join tb_co_mlang tcm on
+			tcm.cd_grp_no = tcc.cd_grp_no
+			and tcm.cd = tcc.cd
+			and tcm.lang_cd = #{SESS_LANG}
+			and tcc.usg_yn = 'Y'
+			and tcc.del_yn = 'N'
+	</select>
+	
+	<update id="updateConfig" parameterType="sqlMap">
+		update tb_co_user 
+		   set wkpl_id = #{wkplId}
+		      ,lang_cd = #{langCd}
+		      ,tzon_cd = #{tzonCd}
+		      ,workspace_cd = #{workspaceCd}
+		      ,upt_usr_id = #{usr_id}
+		      ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+		where usr_id = #{usr_id}
+	</update>
+	
+	<select id="selectMultiLanguageList" parameterType="sqlMap" resultType="sqlMap">
+		select mlang_no, mlang_cntn
+		from tb_co_mlang tcm 
+		where usg_yn = 'Y'
+		  and del_yn = 'N'
+		  and lang_cd = #{SESS_LANG}
+	</select>
+	
+	<select id="selectTzCode" parameterType="sqlMap" resultType="sqlMap">
+		select cd 
+		from tb_co_cd 
+		where 1=1
+		  and cd_grp_no = 'CO00000004'
+		  and cd = #{tzonCd}
+		  and usg_yn = 'Y'
+		  and del_yn = 'N'
+	</select>
+	
+	<select id="selectWkplCode" parameterType="sqlMap" resultType="sqlMap">
+		select a.wkpl_id as cd
+		      ,fn_get_cd('ST00000002', a.wkpl_id, 'NM', #{SESS_LANG}) as cd_nm
+		      ,a.cmpy_cd as up_cd
+		      ,c.sort_seq 
+		  from tb_sh_wkpl a
+		      ,tb_co_cd c
+		 where a.wkpl_id = c.cd 
+		   and c.cd_grp_no = 'ST00000002'
+		   and a.del_yn = 'N'
+		 order by c.sort_seq 
+	</select>
+	
+	<insert id="insertPrivacyLog" parameterType="sqlMap">
+	   /* insertPrivacyLog */
+      INSERT INTO tb_co_api_exe_result_log
+		(
+			api_no
+		  , exe_dt
+		  , usr_id
+		  , api_exe_url
+		  , mthd_type_cd
+		  , ip_addr
+		  , wkpl_id
+		  , lang_cd
+		  , tzon_nm
+		  , server_ip_addr
+		  , input_param
+		  , result_cnt
+		  , result_item
+		) values (
+			(select coalesce((select api_no from tb_co_api where api_url = #{url} and usg_yn = 'Y' and del_yn = 'N'), 'api_no'))
+		  , #{exe_dt}
+		  , #{usrId}
+		  , #{url}
+		  , #{method}
+		  , #{ip}
+		  , #{wkplId}
+		  , #{langCd}
+		  , #{tzonNm}
+		  , #{serverIp}
+		  , #{inputParam}
+		  , #{result_cnt}::integer
+		  , #{result_item}
+		)
+    </insert>
+	
+</mapper>

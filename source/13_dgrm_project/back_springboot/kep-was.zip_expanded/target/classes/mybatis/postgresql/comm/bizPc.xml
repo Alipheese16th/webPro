@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.common.chems.mapper.BizPcMapper">
+
+	<select id="selectBizPcGrpList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectBizPcGrpList */
+		select
+			tcc.cd_grp_no ,
+			tcc.cd as biz_pc_grp_cd ,
+			fn_get_cd('CO00000020',tcc.cd,'NM',#{SESS_LANG}) as biz_pc_grp_nm ,
+			coalesce(tcbpg.cnct_1st_cd_grp_no,'') as cnct_1st_cd_grp_no,
+			coalesce(tcbpg.cnct_2nd_cd_grp_no,'') as cnct_2nd_cd_grp_no,
+			coalesce(tcbpg.cnct_3rd_cd_grp_no,'') as cnct_3rd_cd_grp_no,
+			coalesce(tcbpg.biz_pc_note,'') as biz_pc_note,
+			tcbpg.usg_yn ,
+			tcbpg.del_yn ,
+			tcbpg.crt_usr_id ,
+			tcbpg.crt_dt ,
+			tcbpg.upt_usr_id ,
+			tcbpg.upt_dt,
+			case when (select count(1)
+						from  tb_co_biz_pc tcbp
+						where tcbp.biz_pc_grp_cd = tcbpg.biz_pc_grp_cd
+							and tcbp.usg_yn = 'Y'
+							and tcbp.del_yn = 'N') > 0 	then 'n'
+				 else 'y'
+			end as editableYn
+		from
+			tb_co_cd tcc
+		left outer join tb_co_biz_pc_grp tcbpg
+		on tcc.cd = tcbpg.biz_pc_grp_cd
+		and tcbpg.usg_yn = 'Y'
+		and	tcbpg.del_yn = 'N'	
+		where
+			tcc.cd_grp_no = 'CO00000020'
+			and tcc.del_yn = 'N'
+			and tcc.usg_yn = 'Y'
+			order by tcbpg.biz_pc_grp_cd asc
+		</select>
+	
+	<select id="selectBizPcDtlList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectBizPcDtlList */
+		select
+			tcbp.biz_pc_no
+			,tcbp.biz_pc_grp_cd
+			,tcbp.usr_id
+			,case when #{SESS_LANG} = 'KO' then (select tcu.usr_ko_nm  from tb_co_user tcu where tcu.usr_id = tcbp.usr_id)
+				  when #{SESS_LANG} = 'EN' then	(select tcu.usr_en_nm  from tb_co_user tcu where tcu.usr_id = tcbp.usr_id)   
+					  else	(select tcu.usr_zh_nm  from tb_co_user tcu where tcu.usr_id = tcbp.usr_id)   
+			end as usr_nm
+			,tcbp.cnct_1st_cd
+			,tcbp.cnct_2nd_cd
+			,tcbp.cnct_3rd_cd
+			,tcbp.biz_pc_note
+			,tcbp.sort_seq
+			,tcbp.usg_yn
+			,tcbp.del_yn
+			,tcbp.upt_usr_id
+			,case when #{SESS_LANG} = 'KO' then (select tcu.usr_ko_nm  from tb_co_user tcu where tcu.usr_id = tcbp.upt_usr_id)
+				  when #{SESS_LANG} = 'EN' then	(select tcu.usr_en_nm  from tb_co_user tcu where tcu.usr_id = tcbp.upt_usr_id) 
+				  else	(select tcu.usr_zh_nm  from tb_co_user tcu where tcu.usr_id = tcbp.upt_usr_id) 
+			end as upt_usr_nm
+			,fn_get_time(tcbp.upt_dt, #{SESS_TIME_ZONE},'DA', '-') as upt_dt
+		    ,fn_get_time(tcbp.upt_dt, #{SESS_TIME_ZONE},'TS', ':') as upt_tm
+			,tcbpg.cnct_1st_cd_grp_no 
+			,tcbpg.cnct_2nd_cd_grp_no 
+			,tcbpg.cnct_3rd_cd_grp_no 
+		from tb_co_biz_pc tcbp 
+		left outer join tb_co_biz_pc_grp tcbpg 	on tcbpg.biz_pc_grp_cd  = tcbp.biz_pc_grp_cd 
+		where tcbp.biz_pc_grp_cd  = #{biz_pc_grp_cd}
+		and	  tcbp.del_yn = 'N'		
+		order by tcbp.sort_seq asc
+		
+	</select>
+	
+	<select id="selectBizPckey" parameterType="sqlMap" resultType="string">
+		/* selectBizPckey */
+		select concat('BG',coalesce(lpad((max(substring(biz_pc_grp_cd , 3, 7)::integer) + 1)::text, 5, '0'),'00001')) as key
+		from tb_co_biz_pc_grp 
+	</select>
+	
+	<insert id="saveBizPcGrp" parameterType="sqlMap">
+	/* saveBizPcGrp */
+       insert into tb_co_biz_pc_grp (
+        	biz_pc_grp_cd
+			,cnct_1st_cd_grp_no
+			,cnct_2nd_cd_grp_no
+			,cnct_3rd_cd_grp_no
+			,biz_pc_note
+			,usg_yn
+			,del_yn
+			,crt_usr_id
+			,crt_dt
+			,upt_usr_id
+			,upt_dt
+		) values (
+        	#{biz_pc_grp_cd}
+			,#{cnct_1st_cd_grp_no}
+			,#{cnct_2nd_cd_grp_no}
+			,#{cnct_3rd_cd_grp_no}
+			,#{biz_pc_note}
+			,'Y'
+			,'N'
+			,#{SESS_USR_ID}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{SESS_USR_ID}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+		) on conflict (biz_pc_grp_cd)
+		do update set 
+				cnct_1st_cd_grp_no = #{cnct_1st_cd_grp_no}
+				,cnct_2nd_cd_grp_no = #{cnct_2nd_cd_grp_no}
+				,cnct_3rd_cd_grp_no = #{cnct_3rd_cd_grp_no}
+				,biz_pc_note = #{biz_pc_note}
+			   ,upt_usr_id = #{SESS_USR_ID}
+			   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_co_biz_pc_grp.biz_pc_grp_cd = #{biz_pc_grp_cd} 
+    </insert>
+    
+    <update id="deleteBizPcGrp" parameterType="sqlMap">
+        /* deleteBizPcGrp */
+        update tb_co_biz_pc_grp set
+  			 del_yn = 'Y'
+        	,usg_yn = 'N'
+        	,upt_usr_id = #{SESS_USR_ID}
+        	,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+        where biz_pc_grp_cd = #{biz_pc_grp_cd}
+    </update>
+    
+    <insert id="saveBizPc" parameterType="sqlMap">
+	/* saveBizPc */
+       insert into tb_co_biz_pc (
+      		 biz_pc_no
+       		,biz_pc_grp_cd
+			,usr_id
+			,cnct_1st_cd
+			,cnct_2nd_cd
+			,cnct_3rd_cd
+			,biz_pc_note
+			,sort_seq
+			,usg_yn
+			,del_yn
+			,crt_usr_id
+			,crt_dt
+			,upt_usr_id
+			,upt_dt
+		) values (
+		<if test='biz_pc_no != null and biz_pc_no != ""'>
+			#{biz_pc_no}::INTEGER 
+		</if>	
+		<if test='biz_pc_no == null or biz_pc_no == ""'>
+			(select nextval('tb_co_biz_pc_biz_pc_no_seq'::regclass))
+		</if>	
+        	,#{biz_pc_grp_cd}
+			,#{usr_id}
+			,#{cnct_1st_cd}
+			,#{cnct_2nd_cd}
+			,#{cnct_3rd_cd}
+			,trim(#{biz_pc_note})
+			,#{sort_seq}::INTEGER
+			,#{usg_yn}
+			,'N'
+			,#{SESS_USR_ID}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{SESS_USR_ID}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+		) on conflict (biz_pc_no)
+		do update set 
+				cnct_1st_cd = #{cnct_1st_cd}
+				,cnct_2nd_cd = #{cnct_2nd_cd}
+				,cnct_3rd_cd = #{cnct_3rd_cd}
+				,sort_seq = #{sort_seq}::INTEGER
+				,biz_pc_note = #{biz_pc_note}
+				,usg_yn = #{usg_yn}
+			   ,upt_usr_id = #{SESS_USR_ID}
+			   ,del_yn = 'N'
+			   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_co_biz_pc.biz_pc_no = #{biz_pc_no}::INTEGER 
+    </insert>
+    
+    <update id="deleteBizPc" parameterType="sqlMap">
+        /* deleteBizPc */
+        update tb_co_biz_pc set
+  			 del_yn = 'Y'
+        	,usg_yn = 'N'
+        	,upt_usr_id = #{SESS_USR_ID}
+        	,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+        where biz_pc_no = #{biz_pc_no}::INTEGER 
+    </update>
+	
+</mapper>

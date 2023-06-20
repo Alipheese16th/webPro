@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.common.login.mapper.LoginMapper">
+
+	<resultMap id='userMap' type='com.kist.portal.common.login.dto.UserDetailDto'>
+        <result property='userId' column='usr_id'/>
+        <result property='userName' column='usr_nm'/>
+        <result property='departmentCode' column='dept_cd'/>
+        <result property='departmentName' column='dept_nm'/>
+        <result property='companyName' column='cmpy_nm'/>
+        <result property='companyCode' column='cmpy_cd'/>
+        <result property='wkplId' column='wkpl_id'/>
+        <result property='wkplNm' column='wkpl_nm'/>
+        <result property='languageCode' column='lang_cd'/>
+        <result property='timeZone' column='time_zone'/>
+        <result property='timeZoneCode' column='tzon_cd'/>
+        <result property='roles' column='roles'/>
+        <result property='roleTypeCodes' column='role_type_cds'/>
+        <result property='userEmail' column='usr_email'/>
+        <result property='userCellPhoneNo' column='usr_cpho_no'/>
+        <result property='departmentHeadUserId' column='dpth_usr_id'/>
+        <result property='workspaceCode' column='workspace_cd'/>
+    </resultMap>
+
+	<select id="selectUser" parameterType="java.lang.String" resultMap="userMap">
+		/* selectUser */
+		select a.usr_id
+			,case when a.lang_cd = 'EN' then usr_en_nm
+				when a.lang_cd = 'ZH' then usr_zh_nm
+				when a.lang_cd is null then usr_ko_nm
+				else usr_ko_nm
+			end as usr_nm
+			,a.dept_cd
+			,case when a.lang_cd='KO' then d.dept_ko_nm when a.lang_cd is null then d.dept_ko_nm else d.dept_en_nm end as dept_nm
+			,a.cmpy_cd
+			,fn_get_cd('CO00000009', a.cmpy_cd, 'nm', a.lang_cd) as cmpy_nm
+			,a.wkpl_id
+			,fn_get_cd('ST00000002', a.wkpl_id, 'nm', a.lang_cd) as wkpl_nm
+			,a.lang_cd
+			,(select array_to_string(array_agg(role_no),',') from tb_co_user_role r where r.usr_id = a.usr_id  and r.usg_yn = 'Y' and r.del_yn = 'N') as roles
+			,(select array_to_string(array_agg(role_type_cd),',') from tb_co_role r where role_no in (select role_no from tb_co_user_role r where r.usr_id = a.usr_id  and r.usg_yn = 'Y' and r.del_yn = 'N') ) as role_type_cds
+			,(select cd.buf_1st_cntn from tb_co_cd cd where a.tzon_cd=cd.cd and cd.usg_yn = 'Y' and cd.del_yn = 'N') as time_zone
+			,to_char(to_timestamp(ul2.login_dt,'YYYYMMDDHH24MISS'),'YYYY-MM-DD HH24:MI') as last_login_dt
+            ,ul2.ip_addr as last_ip_addr
+			,a.tzon_cd
+			,a.usr_email 
+			,a.usr_cpho_no 
+			,d.dpth_usr_id
+			,a.workspace_cd
+		from tb_co_user a
+		join tb_co_dept d on d.dept_cd = a.dept_cd
+		left outer join (select * from tb_co_user_login_log ul where ul.usr_id = upper(#{usrId}) order by ul.usr_login_seq desc limit 1) ul2 on ul2.usr_id = a.usr_id 
+		where a.usr_id = upper(#{usrId})
+			and a.usg_yn = 'Y'
+			and a.del_yn = 'N'
+	</select>
+	
+	<select id="selectMenuList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMenuList */
+		with recursive apchems_menu 
+		 (menu_no
+		 ,up_menu_no
+		 ,mlang_cntn
+		 ,mlang_abbr
+		 ,menu_url
+		 ,level
+		 ,path
+		 ,cycle
+		 ) as
+		(select tcm.menu_no::text as menu_no
+		       ,tcm.up_menu_no 
+		       ,tcm2.mlang_cntn 
+		       ,tcm2.mlang_abbr
+		       ,tcm.menu_url
+		       ,0
+		       ,array[lpad(tcm.sort_seq::text,4,'0')]
+		       ,false
+		   from tb_co_menu tcm
+		   join tb_co_mlang tcm2 on tcm.menu_no = tcm2.menu_no and tcm2.lang_cd = #{lang_cd}
+		  where tcm.up_menu_no = fn_get_cd('CO00000016', #{workspace_cd}, 'B1', #{SESS_LANG})
+            and tcm.usg_yn = 'Y'
+            and tcm.del_yn = 'N'
+		    and tcm.menu_no != 'M999900'
+		  union all
+		  /* 시스템관리 메뉴는 특정 IP에서 접속시에만 조회가능 */
+		  select tcm.menu_no::text as menu_no
+		       ,tcm.up_menu_no 
+		       ,tcm2.mlang_cntn 
+		       ,tcm2.mlang_abbr
+		       ,tcm.menu_url
+		       ,0
+		       ,array[lpad(tcm.sort_seq::text,4,'0')]
+		       ,false
+		   from tb_co_menu tcm
+		   join tb_co_mlang tcm2 on tcm.menu_no = tcm2.menu_no and tcm2.lang_cd = #{lang_cd}
+		  where tcm.up_menu_no = '' and tcm.usg_yn = 'Y' and tcm.del_yn = 'N'
+		    and tcm.up_menu_no = fn_get_cd('CO00000016', #{workspace_cd}, 'B1', #{SESS_LANG})
+		    and tcm.menu_no = 'M999900'
+		  <!--
+		    and exists (select '1'
+		                  from tb_co_cd 
+		                 where cd_grp_no = 'CO00000032' 
+		                   and buf_1st_cntn = #{ip})
+		  -->
+		  union all
+		 select tcm.menu_no
+		       ,tcm.up_menu_no
+		       ,tcm2.mlang_cntn
+		       ,tcm2.mlang_abbr
+		       ,tcm.menu_url
+		       ,am.level + 1
+		       ,array_append(am.path, lpad(tcm.sort_seq::text,4,'0'))
+		       ,tcm.menu_no = ANY(am.path)
+		   from tb_co_menu tcm
+		   join tb_co_mlang tcm2 on tcm.menu_no = tcm2.menu_no and tcm2.lang_cd = #{lang_cd}
+		   join apchems_menu am on tcm.up_menu_no = am.menu_no
+		  where not cycle and tcm.usg_yn = 'Y' and tcm.del_yn = 'N'
+		)
+		select menu_no
+		      ,up_menu_no
+		      ,mlang_cntn as menu_nm
+		      ,trim(menu_url) as menu_url
+		      ,level
+		      ,path
+		 from apchems_menu
+		where exists (
+		 	select 1 from tb_co_menu_role tcmr 
+		 		where apchems_menu.menu_no = tcmr.menu_no
+		 		and tcmr.usg_yn = 'Y'
+                and tcmr.del_yn = 'N'
+		 		and tcmr.role_no in (select role_no from tb_co_user_role
+									where usr_id = #{usrId}
+										and usg_yn = 'Y'
+										and del_yn = 'N') 
+			)
+		 order by path
+	</select>
+	
+	<select id="selectDayDiff" parameterType="java.lang.String" resultType="java.lang.Integer">
+		/* selectDayDiff */
+		select current_date - left(coalesce(max(login_dt), to_char(now(), 'YYYYMMDDHH24MISS')), 8)::date as diff_days 
+		from tb_co_user_login_log
+		where usr_id = #{usrId}
+	</select>
+	
+	<select id="selectApiRole" parameterType="sqlMap" resultType="sqlMap">
+		/* selectApiRole */
+		select api_no, gemthd_yn, pomthd_yn, pumthd_yn, demthd_yn 
+		from tb_co_api_role
+		where usg_yn = 'Y' and del_yn = 'N'
+			and role_no in (select role_no from tb_co_user_role where usg_yn = 'Y' and del_yn = 'N' and usr_id = #{usrId})
+			and api_no = (select api_no from tb_co_api where usg_yn = 'Y' and del_yn = 'N' and api_url = #{url})
+	</select>
+	
+	<insert id="insertUserLoginLog" parameterType="sqlMap">
+        /* insertUserLoginLog */
+        insert into tb_co_user_login_log (
+        	usr_id
+        	,login_dt
+			,ip_addr
+			,wkpl_id
+			,lang_cd
+			,tzon_nm
+		) values (
+			#{usrId}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{ip}
+			,#{wkplId}
+			,#{langCd}
+			,#{tzonNm}
+		)
+    </insert>
+    
+    <insert id="insertApiLog" parameterType="sqlMap">
+        /* insertApiLog */
+        insert into tb_co_api_exe_log (
+        	api_no
+			,exe_dt
+			,usr_id
+			,api_exe_url
+			,mthd_type_cd
+			,ip_addr
+			,wkpl_id
+			,lang_cd
+			,tzon_nm
+			,server_ip_addr
+			,input_param
+		) values (
+			(select coalesce((select api_no from tb_co_api where api_url = #{url} and usg_yn = 'Y' and del_yn = 'N'), 'api_no'))
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{usrId}
+			,#{url}
+			,#{method}
+			,#{ip}
+			,#{wkplId}
+			,#{langCd}
+			,#{tzonNm}
+			,#{serverIp}
+			,substring(#{inputParam}, 0, 1000)
+		)
+    </insert>
+    
+    <insert id="insertSmsNo" parameterType="sqlMap">
+       insert into tb_co_sms_cert(
+				usr_id 
+			   ,cert_no 
+			   ,cert_req_dt 
+			   ,cert_yn 
+		) values (
+			    #{usrId}
+			   ,#{r_authNo}
+			   ,#{r_reqDate}
+			   ,#{r_result} 
+		)
+    </insert>
+    
+    <select id="selectSmsNo" parameterType="sqlMap" resultType="String">
+		/* selectSmsNo */
+		select cert_no
+		from tb_co_sms_cert
+		where usr_id = #{usrId}
+		order by cert_req_no desc 
+		limit 1
+	</select>
+	
+	<select id="selectUserTelNo" parameterType="sqlMap" resultType="String">
+		/* selectUserTelNo */
+		select tcu.usr_cpho_no
+		from tb_co_user tcu
+		where tcu.usr_id = #{usrId}
+		  and tcu.usg_yn = 'Y'
+		  and tcu.del_yn = 'N'
+	</select>
+
+	<select id="selectUserPassword" parameterType="String" resultType="String">
+		/* selectUserPassword */
+		select	tcu.usr_pwd
+		from		tb_co_user tcu
+		where		tcu.usr_id = #{usrId}
+	</select>
+
+</mapper>

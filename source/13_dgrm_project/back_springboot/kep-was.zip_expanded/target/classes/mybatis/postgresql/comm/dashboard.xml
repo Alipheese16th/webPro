@@ -1,0 +1,1563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.common.dashboard.mapper.dashboardMapper">
+
+	<!-- 사업장별 작업현황 -->
+	<select id="selectOprnLocList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectOprnLocList */
+		with oprn as (
+			select 
+				substring(d.con_oprn_wkpl_loc_id, 1, 12) as loc_id
+				,count(case when e.con_oprn_type_cd = 'WCD01' then 1 end) as cnt1 --화기
+				,count(case when e.con_oprn_type_cd = 'WCD02' then 1 end) as cnt2 --고소
+				,count(case when e.con_oprn_type_cd = 'WCD04' then 1 end) as cnt3 --전기
+				,count(case when e.con_oprn_type_cd = 'WCD03' then 1 end) as cnt4 --밀폐
+				,count(case when e.con_oprn_type_cd = 'WCD06' then 1 end) as cnt5 --중장비
+				,count(case when e.con_oprn_type_cd = 'WCD05' then 1 end) as cnt6 --위험물질
+				,count(case when e.con_oprn_type_cd = 'WCD07' then 1 end) as cnt7 --일반
+			from tb_sh_con_oprn_prms_plan c
+			left join tb_sh_con_oprn_prms_req d 
+				on c.con_id = d.con_id 
+			left join tb_sh_con_oprn_prms_oprn e 
+				on d.con_prms_id = e.con_prms_id 
+			where c.wkpl_id = #{wkpl_id}
+				and (d.del_yn = 'N' or d.del_yn is null or d.del_yn = '')
+				and substring(d.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+			group by substring(d.con_oprn_wkpl_loc_id, 1, 12)
+		),
+		loc as (
+			select 
+				a.wkpl_id 
+				,a.wkpl_loc_id 
+				,a.wkpl_loc_xcrd 
+				,a.wkpl_loc_ycrd 
+				,b.wkpl_loc_nm 
+			from tb_sh_wkpl_sts_loc a
+			left join tb_sh_wkpl_loc b
+				on a.wkpl_loc_id = b.wkpl_loc_id
+			where b.usg_yn = 'Y'
+				and a.wkpl_id = #{wkpl_id}
+		)
+		select 
+			a.wkpl_id 
+			,a.wkpl_loc_nm
+			,a.wkpl_loc_xcrd 
+			,a.wkpl_loc_ycrd 
+			,coalesce(b.cnt1, 0) as cnt1
+			,coalesce(b.cnt2, 0) as cnt2
+			,coalesce(b.cnt3, 0) as cnt3
+			,coalesce(b.cnt4, 0) as cnt4
+			,coalesce(b.cnt5, 0) as cnt5
+			,coalesce(b.cnt6, 0) as cnt6
+			,coalesce(b.cnt7, 0) as cnt7
+		from loc a
+		left join oprn b
+			on a.wkpl_loc_id = b.loc_id
+	</select>
+	
+	<!-- 사업장별 작업현황 Total -->
+	<select id="selectOprnLocTot" parameterType="sqlMap" resultType="sqlMap">
+		/* selectOprnLocTot */
+		with oprn as (
+			select 
+				count(case when e.con_oprn_type_cd = 'WCD01' then 1 end) as cnt1 --화기
+				,count(case when e.con_oprn_type_cd = 'WCD02' then 1 end) as cnt2 --고소
+				,count(case when e.con_oprn_type_cd = 'WCD04' then 1 end) as cnt3 --전기
+				,count(case when e.con_oprn_type_cd = 'WCD03' then 1 end) as cnt4 --밀폐
+				,count(case when e.con_oprn_type_cd = 'WCD06' then 1 end) as cnt5 --중장비
+				,count(case when e.con_oprn_type_cd = 'WCD05' then 1 end) as cnt6 --위험물질
+				,count(case when e.con_oprn_type_cd = 'WCD07' then 1 end) as cnt7 --일반
+			from tb_sh_con_oprn_prms_plan c
+			left join tb_sh_con_oprn_prms_req d 
+				on c.con_id = d.con_id 
+			left join tb_sh_con_oprn_prms_oprn e 
+				on d.con_prms_id = e.con_prms_id 
+			where c.wkpl_id = #{wkpl_id}
+				and (d.del_yn = 'N' or d.del_yn is null or d.del_yn = '')
+				and substring(d.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+		)
+		select 
+			cnt1
+			,cnt2
+			,cnt3
+			,cnt4
+			,cnt5
+			,cnt6
+			,cnt7
+			,cnt1 + cnt2 + cnt3 + cnt4 + cnt5 + cnt6 + cnt7 as tot 
+		from oprn
+	</select>
+	
+	<!-- 기상정보 지역 -->
+	<select id="selectWeatRgn" parameterType="sqlMap" resultType="String">
+		/* selectWeatRgn */
+		select coalesce(weat_rgn_cd, 'WTAREA01')as rgn_cd from tb_sh_wkpl where wkpl_id = #{wkpl_id}
+	</select>
+	
+	<!-- 기상 주의사항 -->
+	<select id="selectWeatMsgList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectWeatMsgList */
+		select 
+			weat_infr_msg_id 
+			,weat_elmt_cd 
+			,weat_elmt_min_vl 
+			,min_cppr_cd 
+			,weat_elmt_max_vl 
+			,max_cppr_cd 
+			,msg_txt 
+			,sort_sn 
+		from tb_sh_weat_infr_msg
+		where wtsr_yn = #{wtsr_yn}
+		order by sort_sn, weat_infr_msg_id 
+	</select>
+	
+	<!-- 기상정보 주의사항 체크 -->
+	<select id="selectWeatMsgChk" parameterType="sqlMap" resultType="sqlMap">
+		/* selectWeatMsgChk */
+		<![CDATA[
+		select *
+		  from (select a.weat_infr_msg_id
+		  			  ,a.weat_elmt_cd
+					  ,a.weat_elmt_min_vl
+					  ,a.min_cppr_cd
+					  ,a.weat_elmt_max_vl
+					  ,a.max_cppr_cd
+					  ,a.calc_type
+					  ,#{value1}::numeric	/* 온도 */
+					  ,#{value2}::numeric	/* 습도 */
+					  ,#{value3}::numeric	/* 바람 */
+					  ,#{value4}::numeric	/* 강수량 */
+					  ,#{value5}::numeric	/* 미세먼지 */
+					  ,(case when weat_elmt_cd = 'WTFCT01'	/* 온도 */
+					  		 then (case when a.calc_type = 'A'
+					  		 				 and (((a.min_cppr_cd = 'MN01' and #{value1}::numeric > a.weat_elmt_min_vl) or (a.min_cppr_cd = 'MN02' and #{value1}::numeric >= a.weat_elmt_min_vl))
+										      	  and ((a.max_cppr_cd = 'MX01' and #{value1}::numeric < a.weat_elmt_max_vl) or (a.max_cppr_cd = 'MX02' and #{value1}::numeric <= a.weat_elmt_max_vl)))
+									    then 1
+									    when a.calc_type = 'B'
+					  		 				 and ((a.min_cppr_cd = 'MN01' and #{value1}::numeric > a.weat_elmt_min_vl) or (a.min_cppr_cd = 'MN02' and #{value1}::numeric >= a.weat_elmt_min_vl))
+									    then 1
+									    when a.calc_type = 'C'
+					  		 				 and ((a.max_cppr_cd = 'MX01' and #{value1}::numeric < a.weat_elmt_max_vl) or (a.max_cppr_cd = 'MX02' and #{value1}::numeric <= a.weat_elmt_max_vl))
+									    then 1
+					  		 		    else 0
+					  		 		end)
+					  		 when weat_elmt_cd = 'WTFCT02'	/* 습도 */
+					  		 then (case when calc_type = 'A'
+					  		 				 and (((min_cppr_cd = 'MN01' and #{value2}::numeric > weat_elmt_min_vl) or (min_cppr_cd = 'MN02' and #{value2}::numeric >= weat_elmt_min_vl))
+										      	  and ((max_cppr_cd = 'MX01' and #{value2}::numeric < weat_elmt_max_vl) or (max_cppr_cd = 'MX02' and #{value2}::numeric <= weat_elmt_max_vl)))
+									    then 1
+									    when calc_type = 'B'
+					  		 				 and ((min_cppr_cd = 'MN01' and #{value2}::numeric > weat_elmt_min_vl) or (min_cppr_cd = 'MN02' and #{value2}::numeric >= weat_elmt_min_vl))
+									    then 1
+									    when calc_type = 'C'
+					  		 				 and ((max_cppr_cd = 'MX01' and #{value2}::numeric < weat_elmt_max_vl) or (max_cppr_cd = 'MX02' and #{value2}::numeric <= weat_elmt_max_vl))
+									    then 1
+					  		 		    else 0
+					  		 		end)
+					  		 when weat_elmt_cd = 'WTFCT03'	/* 바람 */
+					  		 then (case when calc_type = 'A'
+					  		 				 and (((min_cppr_cd = 'MN01' and #{value3}::numeric > weat_elmt_min_vl) or (min_cppr_cd = 'MN02' and #{value3}::numeric >= weat_elmt_min_vl))
+										      	  and ((max_cppr_cd = 'MX01' and #{value3}::numeric < weat_elmt_max_vl) or (max_cppr_cd = 'MX02' and #{value3}::numeric <= weat_elmt_max_vl)))
+									    then 1
+									    when calc_type = 'B'
+					  		 				 and ((min_cppr_cd = 'MN01' and #{value3}::numeric > weat_elmt_min_vl) or (min_cppr_cd = 'MN02' and #{value3}::numeric >= weat_elmt_min_vl))
+									    then 1
+									    when calc_type = 'C'
+					  		 				 and ((max_cppr_cd = 'MX01' and #{value3}::numeric < weat_elmt_max_vl) or (max_cppr_cd = 'MX02' and #{value3}::numeric <= weat_elmt_max_vl))
+									    then 1
+					  		 		    else 0
+					  		 		end)
+					  		 when weat_elmt_cd = 'WTFCT04'	/* 강수량 */
+					  		 then (case when calc_type = 'A'
+					  		 				 and (((min_cppr_cd = 'MN01' and #{value4}::numeric > weat_elmt_min_vl) or (min_cppr_cd = 'MN02' and #{value4}::numeric >= weat_elmt_min_vl))
+										      	  and ((max_cppr_cd = 'MX01' and #{value4}::numeric < weat_elmt_max_vl) or (max_cppr_cd = 'MX02' and #{value4}::numeric <= weat_elmt_max_vl)))
+									    then 1
+									    when calc_type = 'B'
+					  		 				 and ((min_cppr_cd = 'MN01' and #{value4}::numeric > weat_elmt_min_vl) or (min_cppr_cd = 'MN02' and #{value4}::numeric >= weat_elmt_min_vl))
+									    then 1
+									    when calc_type = 'C'
+					  		 				 and ((max_cppr_cd = 'MX01' and #{value4}::numeric < weat_elmt_max_vl) or (max_cppr_cd = 'MX02' and #{value4}::numeric <= weat_elmt_max_vl))
+									    then 1
+					  		 		    else 0
+					  		 		end)
+					  		 when weat_elmt_cd = 'WTFCT05'	/* 미세먼지 */
+					  		 then (case when calc_type = 'A'
+					  		 				 and (((min_cppr_cd = 'MN01' and #{value5}::numeric > weat_elmt_min_vl) or (min_cppr_cd = 'MN02' and #{value5}::numeric >= weat_elmt_min_vl))
+										      	  and ((max_cppr_cd = 'MX01' and #{value5}::numeric < weat_elmt_max_vl) or (max_cppr_cd = 'MX02' and #{value5}::numeric <= weat_elmt_max_vl)))
+									    then 1
+									    when calc_type = 'B'
+					  		 				 and ((min_cppr_cd = 'MN01' and #{value5}::numeric > weat_elmt_min_vl) or (min_cppr_cd = 'MN02' and #{value5}::numeric >= weat_elmt_min_vl))
+									    then 1
+									    when calc_type = 'C'
+					  		 				 and ((max_cppr_cd = 'MX01' and #{value5}::numeric < weat_elmt_max_vl) or (max_cppr_cd = 'MX02' and #{value5}::numeric <= weat_elmt_max_vl))
+									    then 1
+					  		 		    else 0
+					  		 		end)
+					  	 end) as calc_rst
+					  ,a.msg_txt
+					  ,a.sort_sn
+				  from (select weat_infr_msg_id
+							  ,weat_elmt_cd
+							  ,weat_elmt_min_vl
+							  ,coalesce(min_cppr_cd, '') as min_cppr_cd
+							  ,weat_elmt_max_vl
+							  ,coalesce(max_cppr_cd, '') as max_cppr_cd
+							  ,(case when weat_elmt_min_vl is not null and coalesce(min_cppr_cd, '') != '' and weat_elmt_max_vl is not null and coalesce(max_cppr_cd, '') != ''
+							  		 then 'A'	/* between비교 */
+							  		 when weat_elmt_min_vl is not null and coalesce(min_cppr_cd, '') != '' and weat_elmt_max_vl is null and coalesce(max_cppr_cd, '') = ''
+							  		 then 'B'	/* 이상,초과 비교 */
+							  		 when weat_elmt_min_vl is null and coalesce(min_cppr_cd, '') = '' and weat_elmt_max_vl is not null and coalesce(max_cppr_cd, '') != ''
+							  		 then 'C'	/* 이하,미만 비교 */
+							  	 end) as calc_type
+							  ,msg_txt
+							  ,sort_sn
+						  from tb_sh_weat_infr_msg
+				  	   ) a
+		       ) a
+		 where a.calc_rst = 1
+				order by a.weat_elmt_cd
+					  ,a.sort_sn limit 4
+	]]>
+	</select>
+	
+	<!-- 기상특보 주의사항 체크 -->
+	<select id="selectWeatMsgChk2" parameterType="sqlMap" resultType="sqlMap">
+		/* selectWeatMsgChk2 */
+		select 
+			weat_infr_msg_id 
+			,weat_elmt_cd 
+			,fn_get_cd('ST00000027', weat_elmt_cd, 'NM', 'KO') as weat_elmt_nm
+			,msg_txt 
+		from tb_sh_weat_infr_msg
+		where wtsr_yn = 'Y'
+			and fn_get_cd('ST00000027', weat_elmt_cd, 'NM', 'KO') = ANY (regexp_split_to_array(#{weat_elmt_nm}, '·'))
+		order by sort_sn
+	</select>
+	
+	<!-- 기상 주의사항 저장 -->
+    <insert id="insertWeatMsg" parameterType="sqlMap">
+        /* insertWeatMsg */
+        with upsert as (
+		update tb_sh_weat_infr_msg
+		   set weat_elmt_cd    	= #{weat_elmt_cd}
+		      ,weat_elmt_min_vl    	= #{weat_elmt_min_vl}::numeric
+		      ,min_cppr_cd    	= #{min_cppr_cd}
+		      ,weat_elmt_max_vl    	= #{weat_elmt_max_vl}::numeric
+		      ,max_cppr_cd    	= #{max_cppr_cd}
+		      ,msg_txt    			= #{msg_txt}
+		      ,sort_sn    			= #{sort_sn}::numeric
+		      ,wtsr_yn    			= #{wtsr_yn}
+		      ,upt_usr_id       		= #{username}
+		      ,upt_dt            	= current_timestamp
+		 where weat_infr_msg_id = #{weat_infr_msg_id} RETURNING *
+		)
+		insert into tb_sh_weat_infr_msg (
+			   weat_infr_msg_id
+			  ,weat_elmt_cd
+			  ,weat_elmt_min_vl
+			  ,min_cppr_cd
+			  ,weat_elmt_max_vl
+			  ,max_cppr_cd
+			  ,msg_txt
+			  ,sort_sn
+			  ,wtsr_yn
+			  ,crt_usr_id
+			  ,crt_dt
+			  ,upt_usr_id
+			  ,upt_dt
+		)
+		select (select 'MSG' || to_char(coalesce(max(substring(weat_infr_msg_id, 4, 3)), '000')::INTEGER + 1, 'FM000') from tb_sh_weat_infr_msg)
+		      ,#{weat_elmt_cd}
+		      ,#{weat_elmt_min_vl}::numeric
+		      ,#{min_cppr_cd}
+		      ,#{weat_elmt_max_vl}::numeric
+		      ,#{max_cppr_cd}
+		      ,#{msg_txt}
+		      ,#{sort_sn}::numeric
+		      ,#{wtsr_yn}
+		      ,#{username}
+		      ,current_timestamp
+		      ,#{username}
+		      ,current_timestamp
+	     where not exists (select * from upsert)
+    </insert>
+    
+    <!-- 기상 주의사항 삭제 -->
+    <delete id="deleteWeatMsg" parameterType="sqlMap">
+        /* deleteWeatMsg */
+        delete 
+          from tb_sh_weat_infr_msg
+		 where weat_infr_msg_id = #{weat_infr_msg_id}
+    </delete>
+	
+	<!-- 전사 근로자 정기안전교육(분기) 이수율 -->
+	<select id="selectTrnFc1AllList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectTrnFc1AllList */
+		select fn_get_cd('SH00000011', a.trn_cl_cd, 'NM', #{SESS_LANG}) as trn_cl_nm
+		      ,sum(a.trn_fcst_prsn_cnt) as trn_fcst_prsn_cnt
+		      ,sum(a.trn_tgt_prsn_cnt) as trn_tgt_prsn_cnt
+		      ,case when sum(a.trn_fcst_prsn_cnt) > 0 and sum(a.trn_tgt_prsn_cnt) > 0 then round(sum(a.trn_fcst_prsn_cnt) / sum(a.trn_tgt_prsn_cnt) * 100,1) else 0 end as per
+      		  ,case when sum(a.trn_fcst_prsn_cnt) > 0 and sum(a.trn_tgt_prsn_cnt) > 0 then round((sum(a.trn_tgt_prsn_cnt) - sum(a.trn_fcst_prsn_cnt)) / sum(a.trn_tgt_prsn_cnt) * 100,1) else 0 end as nper
+		  from tb_sh_trn a
+		 where substring(a.trn_bgn_dt,1,4) = to_char(now(), 'YYYY')
+		   and (a.del_yn = 'N' or a.del_yn is null or a.del_yn = '')
+		   and trn_cl_cd = 'FC01'
+		   and extract('QUARTER' from to_timestamp(a.trn_bgn_dt, 'YYYYMMDDHH24MISS')) = extract('QUARTER' from current_timestamp)
+		 group by a.trn_cl_cd
+	</select>
+	
+	<!-- 전사 근로자 신규채용자교율 이수율 -->
+	<select id="selectTrnFc2AllList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectTrnFc2AllList */
+		select fn_get_cd('SH00000011', a.trn_cl_cd, 'NM', #{SESS_LANG}) as trn_cl_nm
+		      ,sum(a.trn_fcst_prsn_cnt) as trn_fcst_prsn_cnt
+		      ,sum(a.trn_tgt_prsn_cnt) as trn_tgt_prsn_cnt
+		      ,case when sum(a.trn_fcst_prsn_cnt) > 0 and sum(a.trn_tgt_prsn_cnt) > 0 then round(sum(a.trn_fcst_prsn_cnt) / sum(a.trn_tgt_prsn_cnt) * 100,1) else 0 end as per
+      		  ,case when sum(a.trn_fcst_prsn_cnt) > 0 and sum(a.trn_tgt_prsn_cnt) > 0 then round((sum(a.trn_tgt_prsn_cnt) - sum(a.trn_fcst_prsn_cnt)) / sum(a.trn_tgt_prsn_cnt) * 100,1) else 0 end as nper
+		  from tb_sh_trn a
+		 where substring(a.trn_bgn_dt,1,4) = to_char(now(), 'YYYY')
+		   and (a.del_yn = 'N' or a.del_yn is null or a.del_yn = '')
+		   and trn_cl_cd = 'FC02'
+		 group by a.trn_cl_cd
+	</select>
+	
+	<!-- 전사 근로자 특별안전보건교육 이수율 -->
+	<select id="selectTrnFc3AllList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectTrnFc3AllList */
+		select fn_get_cd('SH00000011', a.trn_cl_cd, 'NM', #{SESS_LANG}) as trn_cl_nm
+		      ,sum(a.trn_fcst_prsn_cnt) as trn_fcst_prsn_cnt
+		      ,sum(a.trn_tgt_prsn_cnt) as trn_tgt_prsn_cnt
+		      ,case when sum(a.trn_fcst_prsn_cnt) > 0 and sum(a.trn_tgt_prsn_cnt) > 0 then round(sum(a.trn_fcst_prsn_cnt) / sum(a.trn_tgt_prsn_cnt) * 100,1) else 0 end as per
+      		  ,case when sum(a.trn_fcst_prsn_cnt) > 0 and sum(a.trn_tgt_prsn_cnt) > 0 then round((sum(a.trn_tgt_prsn_cnt) - sum(a.trn_fcst_prsn_cnt)) / sum(a.trn_tgt_prsn_cnt) * 100,1) else 0 end as nper
+		  from tb_sh_trn a
+		 where substring(a.trn_bgn_dt,1,4) = to_char(now(), 'YYYY')
+		   and (a.del_yn = 'N' or a.del_yn is null or a.del_yn = '')
+		   and trn_cl_cd = 'FC03'
+		 group by a.trn_cl_cd
+	</select>
+	
+	<!-- 전사 근로자 관리감독자교육 이수율 -->
+	<select id="selectTrnFc6AllList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectTrnFc6AllList */
+		select fn_get_cd('SH00000011', a.trn_cl_cd, 'NM', #{SESS_LANG}) as trn_cl_nm
+		      ,sum(a.trn_fcst_prsn_cnt) as trn_fcst_prsn_cnt
+		      ,sum(a.trn_tgt_prsn_cnt) as trn_tgt_prsn_cnt
+		      ,case when sum(a.trn_fcst_prsn_cnt) > 0 and sum(a.trn_tgt_prsn_cnt) > 0 then round(sum(a.trn_fcst_prsn_cnt) / sum(a.trn_tgt_prsn_cnt) * 100,1) else 0 end as per
+      		  ,case when sum(a.trn_fcst_prsn_cnt) > 0 and sum(a.trn_tgt_prsn_cnt) > 0 then round((sum(a.trn_tgt_prsn_cnt) - sum(a.trn_fcst_prsn_cnt)) / sum(a.trn_tgt_prsn_cnt) * 100,1) else 0 end as nper
+		  from tb_sh_trn a
+		 where substring(a.trn_bgn_dt,1,4) = to_char(now(), 'YYYY')
+		   and (a.del_yn = 'N' or a.del_yn is null or a.del_yn = '')
+		   and trn_cl_cd = 'FC06'
+		 group by a.trn_cl_cd
+	</select>
+	
+	<!-- 안전작업허가현황 -->	
+	<select id="selectPlanRsltTot" parameterType="sqlMap" resultType="sqlMap">
+		/* selectPlanRsltTot */
+		select sum(a.f_cnt) as f_cnt
+		      ,sum(a.g_cnt) as g_cnt
+		      ,sum(a.m_cnt) as m_cnt
+		      ,sum(a.e_cnt) as e_cnt
+		      ,sum(a.h_cnt) as h_cnt
+		      ,sum(a.t_cnt) as t_cnt
+		      ,sum(a.d_cnt) as d_cnt
+		      ,sum(a.n_cnt) as n_cnt
+		  from (select a.gb
+				      ,sum(a.f_cnt) as f_cnt
+				      ,sum(a.g_cnt) as g_cnt
+				      ,sum(a.m_cnt) as m_cnt
+				      ,sum(a.e_cnt) as e_cnt
+				      ,sum(a.h_cnt) as h_cnt
+				      ,sum(a.d_cnt) as d_cnt
+				      ,sum(a.n_cnt) as n_cnt
+				      ,sum(a.f_cnt) + sum(a.g_cnt) + sum(a.m_cnt) + sum(a.e_cnt) + sum(a.h_cnt) + sum(a.d_cnt) + sum(a.n_cnt) as t_cnt
+				  from (select case when a.cd = 'SG02' then a.cd_nm
+				              		when a.cd = 'SG05' then <![CDATA['R&D']]>
+				              		when a.cd = 'SG06' then a.cd_nm
+				              		when a.cd = 'SG07' then a.cd_nm 
+				              		else '비제조'
+				               end as gb
+				              ,case when a.cd = 'SG02' then a.cd
+				              		when a.cd = 'SG05' then a.cd
+				              		when a.cd = 'SG06' then a.cd
+				              		when a.cd = 'SG07' then a.cd
+				              		else 'SG04'
+				               end as gb_cd
+						      ,(select count(1)
+						          from tb_sh_con_oprn_prms_req b
+						              ,tb_sh_con_oprn_prms_plan c
+						         where b.con_id = c.con_id 
+				   		           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+				   		           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+				   		           and exists (select 1
+				   		           				 from tb_sh_con_oprn_prms_oprn d
+				   		           				where d.con_prms_id = b.con_prms_id
+				   		           				  and d.con_oprn_type_cd = 'WCD01'
+				   		           			  )
+						           and c.wkpl_id  in (select w.wkpl_id 
+						             						from tb_sh_wkpl w
+						             					   where w.wkpl_main_bsns_cd = a.cd
+						           						 )
+						       ) as f_cnt
+						      ,(select count(1)
+						          from tb_sh_con_oprn_prms_req b
+						              ,tb_sh_con_oprn_prms_plan c
+						         where b.con_id = c.con_id 
+						           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+						           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+						           and exists (select 1
+				   		           				 from tb_sh_con_oprn_prms_oprn d
+				   		           				where d.con_prms_id = b.con_prms_id
+				   		           				  and d.con_oprn_type_cd = 'WCD02'
+				   		           			  )
+						           and c.wkpl_id  in (select w.wkpl_id 
+						             						from tb_sh_wkpl w
+						             					   where w.wkpl_main_bsns_cd = a.cd
+						           						 )
+						       ) as g_cnt
+						      ,(select count(1)
+						          from tb_sh_con_oprn_prms_req b
+						              ,tb_sh_con_oprn_prms_plan c
+						         where b.con_id = c.con_id 
+						           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+						           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+						           and exists (select 1
+				   		           				 from tb_sh_con_oprn_prms_oprn d
+				   		           				where d.con_prms_id = b.con_prms_id
+				   		           				  and d.con_oprn_type_cd = 'WCD03'
+				   		           			  )
+						           and c.wkpl_id  in (select w.wkpl_id 
+						             						from tb_sh_wkpl w
+						             					   where w.wkpl_main_bsns_cd = a.cd
+						           						 )
+						       ) as m_cnt
+						      ,(select count(1)
+						          from tb_sh_con_oprn_prms_req b
+						              ,tb_sh_con_oprn_prms_plan c
+						         where b.con_id = c.con_id 
+						           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+						           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+						           and exists (select 1
+				   		           				 from tb_sh_con_oprn_prms_oprn d
+				   		           				where d.con_prms_id = b.con_prms_id
+				   		           				  and d.con_oprn_type_cd = 'WCD04'
+				   		           			  )
+						           and c.wkpl_id  in (select w.wkpl_id 
+						             						from tb_sh_wkpl w
+						             					   where w.wkpl_main_bsns_cd = a.cd
+						           						 )
+						       ) as e_cnt
+						      ,(select count(1)
+						          from tb_sh_con_oprn_prms_req b
+						              ,tb_sh_con_oprn_prms_plan c
+						         where b.con_id = c.con_id 
+						           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+						           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+						           and exists (select 1
+				   		           				 from tb_sh_con_oprn_prms_oprn d
+				   		           				where d.con_prms_id = b.con_prms_id
+				   		           				  and d.con_oprn_type_cd = 'WCD06'
+				   		           			  )
+						           and c.wkpl_id  in (select w.wkpl_id 
+						             						from tb_sh_wkpl w
+						             					   where w.wkpl_main_bsns_cd = a.cd
+						           						 )
+						       ) as h_cnt
+						      ,(select count(1)
+						          from tb_sh_con_oprn_prms_req b
+						              ,tb_sh_con_oprn_prms_plan c
+						         where b.con_id = c.con_id 
+						           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+						           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+						           and exists (select 1
+				   		           				 from tb_sh_con_oprn_prms_oprn d
+				   		           				where d.con_prms_id = b.con_prms_id
+				   		           				  and d.con_oprn_type_cd = 'WCD05'
+				   		           			  )
+						           and c.wkpl_id  in (select w.wkpl_id 
+						             						from tb_sh_wkpl w
+						             					   where w.wkpl_main_bsns_cd = a.cd
+						           						 )
+						       ) as d_cnt
+						      ,(select count(1)
+						          from tb_sh_con_oprn_prms_req b
+						              ,tb_sh_con_oprn_prms_plan c
+						         where b.con_id = c.con_id 
+						           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+						           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+						           and exists (select 1
+				   		           				 from tb_sh_con_oprn_prms_oprn d
+				   		           				where d.con_prms_id = b.con_prms_id
+				   		           				  and d.con_oprn_type_cd = 'WCD07'
+				   		           			  )
+						           and c.wkpl_id  in (select w.wkpl_id 
+						             						from tb_sh_wkpl w
+						             					   where w.wkpl_main_bsns_cd = a.cd
+						           						 )
+						       ) as n_cnt
+						      ,(select count(1)
+						          from tb_sh_con_oprn_prms_req b
+						              ,tb_sh_con_oprn_prms_plan c
+						         where b.con_id = c.con_id 
+						           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+						           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+						           and c.wkpl_id  in (select w.wkpl_id 
+						             						from tb_sh_wkpl w
+						             					   where w.wkpl_main_bsns_cd = a.cd
+						           						 )
+						       ) as t_cnt
+						  from (select tcc.cd
+								      ,tcm.mlang_cntn as cd_nm
+								  from tb_co_cd tcc
+								  join tb_co_cd_grp tccg on tccg.cd_grp_no = tcc.cd_grp_no 
+								  join tb_co_mlang tcm on tcc.cd_grp_no = tcm.cd_grp_no and tcc.cd = tcm.cd
+								 where tcc.cd_grp_no = 'ST00000015'
+								   and tcm.lang_cd = #{SESS_LANG}
+								   and tcc.del_yn = 'N'
+								   and tcc.usg_yn = 'Y'
+								   and tccg.usg_yn = 'Y'
+								   and tccg.del_yn = 'N'
+								   and tcm.usg_yn = 'Y'
+								   and tcm.del_yn = 'N'
+								 order by tcc.sort_seq
+							   ) a
+					   ) a
+				 group by a.gb 
+			   ) a
+	</select>
+
+	<!-- 안전작업허가현황 -->	
+	<select id="selectPlanRsltList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectPlanRsltList */
+		select a.gb
+		      ,a.gb_cd
+		      ,sum(a.f_cnt) as f_cnt
+		      ,sum(a.g_cnt) as g_cnt
+		      ,sum(a.m_cnt) as m_cnt
+		      ,sum(a.e_cnt) as e_cnt
+		      ,sum(a.h_cnt) as h_cnt
+		      ,sum(a.d_cnt) as d_cnt
+		      ,sum(a.n_cnt) as n_cnt
+		      ,sum(a.f_cnt) + sum(a.g_cnt) + sum(a.m_cnt) + sum(a.e_cnt) + sum(a.h_cnt) + sum(a.d_cnt) + sum(a.n_cnt)  as t_cnt
+		  from (select case when a.cd = 'SG02' then a.cd_nm
+		              		when a.cd = 'SG05' then <![CDATA['R&D']]>
+		              		when a.cd = 'SG06' then a.cd_nm
+		              		when a.cd = 'SG07' then a.cd_nm 
+		              		else '비제조'
+		               end as gb
+		              ,case when a.cd = 'SG02' then a.cd
+		              		when a.cd = 'SG05' then a.cd
+		              		when a.cd = 'SG06' then a.cd
+		              		when a.cd = 'SG07' then a.cd
+		              		else 'SG04'
+		               end as gb_cd
+				      ,(select count(1)
+				          from tb_sh_con_oprn_prms_req b
+				              ,tb_sh_con_oprn_prms_plan c
+				         where b.con_id = c.con_id 
+		   		           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+		   		           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+		   		           and exists (select 1
+		   		           				 from tb_sh_con_oprn_prms_oprn d
+		   		           				where d.con_prms_id = b.con_prms_id
+		   		           				  and d.con_oprn_type_cd = 'WCD01'
+		   		           			  )
+				           and c.wkpl_id  in (select w.wkpl_id 
+				             						from tb_sh_wkpl w
+				             					   where w.wkpl_main_bsns_cd = a.cd
+				           						 )
+				       ) as f_cnt
+				      ,(select count(1)
+				          from tb_sh_con_oprn_prms_req b
+				              ,tb_sh_con_oprn_prms_plan c
+				         where b.con_id = c.con_id 
+				           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+				           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+				           and exists (select 1
+		   		           				 from tb_sh_con_oprn_prms_oprn d
+		   		           				where d.con_prms_id = b.con_prms_id
+		   		           				  and d.con_oprn_type_cd = 'WCD02'
+		   		           			  )
+				           and c.wkpl_id  in (select w.wkpl_id 
+				             						from tb_sh_wkpl w
+				             					   where w.wkpl_main_bsns_cd = a.cd
+				           						 )
+				       ) as g_cnt
+				      ,(select count(1)
+				          from tb_sh_con_oprn_prms_req b
+				              ,tb_sh_con_oprn_prms_plan c
+				         where b.con_id = c.con_id 
+				           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+				           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+				           and exists (select 1
+		   		           				 from tb_sh_con_oprn_prms_oprn d
+		   		           				where d.con_prms_id = b.con_prms_id
+		   		           				  and d.con_oprn_type_cd = 'WCD03'
+		   		           			  )
+				           and c.wkpl_id  in (select w.wkpl_id 
+				             						from tb_sh_wkpl w
+				             					   where w.wkpl_main_bsns_cd = a.cd
+				           						 )
+				       ) as m_cnt
+				      ,(select count(1)
+				          from tb_sh_con_oprn_prms_req b
+				              ,tb_sh_con_oprn_prms_plan c
+				         where b.con_id = c.con_id 
+				           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+				           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+				           and exists (select 1
+		   		           				 from tb_sh_con_oprn_prms_oprn d
+		   		           				where d.con_prms_id = b.con_prms_id
+		   		           				  and d.con_oprn_type_cd = 'WCD04'
+		   		           			  )
+				           and c.wkpl_id  in (select w.wkpl_id 
+				             						from tb_sh_wkpl w
+				             					   where w.wkpl_main_bsns_cd = a.cd
+				           						 )
+				       ) as e_cnt
+				      ,(select count(1)
+				          from tb_sh_con_oprn_prms_req b
+				              ,tb_sh_con_oprn_prms_plan c
+				         where b.con_id = c.con_id 
+				           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+				           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+				           and exists (select 1
+		   		           				 from tb_sh_con_oprn_prms_oprn d
+		   		           				where d.con_prms_id = b.con_prms_id
+		   		           				  and d.con_oprn_type_cd = 'WCD06'
+		   		           			  )
+				           and c.wkpl_id  in (select w.wkpl_id 
+				             						from tb_sh_wkpl w
+				             					   where w.wkpl_main_bsns_cd = a.cd
+				           						 )
+				       ) as h_cnt
+				      ,(select count(1)
+				          from tb_sh_con_oprn_prms_req b
+				              ,tb_sh_con_oprn_prms_plan c
+				         where b.con_id = c.con_id 
+				           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+				           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+				           and exists (select 1
+		   		           				 from tb_sh_con_oprn_prms_oprn d
+		   		           				where d.con_prms_id = b.con_prms_id
+		   		           				  and d.con_oprn_type_cd = 'WCD05'
+		   		           			  )
+				           and c.wkpl_id  in (select w.wkpl_id 
+				             						from tb_sh_wkpl w
+				             					   where w.wkpl_main_bsns_cd = a.cd
+				           						 )
+				       ) as d_cnt
+				      ,(select count(1)
+				          from tb_sh_con_oprn_prms_req b
+				              ,tb_sh_con_oprn_prms_plan c
+				         where b.con_id = c.con_id 
+				           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+				           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+				           and exists (select 1
+		   		           				 from tb_sh_con_oprn_prms_oprn d
+		   		           				where d.con_prms_id = b.con_prms_id
+		   		           				  and d.con_oprn_type_cd = 'WCD07'
+		   		           			  )
+				           and c.wkpl_id  in (select w.wkpl_id 
+				             						from tb_sh_wkpl w
+				             					   where w.wkpl_main_bsns_cd = a.cd
+				           						 )
+				       ) as n_cnt
+				      ,(select count(1)
+				          from tb_sh_con_oprn_prms_req b
+				              ,tb_sh_con_oprn_prms_plan c
+				         where b.con_id = c.con_id 
+				           and substring(b.con_dt,1,8) = to_char(now(), 'YYYYMMDD')
+				           and (b.del_yn = 'N' or b.del_yn is null or b.del_yn = '')
+				           and c.wkpl_id  in (select w.wkpl_id 
+				             						from tb_sh_wkpl w
+				             					   where w.wkpl_main_bsns_cd = a.cd
+				           						 )
+				       ) as t_cnt
+				  from (select tcc.cd
+						      ,tcm.mlang_cntn as cd_nm
+						  from tb_co_cd tcc
+						  join tb_co_cd_grp tccg on tccg.cd_grp_no = tcc.cd_grp_no 
+						  join tb_co_mlang tcm on tcc.cd_grp_no = tcm.cd_grp_no and tcc.cd = tcm.cd
+						 where tcc.cd_grp_no = 'ST00000015'
+						   and tcm.lang_cd = #{SESS_LANG}
+						   and tcc.del_yn = 'N'
+						   and tcc.usg_yn = 'Y'
+						   and tccg.usg_yn = 'Y'
+						   and tccg.del_yn = 'N'
+						   and tcm.usg_yn = 'Y'
+						   and tcm.del_yn = 'N'
+						 order by tcc.sort_seq
+					   ) a
+			   ) a
+		 group by a.gb,a.gb_cd
+	</select>
+	
+	<!-- 연간/일일 외주작업 현황 -->
+	<select id="selectYearConOprnAllList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectYearConOprnAllList */
+		select '전사' as gb
+		      ,count(1) as plan_cnt
+		      ,count(case when a.con_cmpy_prst_cd = 'S03' then 1 end) as rslt_cnt
+		      ,case when count(1) > 0 and count(case when a.con_cmpy_prst_cd = 'S03' then 1 end) > 0 then round(count(case when a.con_cmpy_prst_cd = 'S03' then 1 end)::numeric / count(1)::numeric * 100,0) else 0 end as amt_per
+		  from (select b.wkpl_id
+				      ,a.con_prms_id 
+				      ,(select c.wkpl_cl_cd
+				          from tb_sh_wkpl c
+				         where c.wkpl_id = b.wkpl_id
+				       ) as wkpl_cl_cd
+				      ,(select fn_get_cd('ST00000001', c.wkpl_cl_cd, 'NM', #{SESS_LANG}) as wkpl_cl_nm
+				          from tb_sh_wkpl c
+				         where c.wkpl_id = b.wkpl_id
+				       ) as wkpl_main_bsns_nm
+				      ,a.con_req_prst_cd 
+				      ,(select c.con_cmpy_prst_cd
+				          from tb_sh_con_oprn_cmpy c
+				         where c.con_prms_id = a.con_prms_id 
+				       ) as con_cmpy_prst_cd
+				  from tb_sh_con_oprn_prms_req a
+				      ,tb_sh_con_oprn_prms_plan b
+				 where a.con_id = b.con_id 
+				   and substring(a.con_dt,1,4) = to_char(now(), 'YYYY')
+				 order by b.wkpl_id
+			  ) a
+		union all
+		select a.gb
+		      ,sum(a.plan_cnt) as plan_amt
+		      ,sum(a.rslt_cnt) as rslt_amt
+		      ,case when sum(a.rslt_cnt) > 0 and sum(a.plan_cnt) > 0 then round(sum(a.rslt_cnt) / sum(a.plan_cnt) * 100,0) else 0 end as amt_per
+		  from (select case when a.cd = 'SG01' then a.cd_nm 
+		              		when a.cd = 'SG02' then a.cd_nm
+		              		when a.cd = 'SG05' then a.cd_nm 
+		              		else '비제조'
+		               end as gb
+		              ,case when a.cd = 'SG01' then a.cd 
+		              		when a.cd = 'SG02' then a.cd
+		              		when a.cd = 'SG05' then a.cd 
+		              		else 'SG99'
+		               end as gb_cd
+				      ,(select count(1)
+				          from tb_sh_con_oprn_prms_req b
+				              ,tb_sh_con_oprn_prms_plan c
+				         where b.con_id = c.con_id 
+		   		           and substring(b.con_dt,1,4) = to_char(now(), 'YYYY')
+				           and c.wkpl_id  in (select w.wkpl_id 
+				             						from tb_sh_wkpl w
+				             					   where w.wkpl_cl_cd = a.cd
+				           						 )
+				       ) as plan_cnt
+				      ,(select count(1)
+				          from tb_sh_con_oprn_prms_req b
+				              ,tb_sh_con_oprn_prms_plan c
+				         where b.con_id = c.con_id 
+				           and substring(b.con_dt,1,4) = to_char(now(), 'YYYY')
+				           and exists (select 1
+				                         from tb_sh_con_oprn_cmpy d
+				                        where d.con_prms_id = b.con_prms_id
+				                          and d.con_cmpy_prst_cd = 'S03'
+				           			  )
+				           and c.wkpl_id  in (select w.wkpl_id 
+				             						from tb_sh_wkpl w
+				             					   where w.wkpl_cl_cd = a.cd
+				           						 )
+				       ) as rslt_cnt
+				  from (select tcc.cd
+						      ,tcm.mlang_cntn as cd_nm
+						  from tb_co_cd tcc
+						  join tb_co_cd_grp tccg on tccg.cd_grp_no = tcc.cd_grp_no 
+						  join tb_co_mlang tcm on tcc.cd_grp_no = tcm.cd_grp_no and tcc.cd = tcm.cd
+						 where tcc.cd_grp_no = 'ST00000001'
+						   and tcm.lang_cd = #{SESS_LANG}
+						   and tcc.del_yn = 'N'
+						   and tcc.usg_yn = 'Y'
+						   and tccg.usg_yn = 'Y'
+						   and tccg.del_yn = 'N'
+						   and tcm.usg_yn = 'Y'
+						   and tcm.del_yn = 'N'
+						 order by tcc.sort_seq
+					   ) a
+			   ) a
+		 group by a.gb
+	</select>
+	
+	<!-- 연간 작업 유형별 구분 -->
+	<select id="selectYearConOprnTypeList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectYearConOprnTypeList */
+		select '전체' as gb
+		      ,count(1) as cnt
+		      ,ARRAY_TO_STRING(ARRAY_AGG(a.con_prms_id),',') as con_prms_id
+		  from tb_sh_con_oprn_prms_req a
+		      ,tb_sh_con_oprn_prms_plan b
+		      ,tb_sh_con_oprn_prms_oprn c
+		 where a.con_prms_id = c.con_prms_id 
+		   and a.con_id = b.con_id
+		   and substring(a.con_dt,1,4) = to_char(now(), 'YYYY')
+		 <if test='wkpl_cl_cd != null and wkpl_cl_cd != ""'>
+		   and exists (select 1 
+		   				 from tb_sh_wkpl w
+		   				where w.wkpl_id = b.wkpl_id 
+		   				  and w.wkpl_cl_cd in (${wkpl_cl_cd})
+		   			  )
+		 </if>
+		 union all
+		select a.cd_nm as gb
+		      ,(select count(1)
+		          from tb_sh_con_oprn_prms_req b
+		              ,tb_sh_con_oprn_prms_oprn c
+		              ,tb_sh_con_oprn_prms_plan d
+		         where b.con_prms_id = c.con_prms_id 
+		           and c.con_oprn_type_cd = a.cd
+		           and b.con_id = d.con_id
+		           and substring(b.con_dt,1,4) = to_char(now(), 'YYYY')
+		         <if test='wkpl_cl_cd != null and wkpl_cl_cd != ""'>
+		           and exists (select 1 
+		           				 from tb_sh_wkpl w
+		           				where w.wkpl_id = d.wkpl_id 
+		           				  and w.wkpl_cl_cd in (${wkpl_cl_cd})
+		           			  )
+		         </if>
+		       ) as cnt
+		      ,(select ARRAY_TO_STRING(ARRAY_AGG(b.con_prms_id),',') 
+		          from tb_sh_con_oprn_prms_req b
+		              ,tb_sh_con_oprn_prms_oprn c
+		              ,tb_sh_con_oprn_prms_plan d
+		         where b.con_prms_id = c.con_prms_id 
+		           and c.con_oprn_type_cd = a.cd
+		           and b.con_id = d.con_id
+		           and substring(b.con_dt,1,4) = to_char(now(), 'YYYY')
+		         <if test='wkpl_cl_cd != null and wkpl_cl_cd != ""'>
+		           and exists (select 1 
+		           				 from tb_sh_wkpl w
+		           				where w.wkpl_id = d.wkpl_id 
+		           				  and w.wkpl_cl_cd in (${wkpl_cl_cd})
+		           			  )
+		         </if>
+		       ) as con_prms_id
+		  from (select tcc.cd
+				      ,tcm.mlang_cntn as cd_nm
+				  from tb_co_cd tcc
+				  join tb_co_cd_grp tccg on tccg.cd_grp_no = tcc.cd_grp_no 
+				  join tb_co_mlang tcm on tcc.cd_grp_no = tcm.cd_grp_no and tcc.cd = tcm.cd
+				 where tcc.cd_grp_no = 'ST00000013'
+				   and tcm.lang_cd = #{SESS_LANG}
+				   and tcc.del_yn = 'N'
+				   and tcc.usg_yn = 'Y'
+				   and tccg.usg_yn = 'Y'
+				   and tccg.del_yn = 'N'
+				   and tcm.usg_yn = 'Y'
+				   and tcm.del_yn = 'N'
+				 order by tcc.sort_seq
+			   ) a
+	</select>
+	
+	<!-- 투자예산 실적 -->
+	<select id="selectInvsPlanRsltTot" parameterType="sqlMap" resultType="sqlMap">
+		/* selectInvsPlanRsltTot */
+		select case when sum(a.plan_amt) > 0 then round(sum(a.plan_amt) / 100000000,1) else 0 end as plan_amt
+		      ,case when sum(a.rslt_amt) > 0 then round(sum(a.rslt_amt) / 100000000,1) else 0 end as rslt_amt
+		      ,case when sum(a.rslt_amt) > 0 and sum(a.plan_amt) > 0 then round(sum(a.rslt_amt) / sum(a.plan_amt) * 100,1) else 0 end as amt_per
+		  from (select a.gb
+		              ,a.gb_cd
+				      ,a.plan_amt
+				      ,a.rslt_amt
+				  from (select case when a.cd = 'SG02' then a.cd_nm
+				              		when a.cd = 'SG05' then <![CDATA['R&D']]>
+				              		when a.cd = 'SG06' then a.cd_nm
+				              		when a.cd = 'SG07' then a.cd_nm 
+				              		else '비제조'
+				               end as gb
+				              ,case when a.cd = 'SG02' then a.cd
+				              		when a.cd = 'SG05' then a.cd
+				              		when a.cd = 'SG06' then a.cd
+				              		when a.cd = 'SG07' then a.cd
+				              		else 'SG04'
+				               end as gb_cd
+						      ,(select case when sum(b.invs_item_amt) is null then 0 else sum(b.invs_item_amt) end as amt_val
+						          from tb_sh_wkpl_invs_item b
+						              ,tb_sh_wkpl_invs c
+						         where b.wkpl_id = c.wkpl_id 
+						           and c.invs_year = to_char(now(), 'YYYY')
+						           and c.wkpl_id  in (select w.wkpl_id 
+						             						from tb_sh_wkpl w
+						             					   where w.wkpl_main_bsns_cd = a.cd
+						           						 )
+						       ) as plan_amt
+						      ,(select case when sum(b.prfr_amt) is null then 0 else sum(b.prfr_amt) end as amt_val
+						          from tb_sh_wkpl_mtly_prfr b
+						              ,tb_sh_wkpl_invs c
+						         where b.wkpl_id = c.wkpl_id 
+						           and c.invs_year = to_char(now(), 'YYYY')
+						           and c.wkpl_id  in (select w.wkpl_id 
+						             						from tb_sh_wkpl w
+						             					   where w.wkpl_main_bsns_cd = a.cd
+						           						 )
+						       ) as rslt_amt
+						  from (select tcc.cd
+								      ,tcm.mlang_cntn as cd_nm
+								  from tb_co_cd tcc
+								  join tb_co_cd_grp tccg on tccg.cd_grp_no = tcc.cd_grp_no 
+								  join tb_co_mlang tcm on tcc.cd_grp_no = tcm.cd_grp_no and tcc.cd = tcm.cd
+								 where tcc.cd_grp_no = 'ST00000015'
+								   and tcm.lang_cd = #{SESS_LANG}
+								   and tcc.del_yn = 'N'
+								   and tcc.usg_yn = 'Y'
+								   and tccg.usg_yn = 'Y'
+								   and tccg.del_yn = 'N'
+								   and tcm.usg_yn = 'Y'
+								   and tcm.del_yn = 'N'
+								 order by tcc.sort_seq
+							   ) a
+					    ) a
+				  ) a
+	</select>
+	
+	<!-- 투자예산 실적 -->
+	<select id="selectInvsPlanRsltList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectInvsPlanRsltList */
+		select a.gb
+      	      ,a.gb_cd
+		      ,case when sum(a.plan_amt) > 0 then round(sum(a.plan_amt) / 100000000,1) else 0 end as plan_amt
+		      ,case when sum(a.rslt_amt) > 0 then round(sum(a.rslt_amt) / 100000000,1) else 0 end as rslt_amt
+		      ,case when sum(a.rslt_amt) > 0 and sum(a.plan_amt) > 0 then round(sum(a.rslt_amt) / sum(a.plan_amt) * 100,1) else 0 end as amt_per
+		  from (select case when a.cd = 'SG02' then a.cd_nm
+		              		when a.cd = 'SG05' then <![CDATA['R&D']]>
+		              		when a.cd = 'SG06' then a.cd_nm
+		              		when a.cd = 'SG07' then a.cd_nm 
+		              		else '비제조'
+		               end as gb
+		              ,case when a.cd = 'SG02' then a.cd
+		              		when a.cd = 'SG05' then a.cd
+		              		when a.cd = 'SG06' then a.cd
+		              		when a.cd = 'SG07' then a.cd
+		              		else 'SG04'
+		               end as gb_cd
+				      ,(select case when sum(b.invs_item_amt) is null then 0 else sum(b.invs_item_amt) end as amt_val
+				          from tb_sh_wkpl_invs_item b
+				              ,tb_sh_wkpl_invs c
+				         where b.wkpl_id = c.wkpl_id 
+				           and c.invs_year = to_char(now(), 'YYYY')
+				           and c.wkpl_id  in (select w.wkpl_id 
+				             						from tb_sh_wkpl w
+				             					   where w.wkpl_main_bsns_cd = a.cd
+				           						 )
+				       ) as plan_amt
+				      ,(select case when sum(b.prfr_amt) is null then 0 else sum(b.prfr_amt) end as amt_val
+				          from tb_sh_wkpl_mtly_prfr b
+				              ,tb_sh_wkpl_invs c
+				         where b.wkpl_id = c.wkpl_id 
+				           and c.invs_year = to_char(now(), 'YYYY')
+				           and c.wkpl_id  in (select w.wkpl_id 
+				             						from tb_sh_wkpl w
+				             					   where w.wkpl_main_bsns_cd = a.cd
+				           						 )
+				       ) as rslt_amt
+				  from (select tcc.cd
+						      ,tcm.mlang_cntn as cd_nm
+						  from tb_co_cd tcc
+						  join tb_co_cd_grp tccg on tccg.cd_grp_no = tcc.cd_grp_no 
+						  join tb_co_mlang tcm on tcc.cd_grp_no = tcm.cd_grp_no and tcc.cd = tcm.cd
+						 where tcc.cd_grp_no = 'ST00000015'
+						   and tcm.lang_cd = #{SESS_LANG}
+						   and tcc.del_yn = 'N'
+						   and tcc.usg_yn = 'Y'
+						   and tccg.usg_yn = 'Y'
+						   and tccg.del_yn = 'N'
+						   and tcm.usg_yn = 'Y'
+						   and tcm.del_yn = 'N'
+						 order by tcc.sort_seq
+					   ) a
+			    ) a
+		  group by a.gb,a.gb_cd
+	</select>
+	
+	<!-- 연간 점검 건수 -->
+	<select id="selectYearConCheckList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectYearConCheckList */
+		select gb
+		      ,sum(plan_amt) as plan_amt
+		      ,sum(rslt_amt) as rslt_amt
+		      ,case when sum(plan_amt) != 0 then sum(rslt_amt)::numeric / sum(plan_amt)::numeric * 100 
+		            else 0 
+		       end as amt_per
+		from(
+		select case when tcc.cd = 'SG01' then tcm.mlang_cntn
+	          		when tcc.cd = 'SG02' then tcm.mlang_cntn
+	          		when tcc.cd = 'SG05' then tcm.mlang_cntn
+	          		else '비제조'
+	           end as gb
+	          ,case when tcc.cd = 'SG01' then tcc.cd 
+	          		when tcc.cd = 'SG02' then tcc.cd
+	          		when tcc.cd = 'SG05' then tcc.cd 
+	          		else 'SG99'
+	           end as gb_cd
+			  ,(select count(*) 
+			     from tb_sh_oprb_chk soc
+			     join tb_sh_wkpl sw 
+			       on soc.wkpl_id = sw.wkpl_id 
+			    where sw.wkpl_cl_cd = tcc.cd
+			      and substring(soc.oprb_chk_schd_dt, 0, 5) = to_char(now(), 'YYYY'))
+			   + 
+			   (select count(*) 
+			     from tb_sh_circ_chk scc
+			     join tb_sh_wkpl sw 
+			       on scc.wkpl_id = sw.wkpl_id 
+			    where sw.wkpl_cl_cd = tcc.cd
+			      and substring(scc.circ_chk_schd_dt, 0, 5) = to_char(now(), 'YYYY'))
+			   +
+			   (select count(*) 
+			     from tb_sh_jnt_chk sjc
+			     join tb_sh_wkpl sw 
+			       on sjc.wkpl_id = sw.wkpl_id 
+			    where sw.wkpl_cl_cd = tcc.cd
+			      and substring(sjc.jnt_chk_schd_dt, 0, 5) = to_char(now(), 'YYYY'))
+			   as plan_amt
+			   ,(select count(*) 
+			     from tb_sh_oprb_chk soc
+			     join tb_sh_wkpl sw 
+			       on soc.wkpl_id = sw.wkpl_id 
+			    where sw.wkpl_cl_cd = tcc.cd
+			      and substring(soc.oprb_chk_schd_dt, 0, 5) = to_char(now(), 'YYYY')
+			      and soc.oprb_chk_prst_cd = '40')
+			   + 
+			   (select count(*) 
+			     from tb_sh_circ_chk scc
+			     join tb_sh_wkpl sw 
+			       on scc.wkpl_id = sw.wkpl_id 
+			    where sw.wkpl_cl_cd = tcc.cd
+			      and substring(scc.circ_chk_schd_dt, 0, 5) = to_char(now(), 'YYYY')
+			      and scc.circ_chk_prst_cd = '40')
+			   +
+			   (select count(*) 
+			     from tb_sh_jnt_chk sjc
+			     join tb_sh_wkpl sw 
+			       on sjc.wkpl_id = sw.wkpl_id 
+			    where sw.wkpl_cl_cd = tcc.cd
+			      and substring(sjc.jnt_chk_schd_dt, 0, 5) = to_char(now(), 'YYYY')
+			      and sjc.jnt_chk_prst_cd = '40')
+			   as rslt_amt
+				  from tb_co_cd tcc
+				  join tb_co_cd_grp tccg on tccg.cd_grp_no = tcc.cd_grp_no 
+				  join tb_co_mlang tcm on tcc.cd_grp_no = tcm.cd_grp_no and tcc.cd = tcm.cd
+				 where 1=1
+				   and tcc.cd_grp_no = 'ST00000001'
+				   and tcm.lang_cd = #{SESS_LANG}
+				   and tcc.del_yn = 'N'
+				   and tccg.usg_yn = 'Y'
+				   and tccg.del_yn = 'N'
+				   and tcm.usg_yn = 'Y'
+				   and tcm.del_yn = 'N'
+		   ) a
+	  group by a.gb
+	</select>
+	
+	<!-- 연간 지적/개선 건수 -->
+	<select id="selectYearCrinCheckList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectYearCrinCheckList */
+		select gb
+		      ,sum(plan_amt) as plan_amt
+      		  ,sum(rslt_amt) as rslt_amt
+		      ,case when sum(plan_amt) != 0 then sum(rslt_amt)::numeric / sum(plan_amt)::numeric * 100 
+		            else 0 
+		       end as amt_per
+		from(
+		select case when tcc.cd = 'SG01' then tcm.mlang_cntn
+	          		when tcc.cd = 'SG02' then tcm.mlang_cntn
+	          		when tcc.cd = 'SG05' then tcm.mlang_cntn
+	          		else '비제조'
+	           end as gb
+	          ,case when tcc.cd = 'SG01' then tcc.cd 
+	          		when tcc.cd = 'SG02' then tcc.cd
+	          		when tcc.cd = 'SG05' then tcc.cd 
+	          		else 'SG99'
+	           end as gb_cd
+			  ,(select count(*)
+			      from tb_sh_crin sc
+			      join tb_sh_wkpl sw
+			        on sc.wkpl_id = sw.wkpl_id 
+			     where sw.wkpl_cl_cd = tcc.cd
+			       and substring(sc.crin_chk_dt, 0, 5) = to_char(now(), 'YYYY'))
+			   as plan_amt
+			  ,(select count(distinct sc.crin_id)
+			      from tb_sh_crin sc
+			      join tb_sh_wkpl sw
+			        on sc.wkpl_id = sw.wkpl_id 
+			      left join tb_sh_crin_actn sca 
+			        on sc.crin_id = sca.crin_id 
+			     where sw.wkpl_cl_cd = tcc.cd
+			       and substring(sc.crin_chk_dt, 0, 5) = to_char(now(), 'YYYY')
+			       and sca.crin_prst_cd = '30')
+			   as rslt_amt
+				  from tb_co_cd tcc
+				  join tb_co_cd_grp tccg on tccg.cd_grp_no = tcc.cd_grp_no 
+				  join tb_co_mlang tcm on tcc.cd_grp_no = tcm.cd_grp_no and tcc.cd = tcm.cd
+				 where 1=1
+				   and tcc.cd_grp_no = 'ST00000001'
+				   and tcm.lang_cd = #{SESS_LANG}
+				   and tcc.del_yn = 'N'
+				   and tccg.usg_yn = 'Y'
+				   and tccg.del_yn = 'N'
+				   and tcm.usg_yn = 'Y'
+				   and tcm.del_yn = 'N'
+		) a
+		group by a.gb
+	</select>
+	
+	<!-- 연간 점검 유형별 구분 -->
+	<select id="selectYearConCheckGbList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectYearConCheckGbList */
+		select gb
+		      ,plan_amt
+		      ,rslt_amt
+		      ,case when plan_amt != 0 then rslt_amt::numeric / plan_amt::numeric * 100 
+		            else 0 
+		            end as amt_per
+		from(
+		select '작업 시작 전' as gb
+			  ,count(*) as plan_amt
+			  ,count(case when soc.oprb_chk_prst_cd = '40' then 1 end) as rslt_amt
+		  from tb_sh_oprb_chk soc 
+		 where substring(soc.oprb_chk_schd_dt, 0, 5) = to_char(now(), 'YYYY')
+		 <if test='wkpl_cl_cd != null and wkpl_cl_cd != ""'>
+		   and exists (select 1 
+				         from tb_sh_wkpl w
+				        where w.wkpl_id = soc.wkpl_id 
+				          and w.wkpl_cl_cd in (${wkpl_cl_cd})
+				       )
+		 </if>
+		 <if test='wkpl_id != null and wkpl_id != ""'>
+				     and soc.wkpl_id = #{wkpl_id}
+		 </if>
+		union 
+		select '작업장 순회' as gb
+			  ,count(*) as plan_amt
+			  ,count(case when scc.circ_chk_prst_cd = '40' then 1 end) as rslt_amt
+		  from tb_sh_circ_chk scc 
+		 where substring(scc.circ_chk_schd_dt, 0, 5) = to_char(now(), 'YYYY')
+		 <if test='wkpl_cl_cd != null and wkpl_cl_cd != ""'>
+		   and exists (select 1 
+				         from tb_sh_wkpl w
+				        where w.wkpl_id = scc.wkpl_id 
+				          and w.wkpl_cl_cd in (${wkpl_cl_cd})
+				       )
+	     </if>
+	     <if test='wkpl_id != null and wkpl_id != ""'>
+				     and scc.wkpl_id = #{wkpl_id}
+		 </if>
+		union 
+		select '합동안전' as gb
+			  ,count(*) as plan_amt
+			  ,count(case when sjc.jnt_chk_prst_cd = '40' then 1 end) as rslt_amt
+		  from tb_sh_jnt_chk sjc 
+		 where substring(sjc.jnt_chk_schd_dt, 0, 5) = to_char(now(), 'YYYY')
+		 <if test='wkpl_cl_cd != null and wkpl_cl_cd != ""'>
+		   and exists (select 1 
+				         from tb_sh_wkpl w
+				        where w.wkpl_id = sjc.wkpl_id 
+				          and w.wkpl_cl_cd in (${wkpl_cl_cd})
+				       )
+		 </if>
+		 <if test='wkpl_id != null and wkpl_id != ""'>
+				     and sjc.wkpl_id = #{wkpl_id}
+		 </if>
+		) a
+	</select>
+	
+	<!-- 연간 사고 기인물별 지적 건수 -->
+	<select id="selectYearCrinGbCheckList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectYearCrinGbCheckList */
+		select gb
+		      ,plan_amt 
+		      ,rslt_amt
+		      ,case when plan_amt != 0 then rslt_amt::numeric / plan_amt::numeric * 100 
+		            else 0 
+		            end as amt_per
+		from(
+		select fn_get_cd('SH00000063', tcc.cd, 'NM', #{SESS_LANG}) as gb
+			  ,(select count(*)
+			      from tb_sh_crin sc
+			     where sc.crin_risk_tp_cd = tcc.cd 
+			       and substring(sc.crin_chk_dt, 0, 5) = to_char(now(), 'YYYY')
+			       <if test='wkpl_cl_cd != null and wkpl_cl_cd != ""'>
+				     and exists (select 1 
+						         from tb_sh_wkpl w
+						        where w.wkpl_id = sc.wkpl_id 
+						          and w.wkpl_cl_cd in (${wkpl_cl_cd})
+						       )
+				   </if>
+				   <if test='wkpl_id != null and wkpl_id != ""'>
+				     and sc.wkpl_id = #{wkpl_id}
+				   </if>)
+			   as plan_amt
+			  ,(select count(distinct sc.crin_id)
+			      from tb_sh_crin sc
+			      left join tb_sh_crin_actn sca 
+			        on sc.crin_id = sca.crin_id 
+			     where sc.crin_risk_tp_cd = tcc.cd
+			       and substring(sc.crin_chk_dt, 0, 5) = to_char(now(), 'YYYY')
+			       and sca.crin_prst_cd = '30'
+			       <if test='wkpl_cl_cd != null and wkpl_cl_cd != ""'>
+				     and exists (select 1 
+						         from tb_sh_wkpl w
+						        where w.wkpl_id = sc.wkpl_id 
+						          and w.wkpl_cl_cd in (${wkpl_cl_cd})
+						       )
+				   </if>
+				   <if test='wkpl_id != null and wkpl_id != ""'>
+				     and sc.wkpl_id = #{wkpl_id}
+				   </if>)
+			   as rslt_amt
+				  from tb_co_cd tcc
+				  join tb_co_cd_grp tccg on tccg.cd_grp_no = tcc.cd_grp_no 
+				  join tb_co_mlang tcm on tcc.cd_grp_no = tcm.cd_grp_no and tcc.cd = tcm.cd
+				 where 1=1
+				   and tcc.cd_grp_no = 'SH00000063'
+				   and tcm.lang_cd = #{SESS_LANG}
+				   and tcc.del_yn = 'N'
+				   and tccg.usg_yn = 'Y'
+				   and tccg.del_yn = 'N'
+				   and tcm.usg_yn = 'Y'
+				   and tcm.del_yn = 'N'
+		) a
+	</select>
+	
+	<!-- 사고발생건수 -->
+	<select id="selectAcdtChartTot" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtChartTot */
+		select '전사' as gb
+		,count(case when sa.acdt_cl_cd = 'S01' then 1 end) as s01_cnt /*중대재해*/
+		,count(case when sa.acdt_cl_cd = 'S02' then 1 end) as s02_cnt /*고위험사고*/
+		,count(case when sa.acdt_cl_cd = 'S03' then 1 end) as s03_cnt /*병원치료*/
+		,count(case when sa.acdt_cl_cd = 'S04' then 1 end) as s04_cnt /*경미사고*/
+		,count(case when sa.acdt_cl_cd = 'S05' then 1 end) as s05_cnt /*아차사고*/
+		,(count(case when sa.acdt_cl_cd = 'S01' then 1 end) +
+		 count(case when sa.acdt_cl_cd = 'S02' then 1 end) + 
+		 count(case when sa.acdt_cl_cd = 'S03' then 1 end) + 
+		 count(case when sa.acdt_cl_cd = 'S04' then 1 end) + 
+		 count(case when sa.acdt_cl_cd = 'S05' then 1 end)) || '/' || count(case when sa.inac_yn ='Y' then 1 end) as inac_cnt /*산재승인*/
+		from tb_sh_acdt sa
+	   where to_char(sa.acdt_occr_tsp,'YYYY') = to_char(now(), 'YYYY')
+	   and sa.del_yn != 'Y'
+	</select>
+	
+	<!-- 사고발생건수 -->
+	<select id="selectAcdtChartList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectAcdtChartList */
+		select gb
+		      ,gb_cd
+				,sum(s01_cnt) as s01_cnt
+				,sum(s02_cnt) as s02_cnt
+				,sum(s03_cnt) as s03_cnt
+				,sum(s04_cnt) as s04_cnt
+				,sum(s05_cnt) as s05_cnt
+				,sum(inac_cnt) as inac_cnt
+				from (
+					select case when tcc.cd = 'SG02' then tcm.mlang_cntn
+			              		when tcc.cd = 'SG05' then <![CDATA['R&D']]>
+			              		when tcc.cd = 'SG06' then tcm.mlang_cntn
+			              		when tcc.cd = 'SG07' then tcm.mlang_cntn
+			              		else '비제조'
+			               end as gb
+			              ,case when tcc.cd = 'SG02' then tcc.cd
+			              		when tcc.cd = 'SG05' then tcc.cd
+			              		when tcc.cd = 'SG06' then tcc.cd
+			              		when tcc.cd = 'SG07' then tcc.cd
+			              		else 'SG04'
+			               end as gb_cd
+							,(select count(*)
+								from tb_sh_acdt sa
+								join tb_sh_wkpl sw
+								on sa.wkpl_id = sw.wkpl_id
+								where acdt_cl_cd ='S01'
+								and sw.wkpl_main_bsns_cd = tcc.cd
+								and to_char(sa.acdt_occr_tsp,'YYYY') = to_char(now(),'YYYY')
+      						 	and sa.del_yn != 'Y'
+							)as s01_cnt
+							,(select count(*)
+								from tb_sh_acdt sa
+								join tb_sh_wkpl sw
+								on sa.wkpl_id = sw.wkpl_id
+								where acdt_cl_cd ='S02'
+								and sw.wkpl_main_bsns_cd = tcc.cd
+								and to_char(sa.acdt_occr_tsp,'YYYY') = to_char(now(),'YYYY')
+      						 	and sa.del_yn != 'Y'
+							)as s02_cnt
+							,(select count(*)
+								from tb_sh_acdt sa
+								join tb_sh_wkpl sw
+								on sa.wkpl_id = sw.wkpl_id
+								where acdt_cl_cd ='S03'
+								and sw.wkpl_main_bsns_cd = tcc.cd
+								and to_char(sa.acdt_occr_tsp,'YYYY') = to_char(now(),'YYYY')
+      						 	and sa.del_yn != 'Y'
+							) as s03_cnt
+							,(select count(*)
+								from tb_sh_acdt sa
+								join tb_sh_wkpl sw
+								on sa.wkpl_id = sw.wkpl_id
+								where acdt_cl_cd ='S04'
+								and sw.wkpl_main_bsns_cd = tcc.cd
+								and to_char(sa.acdt_occr_tsp,'YYYY') = to_char(now(),'YYYY')
+      						 	and sa.del_yn != 'Y'
+							) as s04_cnt
+							,(select count(*)
+								from tb_sh_acdt sa
+								join tb_sh_wkpl sw
+								on sa.wkpl_id = sw.wkpl_id
+								where acdt_cl_cd ='S05'
+								and sw.wkpl_main_bsns_cd = tcc.cd
+								and to_char(sa.acdt_occr_tsp,'YYYY') = to_char(now(),'YYYY')
+      						 	and sa.del_yn != 'Y'
+							) as s05_cnt
+						    ,(select count(*)
+								from tb_sh_acdt sa
+								join tb_sh_wkpl sw
+								on sa.wkpl_id = sw.wkpl_id
+								where inac_yn ='Y'
+								and sw.wkpl_main_bsns_cd = tcc.cd
+								and to_char(sa.acdt_occr_tsp,'YYYY') = to_char(now(),'YYYY')
+      						 	and sa.del_yn != 'Y'
+							) as inac_cnt
+					  from tb_co_cd tcc
+					  join tb_co_cd_grp tccg on tccg.cd_grp_no = tcc.cd_grp_no 
+					  join tb_co_mlang tcm on tcc.cd_grp_no = tcm.cd_grp_no and tcc.cd = tcm.cd
+					 where tcc.cd_grp_no = 'ST00000015'
+					   and tcm.lang_cd = #{SESS_LANG}
+					   and tcc.del_yn = 'N'
+					   and tccg.usg_yn = 'Y'
+					   and tccg.del_yn = 'N'
+					   and tcm.usg_yn = 'Y'
+					   and tcm.del_yn = 'N'
+				) a
+				group by gb,gb_cd
+	</select>
+	
+	<!-- 사고발생유형/건수-->
+	<select id="selectAcdtChartcntList" parameterType="sqlMap" resultType="sqlMap">
+			/* selectAcdtChartcntList */
+			select '사고 전체' as gb
+				,count(acdt_cl_cd) as acdt_cnt
+					from tb_sh_acdt sa, tb_sh_wkpl sw
+					where sa.wkpl_id = sw.wkpl_id
+				<if test='wkpl_cl_cd != null and wkpl_cl_cd != ""'>
+			  		 and exists (select 1 
+				         from tb_sh_wkpl w
+				        where w.wkpl_id = sa.wkpl_id 
+				          and w.wkpl_cl_cd in (${wkpl_cl_cd})
+				       )
+				</if>
+		union all
+			select gb
+			 ,acdt_cnt
+			from(
+			select '중대재해' as gb
+				  ,count(*) as acdt_cnt
+			  from tb_sh_acdt sa
+			  where acdt_cl_cd = 'S01'
+			  <if test='wkpl_cl_cd != null and wkpl_cl_cd != ""'>
+			   and exists (select 1 
+					         from tb_sh_wkpl w
+					        where w.wkpl_id = sa.wkpl_id 
+					          and w.wkpl_cl_cd in (${wkpl_cl_cd})
+					       )
+				</if>
+			union 
+			select '고위험사고' as gb
+				  ,count(*) as acdt_cnt
+			  from tb_sh_acdt sa
+			  where acdt_cl_cd = 'S02'
+			   <if test='wkpl_cl_cd != null and wkpl_cl_cd != ""'>
+			   and exists (select 1 
+					         from tb_sh_wkpl w
+					        where w.wkpl_id = sa.wkpl_id 
+					          and w.wkpl_cl_cd in (${wkpl_cl_cd})
+					       )
+				</if>
+			union 
+			select '병원치료' as gb
+				  ,count(*) as acdt_cnt
+			  from tb_sh_acdt sa
+			  where acdt_cl_cd = 'S03'
+			  <if test='wkpl_cl_cd != null and wkpl_cl_cd != ""'>
+			   and exists (select 1 
+					         from tb_sh_wkpl w
+					        where w.wkpl_id = sa.wkpl_id 
+					          and w.wkpl_cl_cd in (${wkpl_cl_cd})
+					       )
+				</if>
+			union 
+			select '경미사고' as gb
+				  ,count(*) as acdt_cnt
+			  from tb_sh_acdt sa
+			  where acdt_cl_cd = 'S04'
+			   <if test='wkpl_cl_cd != null and wkpl_cl_cd != ""'>
+			   and exists (select 1 
+					         from tb_sh_wkpl w
+					        where w.wkpl_id = sa.wkpl_id 
+					          and w.wkpl_cl_cd in (${wkpl_cl_cd})
+					       )
+				</if>
+			union 
+			select '아차사고' as gb
+				  ,count(*) as acdt_cnt
+			  from tb_sh_acdt sa
+			  where acdt_cl_cd = 'S05'
+			   <if test='wkpl_cl_cd != null and wkpl_cl_cd != ""'>
+			   and exists (select 1 
+					         from tb_sh_wkpl w
+					        where w.wkpl_id = sa.wkpl_id 
+					          and w.wkpl_cl_cd in (${wkpl_cl_cd})
+					       )
+				</if>
+			) a
+	</select>
+	
+	<!-- 시정 지시 및 조치현황-->
+	<select id="selectDashCrinList" parameterType="sqlMap" resultType="sqlMap">
+		select gb
+			  ,cd
+		      ,plan_amt
+		      ,rslt_amt
+		      ,case when plan_amt != 0 then rslt_amt::numeric / plan_amt::numeric * 100 
+		            else 0 
+		            end as amt_per
+		from(
+		select fn_get_cd('ST00000015', tcc.cd, 'NM', #{SESS_LANG}) as gb
+		,tcc.cd
+			  ,(select count(*)
+			      from tb_sh_crin sc
+			      join tb_sh_wkpl sw
+			        on sc.wkpl_id = sw.wkpl_id 
+			     where sw.wkpl_cl_cd = tcc.cd
+			       and substring(sc.crin_chk_dt, 0, 5) = to_char(now(), 'YYYY'))
+			   as plan_amt
+			  ,(select count(distinct sc.crin_id)
+			      from tb_sh_crin sc
+			      join tb_sh_wkpl sw
+			        on sc.wkpl_id = sw.wkpl_id 
+			      left join tb_sh_crin_actn sca 
+			        on sc.crin_id = sca.crin_id 
+			     where sw.wkpl_cl_cd = tcc.cd
+			       and substring(sc.crin_chk_dt, 0, 5) = to_char(now(), 'YYYY')
+			       and sca.crin_prst_cd = '30')
+			   as rslt_amt
+				  from tb_co_cd tcc
+				  join tb_co_cd_grp tccg on tccg.cd_grp_no = tcc.cd_grp_no 
+				  join tb_co_mlang tcm on tcc.cd_grp_no = tcm.cd_grp_no and tcc.cd = tcm.cd
+				 where 1=1
+				   and tcc.cd_grp_no = 'ST00000015'
+				   and tcm.lang_cd = #{SESS_LANG}
+				   and tcc.del_yn = 'N'
+				   and tccg.usg_yn = 'Y'
+				   and tccg.del_yn = 'N'
+				   and tcm.usg_yn = 'Y'
+				   and tcm.del_yn = 'N'
+		) a
+	</select>
+	
+	<!-- 안전점검현황 작업시작전 점검-->
+	<select id="selectDashOprnList" parameterType="sqlMap" resultType="sqlMap">
+		select plan_amt 
+		      ,rslt_amt
+		      ,case when plan_amt != 0 then rslt_amt::numeric / plan_amt::numeric * 100 
+		            else 0 
+		            end as per
+		      ,case when plan_amt != 0 then (plan_amt::numeric - rslt_amt::numeric) / plan_amt::numeric * 100 
+		            else 0 
+		            end as nper
+		from(
+		select (select count(*) 
+			     from tb_sh_oprb_chk soc
+			    where substring(soc.oprb_chk_schd_dt, 0, 5) = to_char(now(), 'YYYY'))
+			   as plan_amt
+			   ,(select count(*) 
+			     from tb_sh_oprb_chk soc
+			    where substring(soc.oprb_chk_schd_dt, 0, 5) = to_char(now(), 'YYYY')
+			      and soc.oprb_chk_prst_cd = '40')
+			   as rslt_amt
+		) a
+	</select>
+	
+	<!-- 안전점검현황 순회 점검-->
+	<select id="selectDashCircList" parameterType="sqlMap" resultType="sqlMap">
+		select plan_amt 
+		      ,rslt_amt
+		      ,case when plan_amt != 0 then rslt_amt::numeric / plan_amt::numeric * 100 
+		            else 0 
+		            end as per
+		      ,case when plan_amt != 0 then (plan_amt::numeric - rslt_amt::numeric) / plan_amt::numeric * 100 
+		            else 0 
+		            end as nper
+		from(
+		select (select count(*) 
+			     from tb_sh_circ_chk scc
+			    where substring(scc.circ_chk_schd_dt , 0, 5) = to_char(now(), 'YYYY')
+			      and exists (select 1 from tb_sh_circ_chk_tgt scct 
+			                   where scc.circ_chk_tgt_id = scct.circ_chk_tgt_id 
+			                     and scct.chec_cl_cd != 'CE008'))
+			   as plan_amt
+			   ,(select count(*) 
+			     from tb_sh_circ_chk scc
+			    where substring(scc.circ_chk_schd_dt, 0, 5) = to_char(now(), 'YYYY')
+			      and scc.circ_chk_prst_cd = '40'
+			      and exists (select 1 from tb_sh_circ_chk_tgt scct 
+			                   where scc.circ_chk_tgt_id = scct.circ_chk_tgt_id 
+			                     and scct.chec_cl_cd != 'CE008'))
+			   as rslt_amt
+		) a
+	</select>
+	
+	<!-- 안전점검현황 합동 점검-->
+	<select id="selectDashJntList" parameterType="sqlMap" resultType="sqlMap">
+		select plan_amt 
+		      ,rslt_amt
+		      ,case when plan_amt != 0 then rslt_amt::numeric / plan_amt::numeric * 100 
+		            else 0 
+		            end as per
+		      ,case when plan_amt != 0 then (plan_amt::numeric - rslt_amt::numeric) / plan_amt::numeric * 100 
+		            else 0 
+		            end as nper
+		from(
+		select (select count(*) 
+			     from tb_sh_jnt_chk sjc
+			    where substring(sjc.jnt_chk_schd_dt , 0, 5) = to_char(now(), 'YYYY'))
+			   as plan_amt
+			   ,(select count(*) 
+			     from tb_sh_jnt_chk sjc
+			    where substring(sjc.jnt_chk_schd_dt, 0, 5) = to_char(now(), 'YYYY')
+			      and sjc.jnt_chk_prst_cd = '40')
+			   as rslt_amt
+		) a
+	</select>
+	
+	<!-- 연구실 점검-->
+	<select id="selectDashLabList" parameterType="sqlMap" resultType="sqlMap">
+		select plan_amt 
+		      ,rslt_amt
+		      ,case when plan_amt != 0 then rslt_amt::numeric / plan_amt::numeric * 100 
+		            else 0 
+		            end as per
+		      ,case when plan_amt != 0 then (plan_amt::numeric - rslt_amt::numeric) / plan_amt::numeric * 100 
+		            else 0 
+		            end as nper
+		from(
+		select (select count(*)
+				  from shscsm_labs_sft_chk slsc
+				 where length(labs_sft_chk_yrmn) = 6)
+			   as plan_amt
+			   ,(select count(case when b.fin_yn = 'Y' then 1 end)
+				  from (
+				  	select labs_sft_chk_id
+					      ,(select distinct
+									case when (select count(*) from shscsd_labs_sft_chk_tgt where labs_sft_chk_exct_yn = 'Y' and labs_sft_chk_id = slsc.labs_sft_chk_id) = (select count(*) from shscsd_labs_sft_chk_tgt where labs_sft_chk_id = slsc.labs_sft_chk_id)
+									then 'Y' 
+									else 'N'
+									end as fin_yn
+							from shscsd_labs_sft_chk_tgt where labs_sft_chk_id = slsc.labs_sft_chk_id)
+					  from shscsm_labs_sft_chk slsc
+					 where length(labs_sft_chk_yrmn) = 6
+				  ) b
+				)
+			   as rslt_amt
+		) a
+	</select>
+</mapper>

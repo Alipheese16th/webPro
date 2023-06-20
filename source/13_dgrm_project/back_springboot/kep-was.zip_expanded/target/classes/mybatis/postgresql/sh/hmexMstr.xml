@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.sh.hmex.mapper.HmexMstrMapper">
+
+	<select id="selectDeptList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectDeptList */
+		with recursive CODE_LIST(dept_cd, dept_nm, up_dept_cd, up_dept_nm, depth, path, cycle) as (
+		select
+			A.dept_cd,
+			case when #{SESS_LANG} = 'KO' then A.dept_ko_nm else A.dept_en_nm end as dept_nm,
+			A.up_dept_cd,
+            fn_get_dept(A.up_dept_cd) as up_dept_nm,
+			1,
+			array[A.dept_cd::text],
+			false
+		from
+			tb_co_dept A
+		where	
+			A.up_dept_cd = '$0'
+	    and A.cmpy_cd = #{SESS_CMPN}
+		union all
+		select
+			A.dept_cd,
+			case when #{SESS_LANG} = 'KO' then A.dept_ko_nm else A.dept_en_nm end as dept_nm,
+			A.up_dept_cd,
+            fn_get_dept(A.up_dept_cd) as up_dept_nm,
+			B.DEPTH + 1,
+			ARRAY_APPEND(B.PATH, A.dept_cd::text),
+			A.dept_cd = any(B.PATH)
+		from
+			tb_co_dept A,
+			CODE_LIST B
+		where
+			A.up_dept_cd = B.dept_cd
+	    and A.cmpy_cd = #{SESS_CMPN}
+		and not cycle )
+		select
+			dept_cd,
+			dept_nm,
+			up_dept_cd,
+			up_dept_nm,
+			depth as A_MENU_LEVEL,
+			replace(replace(replace(path::text,'{',''),'}',''),',','.') as tree
+		from
+			CODE_LIST cl
+		where
+			cl.up_dept_cd != '$0'
+		<if test='dept_nm != null and dept_nm != ""'>
+		and (cl.dept_nm like concat('%', trim(#{dept_nm}), '%'))
+		</if>
+		order by
+			path
+	</select>
+	
+	<select id="selectUserList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectUserList */
+		select 
+			tcu.usr_id
+			,tcu.dept_cd
+			,(select case when #{SESS_LANG} = 'KO' then tcd.dept_ko_nm
+					      else tcd.dept_en_nm
+				     end as dept_nm
+			    from tb_co_dept tcd
+			   where tcd.dept_cd = tcu.dept_cd 
+			 ) as dept_nm
+			,case when #{SESS_LANG} = 'KO' then tcu.usr_ko_nm
+			      when #{SESS_LANG} = 'EN' then tcu.usr_en_nm
+				  else tcu.usr_zh_nm
+			end as usr_nm
+			,tcu.usr_email
+			,tcu.usr_cpho_no
+			,tcu.joinc_da
+			,(select count(1) from tb_sh_spc_hmex_trgp where spc_hmex_tgt_usr_id = tcu.usr_id) as aply_cnt
+            ,tcu.usr_clsf_cd
+            ,fn_get_cd('SH00000052', tcu.usr_clsf_cd, 'nm', #{SESS_LANG}) as note
+		from tb_co_user tcu 
+		where   tcu.usg_yn = 'Y'
+			and tcu.del_yn  = 'N'
+		<if test='dept_cd != null and dept_cd != ""'>
+			and tcu.dept_cd = #{dept_cd}
+		</if>
+		<if test='usr_nm != null and usr_nm != ""'>
+			and (
+					tcu.usr_ko_nm like concat('%', trim(#{usr_nm}), '%') or 
+					tcu.usr_en_nm like concat('%', trim(#{usr_nm}), '%') or 
+					tcu.usr_zh_nm like concat('%', trim(#{usr_nm}), '%') 
+			)
+		</if>	
+		order by tcu.usr_id 
+	</select>
+	
+	<select id="selectMtraList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectMtraList */
+		select tcc.cd as deal_mtra_cd
+		      ,tcm.mlang_cntn as deal_mtra_nm
+		      ,coalesce(ssht.spc_hmex_cd,'') as spc_hmex_cd
+		      ,fn_get_cd('SH00000037', ssht.spc_hmex_cd, 'nm', #{SESS_LANG}) as spc_hmex_nm
+		  from tb_co_cd tcc
+		  join tb_co_mlang tcm on tcc.cd_grp_no = tcm.cd_grp_no and tcc.cd = tcm.cd
+		  left outer join (select * from tb_sh_spc_hmex_trgp where spc_hmex_tgt_usr_id = #{usr_id}) ssht on tcc.cd = ssht.deal_mtra_cd 
+		 where 1=1	
+		   and tcc.cd_grp_no = 'SH00000035'
+		   and tcc.del_yn = 'N'
+		   and tcm.usg_yn = 'Y'
+		   and tcm.del_yn = 'N'
+		   and tcm.lang_cd = #{SESS_LANG}
+		<if test='deal_mtra_nm != null and deal_mtra_nm != ""'>
+		and tcm.mlang_cntn like concat('%', trim(#{deal_mtra_nm}), '%')
+		</if>
+		order by ssht.deal_mtra_cd  
+	</select>
+	
+	<insert id="insertHmexMstr" parameterType="sqlMap">
+      	/* insertHmexMstr */
+		insert into tb_sh_spc_hmex_trgp (
+			spc_hmex_tgt_usr_id
+			,deal_mtra_cd
+			,spc_hmex_cd
+			,wkpl_id
+			,spc_hmex_trgp_org_cd
+		    ,crt_usr_id
+			,upt_usr_id
+		) values (
+			#{spc_hmex_tgt_usr_id}
+			,#{deal_mtra_cd}
+			,#{spc_hmex_cd}
+			,#{wkpl_id}
+			,#{spc_hmex_trgp_org_cd}
+			,#{SESS_USR_ID}
+			,#{SESS_USR_ID}
+		)
+    </insert>
+    
+    <delete id="deleteHmexMstr" parameterType="sqlMap">
+        /* deleteHmexMstr */
+        delete from tb_sh_spc_hmex_trgp
+		where spc_hmex_tgt_usr_id = #{spc_hmex_tgt_usr_id}	
+    </delete>
+</mapper>

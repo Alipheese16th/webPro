@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.common.bbs.mapper.BbsMapper">
+
+	<select id="selectNotiList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectNotiList */
+		select 
+			tcb.bbs_doc_no
+			,tcb.bbs_doc_ttl
+			,tcb.crt_usr_id
+			,(select dept_cd from tb_co_user tcu where tcu.usr_id = tcb.crt_usr_id ) as dept_cd
+			,tcb.upt_usr_id
+			,case when #{SESS_LANG} = 'KO' then (select tce.usr_ko_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+				  when #{SESS_LANG} = 'EN' then (select tce.usr_en_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+				  else (select tce.usr_zh_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+			end as usr_nm
+			,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'DA', '-') as upt_dt
+		    ,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'TS', ':') as upt_tm
+			,tcb.noti_yn
+			,tcb.bbs_type_cd
+			,tcb.doc_type_cd
+			,fn_get_cd('CO00000013',tcb.doc_type_cd,'NM',#{SESS_LANG}) as doc_type_cd_nm
+			,tcb.bbs_doc_cntn
+			,tcb.atfl_no
+			,tcb.del_yn
+			,tcb.biz_cd
+			,fn_get_cd('CO00000001',tcb.biz_cd,'NM','KO') as biz_nm
+			,case when to_char(now(), 'YYYYMMDD') between tcb.tppg_fixt_bgn_dt and tcb.tppg_fixt_end_dt then 1 else 2 end as top_sn
+			,coalesce(blbm_inq_cnt, 0) as view_cnt
+		from tb_co_bbs tcb 
+		where 1=1
+		and tcb.bbs_type_cd = #{bbs_type_cd}
+		and tcb.del_yn = 'N'
+		<if test='sDate != null and sDate != "" and eDate != null and eDate != ""'>
+        <![CDATA[
+			and (to_timestamp(tcb.upt_dt,  'YYYYMMDDHH24MIss') >= #{sDate}::timestamp and to_timestamp(tcb.upt_dt,  'YYYYMMDDHH24MIss') <= concat(#{eDate}, ' 23:59:59')::timestamp)
+		]]>
+        </if>
+        <if test='bbs_doc_ttl != null and bbs_doc_ttl != ""'>
+            and tcb.bbs_doc_ttl like concat('%', trim(#{bbs_doc_ttl}), '%')
+        </if>
+         <if test='bbs_doc_cntn != null and bbs_doc_cntn != ""'>
+            and tcb.bbs_doc_cntn like concat('%', trim(#{bbs_doc_cntn}), '%')
+        </if>
+        <if test='noti_yn != null and noti_yn != ""'>
+            and tcb.noti_yn = #{noti_yn}
+        </if>
+        <if test='biz_cd != null and biz_cd != ""'>
+            and tcb.biz_cd = #{biz_cd}
+        </if>
+        <if test='usr_nm != null and usr_nm != ""'>
+            and fn_get_user(tcb.upt_usr_id) like '%' || #{usr_nm} || '%'
+        </if>
+		order by top_sn, tcb.bbs_doc_no desc
+	</select>
+
+	<insert id="saveNoti" parameterType="sqlMap">
+      insert into tb_co_bbs (
+      		bbs_doc_no
+       		,bbs_type_cd
+			,doc_type_cd
+			,bbs_doc_ttl
+			,bbs_doc_cntn
+			,atfl_no
+			,noti_yn
+			,del_yn
+			,biz_cd
+			,crt_usr_id
+			,crt_dt
+			,upt_usr_id
+			,upt_dt
+			,blbm_inq_cnt
+			,ppup_bgn_dt
+			,ppup_end_dt
+			,tppg_fixt_bgn_dt
+			,tppg_fixt_end_dt
+		) values (
+			#{bbs_doc_no}::INTEGER
+       		,#{bbs_type_cd}
+			,#{doc_type_cd}
+			,trim(#{bbs_doc_ttl})
+			,trim(#{bbs_doc_cntn})
+			,case when #{atfl_no} = '' then null 
+				   else #{atfl_no}::INTEGER 
+		     end
+			,#{noti_yn}
+			,'N'
+			,#{biz_cd}
+			,#{SESS_USR_ID}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{SESS_USR_ID}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,0
+			,replace(#{sDate_pop},'-','')
+			,replace(#{eDate_pop},'-','')
+			,replace(#{sDate_top},'-','')
+			,replace(#{eDate_top},'-','')
+		) 
+    </insert>
+    
+    <update id="updateNoti" parameterType="sqlMap">
+        /* updateNoti */
+        update tb_co_bbs set
+        	bbs_doc_ttl = trim(#{bbs_doc_ttl})
+		   ,bbs_doc_cntn = trim(#{bbs_doc_cntn})
+		   ,atfl_no = case when #{atfl_no}::text  = '' then null 
+			   				else #{atfl_no}::INTEGER 
+	    	 			end
+		   ,noti_yn = #{noti_yn}
+		   ,biz_cd = #{biz_cd}
+		   ,upt_usr_id = #{SESS_USR_ID}
+		   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		   ,ppup_bgn_dt = replace(#{sDate_pop},'-','')
+		   ,ppup_end_dt = replace(#{eDate_pop},'-','')
+		   ,tppg_fixt_bgn_dt = replace(#{sDate_top},'-','')
+		   ,tppg_fixt_end_dt = replace(#{eDate_top},'-','')
+		where tb_co_bbs.bbs_doc_no = #{bbs_doc_no}::INTEGER
+    </update>
+    
+    <update id="updateNotiCnt" parameterType="sqlMap">
+        /* updateNotiCnt */
+        update tb_co_bbs set
+        	blbm_inq_cnt = coalesce(blbm_inq_cnt, 0) + 1
+		where bbs_doc_no = #{bbs_doc_no}::INTEGER
+    </update>
+    
+    <select id="selectNotiDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectNotiDtl */
+		select 
+			tcb.bbs_doc_no
+			,tcb.bbs_doc_ttl
+			,tcb.upt_usr_id
+			,case when #{SESS_LANG} = 'KO' then (select tce.usr_ko_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+				  when #{SESS_LANG} = 'EN' then (select tce.usr_en_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+				  else  (select tce.usr_zh_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+			end as usr_nm
+			,tcb.noti_yn
+			,tcb.bbs_type_cd
+			,tcb.doc_type_cd
+			,tcb.bbs_doc_cntn
+			,tcb.atfl_no
+			,tcb.del_yn
+			,tcb.biz_cd
+			,fn_get_cd('CO00000001',tcb.biz_cd,'NM',#{SESS_LANG}) as biz_cd_nm
+			,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'DA', '-') as upt_dt
+		    ,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'TS', ':') as upt_tm
+		    ,blbm_inq_cnt
+		    ,substring(ppup_bgn_dt, 0, 5) || '-' || substring(ppup_bgn_dt, 5, 2) || '-' || substring(ppup_bgn_dt, 7, 2) as ppup_bgn_dt
+		    ,substring(ppup_end_dt, 0, 5) || '-' || substring(ppup_end_dt, 5, 2) || '-' || substring(ppup_end_dt, 7, 2) as ppup_end_dt
+		    ,substring(tppg_fixt_bgn_dt, 0, 5) || '-' || substring(tppg_fixt_bgn_dt, 5, 2) || '-' || substring(tppg_fixt_bgn_dt, 7, 2) as tppg_fixt_bgn_dt
+		    ,substring(tppg_fixt_end_dt, 0, 5) || '-' || substring(tppg_fixt_end_dt, 5, 2) || '-' || substring(tppg_fixt_end_dt, 7, 2) as tppg_fixt_end_dt
+		from tb_co_bbs tcb 
+		where 1=1
+		and tcb.bbs_doc_no = #{bbs_doc_no}::INTEGER
+	</select>
+	
+     <update id="deleteNoti" parameterType="sqlMap">
+        /* deleteNoti */
+        update tb_co_bbs set
+		   del_yn = 'Y'
+		   ,upt_usr_id = #{SESS_USR_ID}
+		   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_co_bbs.bbs_doc_no = #{bbs_doc_no}::INTEGER
+     </update>
+	
+	<select id="selectFaqsList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectFaqsList */
+		select 
+			tcb.bbs_doc_no
+			,tcb.bbs_doc_ttl
+			,tcb.upt_usr_id
+			,case when #{SESS_LANG} = 'KO' then (select tce.usr_ko_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+				  when #{SESS_LANG} = 'EN' then (select tce.usr_en_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+				  else (select tce.usr_zh_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+			end as usr_nm
+			,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'DA', '-') as upt_dt
+		    ,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'TS', ':') as upt_tm
+			,tcb.noti_yn
+			,tcb.bbs_type_cd
+			,tcb.doc_type_cd
+			,fn_get_cd('CO00000013',tcb.doc_type_cd,'NM',#{SESS_LANG}) as doc_type_cd_nm
+			,tcb.bbs_doc_cntn
+			,tcb.atfl_no
+			,tcb.del_yn
+		from tb_co_bbs tcb 
+		where 1=1
+		and tcb.bbs_type_cd = #{bbs_type_cd}
+		and tcb.del_yn = 'N'
+        <if test='bbs_doc_ttl != null and bbs_doc_ttl != ""'>
+            and tcb.bbs_doc_ttl like concat('%', trim(#{bbs_doc_ttl}), '%')
+        </if>
+         <if test='bbs_doc_cntn != null and bbs_doc_cntn != ""'>
+            and tcb.bbs_doc_cntn like concat('%', trim(#{bbs_doc_cntn}), '%')
+        </if>
+        <if test='doc_type_cd != null and doc_type_cd != ""'>
+            and tcb.doc_type_cd = #{doc_type_cd}
+        </if>
+		order by tcb.bbs_doc_no desc
+	</select>
+
+	<insert id="saveFaqs" parameterType="sqlMap">
+      insert into tb_co_bbs (
+      		bbs_doc_no
+       		,bbs_type_cd
+			,doc_type_cd
+			,bbs_doc_ttl
+			,bbs_doc_cntn
+			,atfl_no
+			,noti_yn
+			,del_yn
+			,crt_usr_id
+			,crt_dt
+			,upt_usr_id
+			,upt_dt
+		) values (
+			#{bbs_doc_no}::INTEGER
+       		,#{bbs_type_cd}
+			,#{doc_type_cd}
+			,trim(#{bbs_doc_ttl})
+			,trim(#{bbs_doc_cntn})
+			,case when #{atfl_no} = '' then null 
+				   else #{atfl_no}::INTEGER 
+		     end
+			,'N'
+			,'N'
+			,#{SESS_USR_ID}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{SESS_USR_ID}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+		) 
+    </insert>
+    
+    <update id="updateFaqs" parameterType="sqlMap">
+        /* updateFaqs */
+        update tb_co_bbs set
+        	bbs_doc_ttl = trim(#{bbs_doc_ttl})
+		   ,bbs_doc_cntn = trim(#{bbs_doc_cntn})
+		   ,doc_type_cd = #{doc_type_cd}
+		   ,atfl_no = case when #{atfl_no}::text  = '' then null 
+			   				else #{atfl_no}::INTEGER 
+	    	 			end
+		   ,upt_usr_id = #{SESS_USR_ID}
+		   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_co_bbs.bbs_doc_no = #{bbs_doc_no}::INTEGER
+    </update>
+    
+   <select id="selectFaqsDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectFaqsDtl */
+		select 
+			tcb.bbs_doc_no
+			,tcb.bbs_doc_ttl
+			,tcb.upt_usr_id
+			,case when #{SESS_LANG} = 'KO' then (select tce.usr_ko_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+				  when #{SESS_LANG} = 'EN' then (select tce.usr_en_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+				  else (select tce.usr_zh_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+			end as usr_nm
+			,tcb.noti_yn
+			,tcb.bbs_type_cd
+			,tcb.doc_type_cd
+			,fn_get_cd('CO00000013',tcb.doc_type_cd,'NM',#{SESS_LANG}) as doc_type_cd_nm
+			,tcb.bbs_doc_cntn
+			,tcb.atfl_no
+			,tcb.del_yn
+			,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'DA', '-') as upt_dt
+		    ,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'TS', ':') as upt_tm
+		from tb_co_bbs tcb 
+		where 1=1
+		and tcb.bbs_doc_no = #{bbs_doc_no}::INTEGER
+	</select>
+	
+	<update id="deleteFaqs" parameterType="sqlMap">
+        /* deleteFaqs */
+        update tb_co_bbs set
+		   del_yn = 'Y'
+		   ,upt_usr_id = #{SESS_USR_ID}
+		   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_co_bbs.bbs_doc_no = #{bbs_doc_no}::INTEGER
+     </update>
+    
+    <select id="selectArchList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectArchList */
+		select 
+			tcb.bbs_doc_no
+			,tcb.bbs_doc_ttl
+			,tcb.upt_usr_id
+			,case when #{SESS_LANG} = 'KO' then (select tce.usr_ko_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+				  when #{SESS_LANG} = 'EN' then (select tce.usr_en_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+				  else (select tce.usr_zh_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+			end as usr_nm
+			,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'DA', '-') as upt_dt
+		    ,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'TS', ':') as upt_tm
+			,tcb.noti_yn
+			,tcb.bbs_type_cd
+			,tcb.doc_type_cd
+			,fn_get_cd('CO00000013',tcb.doc_type_cd,'NM',#{SESS_LANG}) as doc_type_cd_nm
+			,tcb.bbs_doc_cntn
+			,tcb.atfl_no
+			,tcb.del_yn
+			,coalesce(blbm_inq_cnt, 0) as view_cnt
+		from tb_co_bbs tcb 
+		where 1=1
+		and tcb.bbs_type_cd = #{bbs_type_cd}
+		and tcb.del_yn = 'N'
+        <if test='bbs_doc_ttl != null and bbs_doc_ttl != ""'>
+            and tcb.bbs_doc_ttl like concat('%', trim(#{bbs_doc_ttl}), '%')
+        </if>
+         <if test='bbs_doc_cntn != null and bbs_doc_cntn != ""'>
+            and tcb.bbs_doc_cntn like concat('%', trim(#{bbs_doc_cntn}), '%')
+        </if>
+        <if test='doc_type_cd != null and doc_type_cd != ""'>
+            and tcb.doc_type_cd = #{doc_type_cd}
+        </if>
+        <if test='biz_cd != null and biz_cd != ""'>
+            and tcb.biz_cd = #{biz_cd}
+        </if>
+		order by tcb.bbs_doc_no desc
+	</select>
+	
+	<insert id="saveArch" parameterType="sqlMap">
+      insert into tb_co_bbs (
+       		bbs_doc_no
+       		,bbs_type_cd
+			,doc_type_cd
+			,bbs_doc_ttl
+			,bbs_doc_cntn
+			,atfl_no
+			,noti_yn
+			,del_yn
+			,biz_cd
+			,crt_usr_id
+			,crt_dt
+			,upt_usr_id
+			,upt_dt
+			,blbm_inq_cnt
+		) values (
+			#{bbs_doc_no}::INTEGER
+       		,#{bbs_type_cd}
+			,#{doc_type_cd}
+			,trim(#{bbs_doc_ttl})
+			,trim(#{bbs_doc_cntn})
+			,case when #{atfl_no} = '' then null 
+				   else #{atfl_no}::INTEGER 
+		     end
+			,'N'
+			,'N'
+			,#{biz_cd}
+			,#{SESS_USR_ID}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{SESS_USR_ID}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,0
+		) 
+    </insert>
+    
+    <update id="updateArch" parameterType="sqlMap">
+        /* updateArch */
+        update tb_co_bbs set
+        	bbs_doc_ttl = trim(#{bbs_doc_ttl})
+		   ,bbs_doc_cntn = trim(#{bbs_doc_cntn})
+		   ,doc_type_cd = #{doc_type_cd}
+		   ,atfl_no = case when #{atfl_no}::text  = '' then null 
+			   				else #{atfl_no}::INTEGER 
+	    	 			end
+	       ,biz_cd = #{biz_cd}
+		   ,upt_usr_id = #{SESS_USR_ID}
+		   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_co_bbs.bbs_doc_no = #{bbs_doc_no}::INTEGER
+    </update>
+    
+    <update id="deleteArch" parameterType="sqlMap">
+        /* deleteArch */
+        update tb_co_bbs set
+		   del_yn = 'Y'
+		   ,upt_usr_id = #{SESS_USR_ID}
+		   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_co_bbs.bbs_doc_no = #{bbs_doc_no}::INTEGER
+     </update>
+    
+    <select id="selectArchDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectArchDtl */
+		select 
+			tcb.bbs_doc_no
+			,tcb.bbs_doc_ttl
+			,tcb.upt_usr_id
+			,case when #{SESS_LANG} = 'KO' then (select tce.usr_ko_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+				  when #{SESS_LANG} = 'EN' then (select tce.usr_en_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 				 
+				  else (select tce.usr_zh_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+			end as usr_nm
+			,tcb.noti_yn
+			,tcb.bbs_type_cd
+			,tcb.doc_type_cd
+			,fn_get_cd('CO00000013',tcb.doc_type_cd,'NM',#{SESS_LANG}) as doc_type_cd_nm
+			,tcb.bbs_doc_cntn
+			,tcb.atfl_no
+			,tcb.del_yn
+			,tcb.biz_cd
+			,fn_get_cd('CO00000001',tcb.biz_cd,'NM',#{SESS_LANG}) as biz_cd_nm
+			,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'DA', '-') as upt_dt
+		    ,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'TS', ':') as upt_tm
+		from tb_co_bbs tcb 
+		where 1=1
+		and tcb.bbs_doc_no = #{bbs_doc_no}::INTEGER
+	</select>
+	
+	<select id="selectNotiYList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectNotiYList */
+	select 
+			tcb.bbs_doc_no
+			,tcb.bbs_doc_ttl
+			,tcb.upt_usr_id
+			,case when #{SESS_LANG} = 'KO' then (select tce.usr_ko_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+				  when #{SESS_LANG} = 'EN' then (select tce.usr_en_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+				  else (select tce.usr_zh_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+			end as usr_nm
+			,to_char(to_timestamp(tcb.upt_dt,  'YYYYMMDDHH24MIss'), 'YYYY-MM-DD HH24:MI:SS') as upt_dt
+			,tcb.noti_yn
+			,tcb.bbs_type_cd
+			,tcb.bbs_doc_cntn
+			,tcb.atfl_no
+			,tcb.del_yn
+		from tb_co_bbs tcb 
+		where 1=1
+		and tcb.bbs_type_cd = 'NOTI'
+		and tcb.del_yn = 'N'
+		and tcb.noti_yn = 'Y'
+		and to_char(now(), 'YYYYMMDD') between tcb.ppup_bgn_dt and tcb.ppup_end_dt
+		order by tcb.bbs_doc_no asc
+	</select>
+	
+	
+	
+	
+	<select id="selectManuList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectManuList */
+		select 
+			tcb.bbs_doc_no
+			,tcb.bbs_doc_ttl
+			,tcb.upt_usr_id
+			,case when #{SESS_LANG} = 'KO' then (select tce.usr_ko_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+			      when #{SESS_LANG} = 'EN' then (select tce.usr_en_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 					 
+				  else (select tce.usr_zh_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+			end as usr_nm
+			,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'DA', '-') as upt_dt
+		    ,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'TS', ':') as upt_tm
+			,tcb.noti_yn
+			,tcb.bbs_type_cd
+			,tcb.doc_type_cd
+			,fn_get_cd('CO00000013',tcb.doc_type_cd,'NM',#{SESS_LANG}) as doc_type_cd_nm
+			,tcb.bbs_doc_cntn
+			,tcb.atfl_no
+			,tcb.del_yn
+		from tb_co_bbs tcb 
+		where 1=1
+		and tcb.bbs_type_cd = #{bbs_type_cd}
+		and tcb.del_yn = 'N'
+        <if test='bbs_doc_ttl != null and bbs_doc_ttl != ""'>
+            and tcb.bbs_doc_ttl like concat('%', trim(#{bbs_doc_ttl}), '%')
+        </if>
+         <if test='bbs_doc_cntn != null and bbs_doc_cntn != ""'>
+            and tcb.bbs_doc_cntn like concat('%', trim(#{bbs_doc_cntn}), '%')
+        </if>
+        <if test='doc_type_cd != null and doc_type_cd != ""'>
+            and tcb.doc_type_cd = #{doc_type_cd}
+        </if>
+		order by tcb.bbs_doc_no desc
+	</select>
+	
+		<insert id="saveManu" parameterType="sqlMap">
+      insert into tb_co_bbs (
+       		bbs_doc_no
+       		,bbs_type_cd
+			,doc_type_cd
+			,bbs_doc_ttl
+			,bbs_doc_cntn
+			,atfl_no
+			,noti_yn
+			,del_yn
+			,crt_usr_id
+			,crt_dt
+			,upt_usr_id
+			,upt_dt
+		) values (
+			#{bbs_doc_no}::INTEGER
+       		,#{bbs_type_cd}
+			,#{doc_type_cd}
+			,trim(#{bbs_doc_ttl})
+			,trim(#{bbs_doc_cntn})
+			,case when #{atfl_no} = '' then null 
+				   else #{atfl_no}::INTEGER 
+		     end
+			,'N'
+			,'N'
+			,#{SESS_USR_ID}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{SESS_USR_ID}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+		) 
+    </insert>
+    
+    <update id="updateManu" parameterType="sqlMap">
+        /* updateManu */
+        update tb_co_bbs set
+        	bbs_doc_ttl = trim(#{bbs_doc_ttl})
+		   ,bbs_doc_cntn = trim(#{bbs_doc_cntn})
+		   ,doc_type_cd = #{doc_type_cd}
+		   ,atfl_no = case when #{atfl_no}::text  = '' then null 
+			   				else #{atfl_no}::INTEGER 
+	    	 			end
+		   ,upt_usr_id = #{SESS_USR_ID}
+		   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_co_bbs.bbs_doc_no = #{bbs_doc_no}::INTEGER
+    </update>
+    
+    <select id="selectManuDtl" parameterType="sqlMap" resultType="sqlMap">
+		/* selectManuDtl */
+		select 
+			tcb.bbs_doc_no
+			,tcb.bbs_doc_ttl
+			,tcb.upt_usr_id
+			,case when #{SESS_LANG} = 'KO' then (select tce.usr_ko_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+				  when #{SESS_LANG} = 'EN' then	 (select tce.usr_en_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 		  
+				  else (select tce.usr_zh_nm from tb_co_user tce where tce.usr_id = tcb.upt_usr_id) 
+			end as usr_nm
+			,tcb.noti_yn
+			,tcb.bbs_type_cd
+			,tcb.doc_type_cd
+			,fn_get_cd('CO00000013',tcb.doc_type_cd,'NM',#{SESS_LANG}) as doc_type_cd_nm
+			,tcb.bbs_doc_cntn
+			,tcb.atfl_no
+			,tcb.del_yn
+			,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'DA', '-') as upt_dt
+		    ,fn_get_time(tcb.upt_dt, #{SESS_TIME_ZONE},'TS', ':') as upt_tm
+		from tb_co_bbs tcb 
+		where 1=1
+		and tcb.bbs_doc_no = #{bbs_doc_no}::INTEGER
+	</select>
+	
+	 <update id="deleteManu" parameterType="sqlMap">
+        /* deleteManu */
+        update tb_co_bbs set
+		   del_yn = 'Y'
+		   ,upt_usr_id = #{SESS_USR_ID}
+		   ,upt_dt = to_char(now(), 'YYYYMMDDHH24MISS') 
+		where tb_co_bbs.bbs_doc_no = #{bbs_doc_no}::INTEGER
+     </update>
+	
+	<select id="selectBbskey" parameterType="sqlMap" resultType="string">
+		/* selectBbskey */
+		select nextval('tb_co_bbs_bbs_doc_no_seq'::regclass) as key
+	</select>
+</mapper>

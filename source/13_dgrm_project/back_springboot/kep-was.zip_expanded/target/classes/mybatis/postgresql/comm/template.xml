@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.common.chems.mapper.TemplateMapper">
+
+    <select id="selectTemplateList" parameterType="com.kist.portal.common.chems.dto.TemplateDto$param" resultType="com.kist.portal.common.chems.dto.TemplateDto$response">
+        /* selectTemplateList  */
+        select
+             tct.tmpt_id AS tmptId
+           , tct.biz_cd AS bizCd
+           , fn_get_cd('CO00000001',tct.biz_cd,'NM', #{sessionLang}) as bizNm
+           , tct.tmpt_div_cd AS tmptDivCd
+           , fn_get_cd('CO00000039',tct.tmpt_div_cd,'NM', #{sessionLang}) as tmptDivNm
+           , tct.tmpt_nm AS tmptNm
+           , tct.tmpt_cntn AS tmptCntn
+           , tct.usg_yn AS usgYn
+           , tct.del_yn AS delYn
+           , tct.crt_usr_id AS crtUsrId
+           , tct.crt_dt AS crtDt
+           , tct.upt_usr_id AS uptUsrId
+           , tct.upt_dt AS uptDt
+        from
+            tb_co_tmpt tct
+        where
+            tct.del_yn = 'N'
+        <if test='tmptId != null and tmptId != ""'>
+            and tct.tmpt_id  = #{tmptId}
+        </if>
+        <if test='tmptDivCd != null and tmptDivCd != ""'>
+            and tct.tmpt_div_cd  = #{tmptDivCd}
+        </if>
+        <if test='tmptNm != null and tmptNm != ""'>
+            and tct.tmpt_nm like '%' || #{tmptNm} || '%'
+        </if>
+        <if test='bizCd != null and bizCd != ""'>
+            and tct.biz_cd  = #{bizCd}
+        </if>
+        <if test='usgYn != null and usgYn != ""'>
+            and tct.usg_yn  = #{usgYn}
+        </if>
+    </select>
+
+    <insert id="insertTemplate" parameterType="sqlMap">
+        /* updateMeunRoleList */
+        insert into tb_co_tmpt (
+              tmpt_id
+             ,biz_cd
+             ,tmpt_div_cd
+             ,tmpt_nm
+             ,tmpt_cntn
+             ,usg_yn
+             ,del_yn
+             ,crt_usr_id
+             ,crt_dt
+             ,upt_usr_id
+             ,upt_dt
+        ) values (
+              'TMPT' || to_char(now(), 'YYYYMMDDHH24MISS')
+             ,#{bizCd}
+             ,#{tmptDivCd}
+             ,#{tmptNm}
+             ,#{tmptCntn}
+             ,'Y'
+             ,'N'
+             ,#{sessionUserId}
+             ,to_char(now(), 'YYYYMMDDHH24MISS')
+             ,#{sessionUserId}
+             ,to_char(now(), 'YYYYMMDDHH24MISS')
+        )
+    </insert>
+
+    <update id="updateTemplate" parameterType="sqlMap">
+        /* updateTemplate */
+        update tb_co_tmpt
+           set biz_cd = #{bizCd}
+             , tmpt_div_cd = #{tmptDivCd}
+             , tmpt_nm = #{tmptNm}
+             , tmpt_cntn = #{tmptCntn}
+             <if test='delYn == null or delYn != "Y"'>
+             , usg_yn = #{usgYn}
+             </if>
+             <if test='delYn != null and delYn == "Y"'>
+             , del_yn = #{delYn}
+             , usg_yn = 'N'
+             </if>
+             , upt_usr_id = #{sessionUserId}
+             , upt_dt = to_char(now(), 'YYYYMMDDHH24MISS')
+         where tmpt_id = #{tmptId}
+    </update>
+</mapper>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kist.portal.common.comm.mapper.FileMapper">
+	
+	<select id="selectFileId" resultType="String">
+		/* selectFileId */
+		select nextval('tb_co_atfl_seq')
+	</select>
+	
+	<select id="selectSeq" parameterType="String" resultType="String">
+		/* selectSeq */
+		select coalesce((max(atfl_seq) + 1), 1) as atfl_seq from tb_co_atfl where atfl_no = #{id}::INTEGER
+	</select>
+	
+	<select id="selectFileList" parameterType="sqlMap" resultType="sqlMap">
+		/* selectFileList */
+		select 
+			atfl_no, atfl_seq, atfl_nm as name, atfl_size as size, atfl_no || '-' || atfl_seq as key, atfl_url, crt_usr_id, crt_dt
+        from tb_co_atfl
+		where atfl_no = #{id}::INTEGER
+	</select>
+	
+	<select id="selectFile" parameterType="sqlMap" resultType="sqlMap">
+		/* selectFile */
+		select atfl_no
+			  ,atfl_seq
+			  ,atfl_nm
+			  ,regexp_replace(atfl_nm, E'.*\\.', '') as atfl_ext
+			  ,atfl_url
+			  ,atfl_size
+			  ,atfl_note
+			  ,pub_yn
+			  ,ext_yn
+			  ,crt_usr_id
+			  ,crt_dt
+		  from tb_co_atfl
+		 where atfl_no = #{id}::INTEGER
+		   and atfl_seq = #{seq}::INTEGER
+	</select>
+	
+	<insert id="insertFile" parameterType="sqlMap">
+        /* insertFile */
+        insert into tb_co_atfl (
+        	atfl_no
+        	,atfl_seq
+			,atfl_nm
+			,atfl_size
+			,pub_yn
+			,atfl_url
+			,crt_usr_id
+			,crt_dt
+			,upt_usr_id
+			,upt_dt
+		) values (
+			#{id}::INTEGER
+			,#{seq}::INTEGER
+			,#{file_name}
+			,#{file_size}
+			,#{pub_yn}
+			,#{file_url}
+			,#{username}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+			,#{username}
+			,to_char(now(), 'YYYYMMDDHH24MISS')
+		)
+    </insert>
+    
+    <delete id="deleteFile" parameterType="sqlMap">
+        /* deleteFile */
+        delete from tb_co_atfl
+		where atfl_no = #{id}::INTEGER
+			and atfl_seq = #{seq}::INTEGER
+    </delete>
+    
+    <select id="selectExtYn" parameterType="sqlMap" resultType="sqlMap">
+		/* selectExtYn */
+		select a.ext_yn
+			  ,a.atfl_url
+			  ,a.equal_yn
+			  ,a.id
+			  ,a.atfl_no
+          from (select atfl_no
+                      ,atfl_seq
+                      ,atfl_url
+                      ,ext_yn
+                      ,reverse(split_part(reverse(atfl_url), '/', 1)) as id
+                      ,case when reverse(split_part(reverse(atfl_url), '/', 1)) != (atfl_no || '-' || atfl_seq) and ext_yn ='N'
+                      		then 'Y'
+                      		else 'N'
+                      	end as equal_yn
+                  from tb_co_atfl
+               ) a
+		 where a.atfl_no = #{id}::INTEGER
+		   and a.atfl_seq = #{seq}::INTEGER
+	</select>
+    
+    <select id="selectFileKey" parameterType="sqlMap" resultType="string">
+		/* selectFileKey */
+		select 
+			atfl_no || '-' || atfl_seq as key
+        from tb_co_atfl
+		where atfl_no = #{atfl_no}::INTEGER
+		  and pub_yn = 'Y'
+		limit 1
+	</select>
+	
+	<select id="selectDocFileNo" parameterType="sqlMap" resultType="string">
+		/* selectDocFileNo */
+		select 
+			tcb.atfl_no
+		from tb_co_bbs tcb 
+		where 1=1
+		and tcb.bbs_doc_no = #{bbs_doc_no}::INTEGER
+	</select>
+	
+	<select id="selectPubYn" parameterType="sqlMap" resultType="sqlMap">
+		/* selectPubYn */
+		select 
+		   atfl_no
+        from tb_co_atfl
+		where atfl_no = #{id}::INTEGER
+		  and atfl_seq = #{seq}::INTEGER
+		  and pub_yn = 'Y'
+	</select>
+	
+</mapper>
