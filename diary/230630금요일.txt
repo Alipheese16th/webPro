@@ -37,10 +37,13 @@ onGetEditValue 이거다
 # 이제 내일 발표 대비해서 어떤 질문이 들어올지 미리 설명할수있게 생각해두자
 1. 삭제는 왜 emptydata로 보냈어요? / 중간에 변경된 내용까지 반영되면 안되서 초기값으로 보냈습니다
 
+2. 
 
 
 
-ASDFASDFASDFAFASDFASDFASDFAFASDFASDFASDFAFASDFASDFASDFAFASDFASDFASDFAFASDFASDFASDFAFASDFASDFASDFAFAS
+
+
+
 
 
 
