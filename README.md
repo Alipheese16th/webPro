@@ -5,6 +5,9 @@
 
 ![교육이수내역](https://user-images.githubusercontent.com/79974632/237023801-1c66e275-4935-47c8-80ac-49e16d3bb661.png)
 
+![Image](https://github.com/user-attachments/assets/de3740e9-5dff-4210-8b23-0d2610154576)
+![Image](https://github.com/user-attachments/assets/018b0735-d911-4891-8db6-aa1ba4bcc0c1)
+
 그동안 제가 정리한 [요약정리](https://github.com/Alipheese16th/webPro/tree/main/%EC%9A%94%EC%95%BD%EC%A0%95%EB%A6%AC) 
 문서는 이곳에서 확인하실 수 있습니다.
   
